@@ -149,8 +149,17 @@ function mostrarTela(tela) {
 
   aplicarPermissoesCampos();
 
+  // Garante a atualização dos dados e do fluxo ao alternar de aba
+  if (tela === "fluxo" || tela === "dashboard" || tela === "tarefas") {
+    atualizarWorkflow();
+    atualizarTarefaAtual();
+  }
+  if (tela === "historico") carregarHistorico();
   if (tela === "patrimonial") carregarPatrimonial();
   if (tela === "sst") carregarSST();
+  if (tela === "caminhoes") carregarCaminhoes();
+  if (tela === "riscos") carregarRiscos();
+  if (tela === "ocorrencias") carregarOcorrencias();
 }
 
 function aplicarPermissoesCampos() {
@@ -191,16 +200,38 @@ function atualizarWorkflow() {
   const navioAtivo = localStorage.getItem("navioAtivo");
   const atual = getWorkflowAtual();
 
+  // Histórico para exibição detalhada nos cards do fluxo
+  const todosHistoricos = JSON.parse(localStorage.getItem("historico") || "[]");
+  const historicoNavio = navioAtivo ? todosHistoricos.filter(h => h.navio === navioAtivo) : [];
+
   workflow.forEach(w => {
     const el = document.getElementById(`e${w.id}`);
     if (el) {
-      el.classList.remove("concluido", "ativo");
+      el.classList.remove("concluido", "ativo", "pendente");
+      
       if (navioAtivo) {
         if (w.id < atual) {
           el.classList.add("concluido");
         } else if (w.id === atual) {
           el.classList.add("ativo");
+        } else {
+          el.classList.add("pendente");
         }
+
+        // Atualiza a legenda de detalhe caso exista no card (ex: <small id="e1_detalhe"></small>)
+        const infoEtapa = historicoNavio.find(h => h.etapa === w.etapa);
+        const elDet = document.getElementById(`e${w.id}_detalhe`);
+        if (elDet) {
+          if (infoEtapa) {
+            elDet.innerText = `Concluído por ${infoEtapa.usuario} em ${infoEtapa.data}`;
+          } else if (w.id === atual) {
+            elDet.innerText = "Em Andamento";
+          } else {
+            elDet.innerText = "Pendente";
+          }
+        }
+      } else {
+        el.classList.add("pendente");
       }
     }
   });
