@@ -231,3 +231,23 @@ input:disabled, textarea:disabled, select:disabled, button:disabled {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);   /* Aumenta a profundidade da sombra */
   border-color: #003366;                        /* Destaca a borda na cor principal */
 }
+
+.user-card {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.user-card small {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+#usuarioLogadoTexto {
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-top: 2px;
+}
