@@ -824,6 +824,21 @@ usuario.usuario +
 "<br>" +
 usuario.area;
 
+let responsavelDashboard =
+document.getElementById(
+"usuarioResponsavel"
+);
+
+if(responsavelDashboard){
+
+responsavelDashboard.innerHTML =
+usuario.usuario +
+" (" +
+usuario.area +
+")";
+
+}
+
 }
 
 aplicarPermissoes();
