@@ -38,7 +38,7 @@ function carregarSeletoresNavio() {
   const seletores = document.querySelectorAll(".seletor-navio");
 
   seletores.forEach(select => {
-    let html = '<option value="">-- Selecione um Navio Cadastrado --</option>';
+    let html = '<option value="">-- Selecione um Navio --</option>';
     navios.forEach(n => {
       const selected = n.navio === navioAtivo ? "selected" : "";
       html += `<option value="${n.navio}" ${selected}>${n.navio} (${n.armador || 'Sem Armador'})</option>`;
@@ -49,10 +49,20 @@ function carregarSeletoresNavio() {
 
 function selecionarNavioGlobal(nomeNavio) {
   localStorage.setItem("navioAtivo", nomeNavio);
+  
+  // Sincronizar todos os campos select das abas
   const seletores = document.querySelectorAll(".seletor-navio");
   seletores.forEach(select => {
     select.value = nomeNavio;
   });
+
+  // ATUALIZAR E FILTRAR TODAS AS TELAS COM OS DADOS DO NAVIO SELECIONADO
+  atualizarWorkflow();
+  atualizarTarefaAtual();
+  carregarHistorico();
+  carregarCaminhoes();
+  carregarRiscos();
+  carregarOcorrencias();
 }
 
 // ==========================================
@@ -104,18 +114,16 @@ function iniciarSistema() {
     usrResp.innerText = usuarioLogado.usuario.toUpperCase();
   }
 
-  if (!localStorage.getItem("workflowAtual")) {
-    localStorage.setItem("workflowAtual", 1);
+  carregarNavios();
+  carregarSeletoresNavio();
+  
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (navioAtivo) {
+    selecionarNavioGlobal(navioAtivo);
+  } else {
+    atualizarWorkflow();
   }
 
-  carregarNavios();
-  carregarCaminhoes();
-  carregarRiscos();
-  carregarOcorrencias();
-  carregarHistorico();
-  carregarSeletoresNavio();
-  atualizarWorkflow();
-  atualizarTarefaAtual();
   mostrarTela("dashboard");
 }
 
@@ -141,31 +149,56 @@ function mostrarTela(tela) {
 }
 
 // ==========================================
-// WORKFLOW E HISTÓRICO
+// WORKFLOW E HISTÓRICO POR NAVIO
 // ==========================================
 
-function atualizarWorkflow() {
-  const atual = Number(localStorage.getItem("workflowAtual") || 1);
+function getWorkflowAtual() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) return 1;
+  return Number(localStorage.getItem(`workflow_${navioAtivo}`) || 1);
+}
 
+function setWorkflowAtual(etapaId) {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (navioAtivo) {
+    localStorage.setItem(`workflow_${navioAtivo}`, etapaId);
+  }
+}
+
+function atualizarWorkflow() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const atual = getWorkflowAtual();
+
+  // Atualizar visual do fluxo
   workflow.forEach(w => {
     const el = document.getElementById(`e${w.id}`);
     if (el) {
       el.classList.remove("concluido", "ativo");
-      if (w.id < atual) {
-        el.classList.add("concluido");
-      } else if (w.id === atual) {
-        el.classList.add("ativo");
+      if (navioAtivo) {
+        if (w.id < atual) {
+          el.classList.add("concluido");
+        } else if (w.id === atual) {
+          el.classList.add("ativo");
+        }
       }
     }
   });
-
-  const etapaAtual = workflow.find(w => w.id === atual);
-  const proximaEtapa = workflow.find(w => w.id === atual + 1);
 
   const elStatus = document.getElementById("statusAtual");
   const elResp = document.getElementById("responsavelAtual");
   const elProx = document.getElementById("proximaArea");
   const elTotalEtapas = document.getElementById("totalEtapas");
+
+  if (!navioAtivo) {
+    if (elStatus) elStatus.innerText = "Nenhum Navio Selecionado";
+    if (elResp) elResp.innerText = "-";
+    if (elProx) elProx.innerText = "-";
+    if (elTotalEtapas) elTotalEtapas.innerText = "0 / 14";
+    return;
+  }
+
+  const etapaAtual = workflow.find(w => w.id === atual);
+  const proximaEtapa = workflow.find(w => w.id === atual + 1);
 
   if (etapaAtual) {
     if (elStatus) elStatus.innerText = etapaAtual.etapa;
@@ -194,10 +227,10 @@ function concluirEtapa() {
     return;
   }
 
-  const atual = Number(localStorage.getItem("workflowAtual") || 1);
+  const atual = getWorkflowAtual();
 
   if (atual > workflow.length) {
-    alert("Todas as etapas do workflow já foram concluídas.");
+    alert("Todas as etapas do workflow já foram concluídas para este navio.");
     return;
   }
 
@@ -223,7 +256,7 @@ function concluirEtapa() {
   });
 
   localStorage.setItem("historico", JSON.stringify(historico));
-  localStorage.setItem("workflowAtual", atual + 1);
+  setWorkflowAtual(atual + 1);
 
   atualizarWorkflow();
   atualizarTarefaAtual();
@@ -233,12 +266,18 @@ function concluirEtapa() {
 }
 
 function atualizarTarefaAtual() {
-  const atual = Number(localStorage.getItem("workflowAtual") || 1);
-  const etapa = workflow.find(w => w.id === atual);
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-
+  const navioAtivo = localStorage.getItem("navioAtivo");
   const elTarefa = document.getElementById("tarefaAtual");
   if (!elTarefa) return;
+
+  if (!navioAtivo) {
+    elTarefa.innerText = "Selecione um navio para visualizar as tarefas.";
+    return;
+  }
+
+  const atual = getWorkflowAtual();
+  const etapa = workflow.find(w => w.id === atual);
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   if (!etapa) {
     elTarefa.innerText = "Nenhuma tarefa pendente (Fluxo Finalizado).";
@@ -256,14 +295,16 @@ function carregarHistorico() {
   const tbody = document.getElementById("listaHistorico");
   if (!tbody) return;
 
-  const historico = JSON.parse(localStorage.getItem("historico") || "[]");
-  let html = "";
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const todosHistoricos = JSON.parse(localStorage.getItem("historico") || "[]");
+  const historico = navioAtivo ? todosHistoricos.filter(h => h.navio === navioAtivo) : [];
 
+  let html = "";
   historico.forEach((item, idx) => {
     html += `
       <tr>
         <td>${idx + 1}</td>
-        <td>${item.etapa} ${item.navio ? `(${item.navio})` : ''}</td>
+        <td>${item.etapa}</td>
         <td>${item.usuario}</td>
         <td>${item.area}</td>
         <td>${item.data}</td>
@@ -271,11 +312,11 @@ function carregarHistorico() {
     `;
   });
 
-  tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum histórico registrado até o momento.</td></tr>`;
+  tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum histórico registrado para este navio.</td></tr>`;
 }
 
 // ==========================================
-// CADASTROS E MÓDULOS
+// MÓDULOS DE DADOS FILTRADOS POR NAVIO
 // ==========================================
 
 function salvarNavio() {
@@ -306,6 +347,7 @@ function salvarNavio() {
 
   carregarNavios();
   carregarSeletoresNavio();
+  selecionarNavioGlobal(navio);
 }
 
 function carregarNavios() {
@@ -329,6 +371,12 @@ function carregarNavios() {
 }
 
 function salvarCaminhao() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) {
+    alert("Selecione um navio antes de cadastrar um caminhão.");
+    return;
+  }
+
   const placa = document.getElementById("placa").value.trim();
   const motorista = document.getElementById("motorista").value.trim();
   const transportadora = document.getElementById("transportadora").value.trim();
@@ -339,7 +387,7 @@ function salvarCaminhao() {
   }
 
   const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-  caminhoes.push({ placa, motorista, transportadora });
+  caminhoes.push({ navio: navioAtivo, placa, motorista, transportadora });
   localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
 
   document.getElementById("placa").value = "";
@@ -351,20 +399,28 @@ function salvarCaminhao() {
 
 function carregarCaminhoes() {
   const tbody = document.getElementById("listaCaminhoes");
-  const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+  if (!tbody) return;
 
-  if (tbody) {
-    tbody.innerHTML = caminhoes.map(c => `
-      <tr>
-        <td>${c.placa}</td>
-        <td>${c.motorista}</td>
-        <td>${c.transportadora}</td>
-      </tr>
-    `).join("");
-  }
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const todos = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+  const caminhoes = navioAtivo ? todos.filter(c => c.navio === navioAtivo) : [];
+
+  tbody.innerHTML = caminhoes.map(c => `
+    <tr>
+      <td>${c.placa}</td>
+      <td>${c.motorista}</td>
+      <td>${c.transportadora}</td>
+    </tr>
+  `).join("");
 }
 
 function registrarRisco() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) {
+    alert("Selecione um navio antes de registrar.");
+    return;
+  }
+
   const tipo = document.getElementById("tipoRisco").value;
   const descricao = document.getElementById("descricaoRisco").value.trim();
 
@@ -375,6 +431,7 @@ function registrarRisco() {
 
   const riscos = JSON.parse(localStorage.getItem("riscos") || "[]");
   riscos.push({
+    navio: navioAtivo,
     data: new Date().toLocaleString("pt-BR"),
     tipo,
     descricao
@@ -387,20 +444,28 @@ function registrarRisco() {
 
 function carregarRiscos() {
   const tbody = document.getElementById("listaRiscos");
-  const riscos = JSON.parse(localStorage.getItem("riscos") || "[]");
+  if (!tbody) return;
 
-  if (tbody) {
-    tbody.innerHTML = riscos.map(r => `
-      <tr>
-        <td>${r.data}</td>
-        <td>${r.tipo}</td>
-        <td>${r.descricao}</td>
-      </tr>
-    `).join("");
-  }
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const todos = JSON.parse(localStorage.getItem("riscos") || "[]");
+  const riscos = navioAtivo ? todos.filter(r => r.navio === navioAtivo) : [];
+
+  tbody.innerHTML = riscos.map(r => `
+    <tr>
+      <td>${r.data}</td>
+      <td>${r.tipo}</td>
+      <td>${r.descricao}</td>
+    </tr>
+  `).join("");
 }
 
 function registrarOcorrencia() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) {
+    alert("Selecione um navio antes de registrar a ocorrência.");
+    return;
+  }
+
   const descricao = document.getElementById("descricao").value.trim();
 
   if (!descricao) {
@@ -410,6 +475,7 @@ function registrarOcorrencia() {
 
   const ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
   ocorrencias.push({
+    navio: navioAtivo,
     data: new Date().toLocaleString("pt-BR"),
     descricao
   });
@@ -421,16 +487,18 @@ function registrarOcorrencia() {
 
 function carregarOcorrencias() {
   const tbody = document.getElementById("listaOcorrencias");
-  const ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
+  if (!tbody) return;
 
-  if (tbody) {
-    tbody.innerHTML = ocorrencias.map(o => `
-      <tr>
-        <td>${o.data}</td>
-        <td>${o.descricao}</td>
-      </tr>
-    `).join("");
-  }
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const todos = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
+  const ocorrencias = navioAtivo ? todos.filter(o => o.navio === navioAtivo) : [];
+
+  tbody.innerHTML = ocorrencias.map(o => `
+    <tr>
+      <td>${o.data}</td>
+      <td>${o.descricao}</td>
+    </tr>
+  `).join("");
 
   const elTotal = document.getElementById("totalOcorrencias");
   if (elTotal) elTotal.innerText = ocorrencias.length;
