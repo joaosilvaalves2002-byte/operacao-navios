@@ -173,39 +173,56 @@
             </div>
 
             <!-- SEGURANÇA PATRIMONIAL -->
-            <div id="patrimonial" class="oculto">
+            <div id="patrimonial" class="tela oculto">
                 <div class="card-navio-selecao">
                     <label><strong>Navio Selecionado:</strong></label>
                     <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                 </div>
                 <h1>Segurança Patrimonial</h1>
-                <div class="card">
-                    <h3>Checklist Patrimonial</h3>
-                    <br>
-                    <label><input type="checkbox" id="chkDocPatrimonial"> Documentação Conferida</label><br><br>
-                    <label><input type="checkbox" id="chkLacrePatrimonial"> Lacre Conferido</label><br><br>
-                    <label><input type="checkbox" id="chkInspecaoPatrimonial"> Inspeção Concluída</label>
+            
+                <div class="form-group">
+                    <label for="patrimonialStatus">Status da Inspeção:</label>
+                    <select id="patrimonialStatus">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
                 </div>
+            
+                <div class="form-group">
+                    <label for="patrimonialObs">Observações / Vistoria Patrimonial:</label>
+                    <textarea id="patrimonialObs" rows="4" placeholder="Informe detalhes da inspeção patrimonial..."></textarea>
+                </div>
+            
+                <!-- ÚNICO BOTÃO DE SALVAR DA PATRIMONIAL -->
+                <button type="button" class="btn-salvar" onclick="salvarPatrimonial()">Salvar Patrimonial</button>
             </div>
-            <button type="button" class="btn-salvar" onclick="salvarPatrimonial()">Salvar Patrimonial</button>
 
-            <!-- SEGURANÇA DO TRABALHO -->
-            <div id="sst" class="oculto">
+            <!-- SEGURANÇA DO TRABALHO (SST) -->
+            <div id="sst" class="tela oculto">
                 <div class="card-navio-selecao">
                     <label><strong>Navio Selecionado:</strong></label>
                     <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                 </div>
                 <h1>Segurança do Trabalho (SST)</h1>
-                <div class="card">
-                    <h3>Checklist SST</h3>
-                    <br>
-                    <label><input type="checkbox" id="chkDdsSst"> DDS Realizado</label><br><br>
-                    <label><input type="checkbox" id="chkEpiSst"> EPIs Conferidos</label><br><br>
-                    <label><input type="checkbox" id="chkEscadaSst"> Escada Inspecionada</label><br><br>
-                    <label><input type="checkbox" id="chkSegurancaSst"> Condições Seguras</label>
+            
+                <div class="form-group">
+                    <label for="sstStatus">Status da Vistoria / DDS:</label>
+                    <select id="sstStatus">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
                 </div>
+            
+                <div class="form-group">
+                    <label for="sstObs">Observações SST / Registros DDS:</label>
+                    <textarea id="sstObs" rows="4" placeholder="Informe os detalhes da vistoria SST..."></textarea>
+                </div>
+            
+                <!-- ÚNICO BOTÃO DE SALVAR DO SST -->
+                <button type="button" class="btn-salvar" onclick="salvarSST()">Salvar Seg. Trabalho (SST)</button>
             </div>
-            <button type="button" class="btn-salvar" onclick="salvarSST()">Salvar Seg. Trabalho (SST)</button>
 
             <!-- NOTIFY / DAMAGE -->
             <div id="riscos" class="oculto">
