@@ -1,19 +1,15 @@
-// =====================================
-// USUÁRIOS
-// =====================================
+// ==========================================
+// CONFIGURAÇÃO DE USUÁRIOS E WORKFLOW
+// ==========================================
 
 const usuarios = [
+  { usuario: "admin", senha: "123", area: "TODAS" },
   { usuario: "documental", senha: "123", area: "DOCUMENTAL" },
   { usuario: "planejamento", senha: "123", area: "PLANEJAMENTO" },
   { usuario: "operacional", senha: "123", area: "OPERACIONAL" },
-  { usuario: "patrimonial", senha: "123", area: "PATRIMONIAL" },
   { usuario: "sst", senha: "123", area: "SST" },
-  { usuario: "riscos", senha: "123", area: "RISCOS" }
+  { usuario: "patrimonial", senha: "123", area: "PATRIMONIAL" }
 ];
-
-// =====================================
-// WORKFLOW
-// =====================================
 
 const workflow = [
   { id: 1, etapa: "Manifesto Conferido", responsavel: "DOCUMENTAL" },
@@ -32,821 +28,378 @@ const workflow = [
   { id: 14, etapa: "Desatracação", responsavel: "OPERACIONAL" }
 ];
 
-// =====================================
-// LOGIN
-// =====================================
+// ==========================================
+// AUTENTICAÇÃO E SESSÃO
+// ==========================================
 
 function fazerLogin() {
+  const user = document.getElementById("usuario").value.trim();
+  const pass = document.getElementById("senha").value.trim();
 
-  const usuario =
-    document.getElementById("usuario").value;
-
-  const senha =
-    document.getElementById("senha").value;
-
-  const encontrado =
-    usuarios.find(u =>
-      u.usuario === usuario &&
-      u.senha === senha
-    );
+  const encontrado = usuarios.find(u => u.usuario === user && u.senha === pass);
 
   if (!encontrado) {
-
     alert("Usuário ou senha inválidos.");
     return;
-
   }
 
-  localStorage.setItem(
-    "usuarioLogado",
-    JSON.stringify(encontrado)
-  );
-
-  document
-    .getElementById("login")
-    .classList.add("oculto");
-
-  document
-    .getElementById("sistema")
-    .classList.remove("oculto");
-
-  atualizarUsuarioLogado();
-
-  aplicarPermissoes();
-
-  atualizarWorkflow();
-
-  atualizarTarefaAtual();
-
+  localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
+  iniciarSistema();
 }
-
-// =====================================
-// LOGOUT
-// =====================================
 
 function logout() {
-
-  localStorage.removeItem(
-    "usuarioLogado"
-  );
-
-  location.reload();
-
+  localStorage.removeItem("usuarioLogado");
+  document.getElementById("login").classList.remove("oculto");
+  document.getElementById("sistema").classList.add("oculto");
+  document.getElementById("usuario").value = "";
+  document.getElementById("senha").value = "";
 }
 
-// =====================================
-// USUÁRIO LOGADO
-// =====================================
-
-function atualizarUsuarioLogado() {
-
-  const usuario =
-    JSON.parse(
-      localStorage.getItem(
-        "usuarioLogado"
-      )
-    );
-
-  if (!usuario) return;
-
-  const lado =
-    document.getElementById(
-      "usuarioLogadoTexto"
-    );
-
-  if (lado) {
-
-    lado.innerHTML =
-      usuario.usuario +
-      "<br>" +
-      usuario.area;
-
+function verificarSessao() {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  if (usuarioLogado) {
+    iniciarSistema();
   }
-
-  const dash =
-    document.getElementById(
-      "usuarioResponsavel"
-    );
-
-  if (dash) {
-
-    dash.innerText =
-      usuario.usuario;
-
-  }
-
 }
 
-// =====================================
-// PERMISSÕES
-// =====================================
+function iniciarSistema() {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  document.getElementById("login").classList.add("oculto");
+  document.getElementById("sistema").classList.remove("oculto");
 
-function aplicarPermissoes() {
-
-  const usuario =
-    JSON.parse(
-      localStorage.getItem(
-        "usuarioLogado"
-      )
-    );
-
-  if (!usuario) return;
-
-  [
-    "btnNavios",
-    "btnPatrimonial",
-    "btnSST",
-    "btnRiscos"
-  ].forEach(id => {
-
-    const btn =
-      document.getElementById(id);
-
-    if (btn)
-      btn.style.display = "none";
-
-  });
-
-  switch(usuario.area){
-
-    case "PLANEJAMENTO":
-
-      document.getElementById("btnNavios").style.display = "block";
-      break;
-
-    case "PATRIMONIAL":
-
-      document.getElementById("btnPatrimonial").style.display = "block";
-      break;
-
-    case "SST":
-
-      document.getElementById("btnSST").style.display = "block";
-      break;
-
-    case "RISCOS":
-
-      document.getElementById("btnRiscos").style.display = "block";
-      break;
-
+  const txtUsuario = document.getElementById("usuarioLogadoTexto");
+  if (txtUsuario) {
+    txtUsuario.innerText = `Usuário: ${usuarioLogado.usuario} (${usuarioLogado.area})`;
   }
 
+  const usrResp = document.getElementById("usuarioResponsavel");
+  if (usrResp) {
+    usrResp.innerText = usuarioLogado.usuario.toUpperCase();
+  }
+
+  if (!localStorage.getItem("workflowAtual")) {
+    localStorage.setItem("workflowAtual", 1);
+  }
+
+  carregarNavios();
+  carregarCaminhoes();
+  carregarRiscos();
+  carregarOcorrencias();
+  carregarHistorico();
+  atualizarWorkflow();
+  atualizarTarefaAtual();
+  mostrarTela("dashboard");
 }
 
-// =====================================
-// NAVEGAÇÃO
-// =====================================
+// ==========================================
+// NAVEGAÇÃO DE TELAS
+// ==========================================
 
 function mostrarTela(tela) {
-
   const paginas = [
-    "dashboard",
-    "tarefas",
-    "navios",
-    "caminhoes",
-    "patrimonial",
-    "sst",
-    "riscos",
-    "fluxo",
-    "ocorrencias"
+    "dashboard", "historico", "tarefas", "navios", 
+    "caminhoes", "patrimonial", "sst", "riscos", "fluxo", "ocorrencias"
   ];
 
   paginas.forEach(p => {
-
-    const el =
-      document.getElementById(p);
-
-    if (el)
-      el.classList.add("oculto");
-
+    const el = document.getElementById(p);
+    if (el) el.classList.add("oculto");
   });
 
-  document
-    .getElementById(tela)
-    .classList.remove("oculto");
-
-}
-
-// =====================================
-// WORKFLOW
-// =====================================
-
-function iniciarWorkflow() {
-
-  if (
-    !localStorage.getItem(
-      "workflowAtual"
-    )
-  ) {
-
-    localStorage.setItem(
-      "workflowAtual",
-      "1"
-    );
-
+  const telaAlvo = document.getElementById(tela);
+  if (telaAlvo) {
+    telaAlvo.classList.remove("oculto");
   }
-
-  atualizarWorkflow();
-
-  atualizarTarefaAtual();
-
 }
+
+// ==========================================
+// WORKFLOW E HISTÓRICO
+// ==========================================
 
 function atualizarWorkflow() {
+  const atual = Number(localStorage.getItem("workflowAtual") || 1);
 
-  const atual =
-    Number(
-      localStorage.getItem(
-        "workflowAtual"
-      )
-    );
+  // Destacar no fluxo visual
+  workflow.forEach(w => {
+    const el = document.getElementById(`e${w.id}`);
+    if (el) {
+      el.classList.remove("concluido", "ativo");
+      if (w.id < atual) {
+        el.classList.add("concluido");
+      } else if (w.id === atual) {
+        el.classList.add("ativo");
+      }
+    }
+  });
 
-  const status =
-    document.getElementById(
-      "statusAtual"
-    );
+  // Atualizar informações do Dashboard
+  const etapaAtual = workflow.find(w => w.id === atual);
+  const proximaEtapa = workflow.find(w => w.id === atual + 1);
 
-  const responsavel =
-    document.getElementById(
-      "responsavelAtual"
-    );
+  const elStatus = document.getElementById("statusAtual");
+  const elResp = document.getElementById("responsavelAtual");
+  const elProx = document.getElementById("proximaArea");
+  const elTotalEtapas = document.getElementById("totalEtapas");
 
-  const proximaArea =
-    document.getElementById(
-      "proximaArea"
-    );
-
-  if (atual > workflow.length) {
-
-    if(status)
-      status.innerText =
-      "Fluxo Concluído";
-
-    if(responsavel)
-      responsavel.innerText =
-      "Finalizado";
-
-    if(proximaArea)
-      proximaArea.innerText =
-      "-";
-
-    return;
-
+  if (etapaAtual) {
+    if (elStatus) elStatus.innerText = etapaAtual.etapa;
+    if (elResp) elResp.innerText = etapaAtual.responsavel;
+  } else {
+    if (elStatus) elStatus.innerText = "Operação Concluída";
+    if (elResp) elResp.innerText = "NENHUM";
   }
 
-  const etapa =
-    workflow.find(
-      w => w.id === atual
-    );
-
-  if (!etapa) return;
-
-  status.innerText =
-    etapa.etapa;
-
-  responsavel.innerText =
-    etapa.responsavel;
-
-  const proxima =
-    workflow.find(
-      w => w.id === atual + 1
-    );
-
-  if(proximaArea){
-
-    proximaArea.innerText =
-      proxima
-      ? proxima.responsavel
-      : "Finalizado";
-
+  if (proximaEtapa) {
+    if (elProx) elProx.innerText = `${proximaEtapa.responsavel} (${proximaEtapa.etapa})`;
+  } else {
+    if (elProx) elProx.innerText = "Fim do Processo";
   }
 
-}
-
-function atualizarTarefaAtual() {
-
-  const tarefa =
-    document.getElementById(
-      "tarefaAtual"
-    );
-
-  if (!tarefa) return;
-
-  const usuario =
-    JSON.parse(
-      localStorage.getItem(
-        "usuarioLogado"
-      )
-    );
-
-  const atual =
-    Number(
-      localStorage.getItem(
-        "workflowAtual"
-      )
-    );
-
-  if (atual > workflow.length) {
-
-    tarefa.innerText =
-      "Nenhuma tarefa pendente";
-
-    return;
-
+  if (elTotalEtapas) {
+    const concluidas = Math.min(atual - 1, workflow.length);
+    elTotalEtapas.innerText = `${concluidas} / ${workflow.length}`;
   }
-
-  const etapa =
-    workflow.find(
-      w => w.id === atual
-    );
-
-  if (
-    !usuario ||
-    !etapa
-  ) return;
-
-  if (
-    etapa.responsavel !==
-    usuario.area
-  ) {
-
-    tarefa.innerText =
-      "Nenhuma tarefa disponível para sua área.";
-
-    return;
-
-  }
-
-  tarefa.innerText =
-    etapa.etapa;
-
 }
 
 function concluirEtapa() {
-
-  const atual =
-    Number(
-      localStorage.getItem(
-        "workflowAtual"
-      )
-    );
+  const atual = Number(localStorage.getItem("workflowAtual") || 1);
 
   if (atual > workflow.length) {
-
-    alert(
-      "Todas as etapas já foram concluídas."
-    );
-
+    alert("Todas as etapas do workflow já foram concluídas.");
     return;
   }
 
-  const usuario =
-    JSON.parse(
-      localStorage.getItem(
-        "usuarioLogado"
-      )
-    );
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  if (!usuarioLogado) return;
 
-  const etapa =
-    workflow.find(
-      w => w.id === atual
-    );
+  const etapa = workflow.find(w => w.id === atual);
+  if (!etapa) return;
 
-  if (
-    etapa.responsavel !==
-    usuario.area
-  ) {
-
-    alert(
-      "Esta etapa pertence à área " +
-      etapa.responsavel
-    );
-
+  if (usuarioLogado.area !== "TODAS" && etapa.responsavel !== usuarioLogado.area) {
+    alert(`Apenas o setor ${etapa.responsavel} pode concluir esta etapa.`);
     return;
   }
 
-  const historico =
-    JSON.parse(
-      localStorage.getItem(
-        "historico"
-      ) || "[]"
-    );
-
+  // Registrar no Histórico
+  const historico = JSON.parse(localStorage.getItem("historico") || "[]");
   historico.push({
-
-    etapa:
-      etapa.etapa,
-
-    usuario:
-      usuario.usuario,
-
-    area:
-      usuario.area,
-
-    data:
-      new Date()
-        .toLocaleString()
-
+    id: historico.length + 1,
+    etapa: etapa.etapa,
+    usuario: usuarioLogado.usuario,
+    area: usuarioLogado.area,
+    data: new Date().toLocaleString("pt-BR")
   });
 
-  localStorage.setItem(
-    "historico",
-    JSON.stringify(historico)
-  );
-
-  localStorage.setItem(
-    "workflowAtual",
-    atual + 1
-  );
+  localStorage.setItem("historico", JSON.stringify(historico));
+  localStorage.setItem("workflowAtual", atual + 1);
 
   atualizarWorkflow();
   atualizarTarefaAtual();
   carregarHistorico();
 
-  alert(
-    "Etapa concluída com sucesso."
-  );
-
+  alert(`Etapa "${etapa.etapa}" concluída com sucesso!`);
 }
 
-// =====================================
-// HISTÓRICO
-// =====================================
+function atualizarTarefaAtual() {
+  const atual = Number(localStorage.getItem("workflowAtual") || 1);
+  const etapa = workflow.find(w => w.id === atual);
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
-function carregarHistorico() {
+  const elTarefa = document.getElementById("tarefaAtual");
+  if (!elTarefa) return;
 
-  const historico =
-    JSON.parse(
-      localStorage.getItem(
-        "historico"
-      ) || "[]"
-    );
-
-  const div =
-    document.getElementById(
-      "historicoWorkflow"
-    );
-
-  if (!div) return;
-
-  div.innerHTML = "";
-
-  historico
-    .slice()
-    .reverse()
-    .forEach(item => {
-
-      div.innerHTML += `
-        <div style="padding:10px;border-bottom:1px solid #ddd;">
-          <strong>${item.etapa}</strong><br>
-          ${item.area}<br>
-          ${item.usuario}<br>
-          ${item.data}
-        </div>
-      `;
-
-    });
-
-}
-
-// =====================================
-// NAVIOS
-// =====================================
-
-function salvarNavio() {
-
-  const navio =
-    document.getElementById("navio");
-
-  if (
-    !navio ||
-    navio.value.trim() === ""
-  ) {
-
-    alert(
-      "Informe o nome do navio."
-    );
-
+  if (!etapa) {
+    elTarefa.innerText = "Nenhuma tarefa pendente (Fluxo Finalizado).";
     return;
-
   }
 
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "navios"
-      ) || "[]"
-    );
+  if (usuarioLogado.area === "TODAS" || etapa.responsavel === usuarioLogado.area) {
+    elTarefa.innerText = `${etapa.etapa} (${etapa.responsavel})`;
+  } else {
+    elTarefa.innerText = `Aguardando setor ${etapa.responsavel} concluir a etapa "${etapa.etapa}".`;
+  }
+}
 
-  lista.push({
+function carregarHistorico() {
+  const tbody = document.getElementById("listaHistorico");
+  if (!tbody) return;
 
-    navio: navio.value,
+  const historico = JSON.parse(localStorage.getItem("historico") || "[]");
+  let html = "";
 
-    armador:
-      document.getElementById("armador").value,
-
-    berco:
-      document.getElementById("berco").value,
-
-    viagem:
-      document.getElementById("viagem").value,
-
-    carga:
-      document.getElementById("carga").value
-
+  historico.forEach((item, idx) => {
+    html += `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${item.etapa}</td>
+        <td>${item.usuario}</td>
+        <td>${item.area}</td>
+        <td>${item.data}</td>
+      </tr>
+    `;
   });
 
-  localStorage.setItem(
-    "navios",
-    JSON.stringify(lista)
-  );
+  tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum histórico registrado até o momento.</td></tr>`;
+}
+
+// ==========================================
+// CADASTROS E MÓDULOS (NAVIOS, CAMINHÕES, ETC)
+// ==========================================
+
+function salvarNavio() {
+  const navio = document.getElementById("navio").value.trim();
+  const armador = document.getElementById("armador").value.trim();
+  const berco = document.getElementById("berco").value.trim();
+  const viagem = document.getElementById("viagem").value.trim();
+  const carga = document.getElementById("carga").value.trim();
+
+  if (!navio) {
+    alert("Informe o nome do navio.");
+    return;
+  }
+
+  const navios = JSON.parse(localStorage.getItem("navios") || "[]");
+  navios.push({ navio, armador, berco, viagem, carga });
+  localStorage.setItem("navios", JSON.stringify(navios));
+
+  document.getElementById("navio").value = "";
+  document.getElementById("armador").value = "";
+  document.getElementById("berco").value = "";
+  document.getElementById("viagem").value = "";
+  document.getElementById("carga").value = "";
 
   carregarNavios();
-
 }
 
 function carregarNavios() {
+  const tbody = document.getElementById("listaNavios");
+  const navios = JSON.parse(localStorage.getItem("navios") || "[]");
 
-  const tabela =
-    document.getElementById(
-      "listaNavios"
-    );
-
-  if (!tabela) return;
-
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "navios"
-      ) || "[]"
-    );
-
-  tabela.innerHTML = "";
-
-  lista.forEach(item => {
-
-    tabela.innerHTML += `
+  if (tbody) {
+    tbody.innerHTML = navios.map(n => `
       <tr>
-        <td>${item.navio}</td>
-        <td>${item.armador}</td>
-        <td>${item.berco}</td>
-        <td>${item.viagem}</td>
-        <td>${item.carga}</td>
+        <td>${n.navio}</td>
+        <td>${n.armador}</td>
+        <td>${n.berco}</td>
+        <td>${n.viagem}</td>
+        <td>${n.carga}</td>
       </tr>
-    `;
+    `).join("");
+  }
 
-  });
-
-  document.getElementById(
-    "totalNavios"
-  ).innerText = lista.length;
-
+  const elTotal = document.getElementById("totalNavios");
+  if (elTotal) elTotal.innerText = navios.length;
 }
 
-// =====================================
-// CAMINHÕES
-// =====================================
-
 function salvarCaminhao() {
+  const placa = document.getElementById("placa").value.trim();
+  const motorista = document.getElementById("motorista").value.trim();
+  const transportadora = document.getElementById("transportadora").value.trim();
 
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "caminhoes"
-      ) || "[]"
-    );
+  if (!placa) {
+    alert("Informe a placa do caminhão.");
+    return;
+  }
 
-  lista.push({
+  const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+  caminhoes.push({ placa, motorista, transportadora });
+  localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
 
-    placa:
-      document.getElementById("placa").value,
-
-    motorista:
-      document.getElementById("motorista").value,
-
-    transportadora:
-      document.getElementById("transportadora").value
-
-  });
-
-  localStorage.setItem(
-    "caminhoes",
-    JSON.stringify(lista)
-  );
+  document.getElementById("placa").value = "";
+  document.getElementById("motorista").value = "";
+  document.getElementById("transportadora").value = "";
 
   carregarCaminhoes();
-
 }
 
 function carregarCaminhoes() {
+  const tbody = document.getElementById("listaCaminhoes");
+  const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
 
-  const tabela =
-    document.getElementById(
-      "listaCaminhoes"
-    );
-
-  if (!tabela) return;
-
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "caminhoes"
-      ) || "[]"
-    );
-
-  tabela.innerHTML = "";
-
-  lista.forEach(item => {
-
-    tabela.innerHTML += `
+  if (tbody) {
+    tbody.innerHTML = caminhoes.map(c => `
       <tr>
-        <td>${item.placa}</td>
-        <td>${item.motorista}</td>
-        <td>${item.transportadora}</td>
+        <td>${c.placa}</td>
+        <td>${c.motorista}</td>
+        <td>${c.transportadora}</td>
       </tr>
-    `;
-
-  });
-
+    `).join("");
+  }
 }
-
-// =====================================
-// OCORRÊNCIAS
-// =====================================
-
-function registrarOcorrencia() {
-
-  const descricao =
-    document.getElementById(
-      "descricao"
-    ).value;
-
-  if (!descricao) return;
-
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "ocorrencias"
-      ) || "[]"
-    );
-
-  lista.push({
-
-    data:
-      new Date()
-      .toLocaleString(),
-
-    descricao
-
-  });
-
-  localStorage.setItem(
-    "ocorrencias",
-    JSON.stringify(lista)
-  );
-
-  carregarOcorrencias();
-
-}
-
-function carregarOcorrencias() {
-
-  const tabela =
-    document.getElementById(
-      "listaOcorrencias"
-    );
-
-  if (!tabela) return;
-
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "ocorrencias"
-      ) || "[]"
-    );
-
-  tabela.innerHTML = "";
-
-  lista.forEach(item => {
-
-    tabela.innerHTML += `
-      <tr>
-        <td>${item.data}</td>
-        <td>${item.descricao}</td>
-      </tr>
-    `;
-
-  });
-
-  document.getElementById(
-    "totalOcorrencias"
-  ).innerText =
-  lista.length;
-
-}
-
-// =====================================
-// RISCOS
-// =====================================
 
 function registrarRisco() {
+  const tipo = document.getElementById("tipoRisco").value;
+  const descricao = document.getElementById("descricaoRisco").value.trim();
 
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "riscos"
-      ) || "[]"
-    );
+  if (!descricao) {
+    alert("Descreva o risco / avaria.");
+    return;
+  }
 
-  lista.push({
-
-    data:
-      new Date()
-      .toLocaleString(),
-
-    tipo:
-      document.getElementById(
-        "tipoRisco"
-      ).value,
-
-    descricao:
-      document.getElementById(
-        "descricaoRisco"
-      ).value
-
+  const riscos = JSON.parse(localStorage.getItem("riscos") || "[]");
+  riscos.push({
+    data: new Date().toLocaleString("pt-BR"),
+    tipo,
+    descricao
   });
 
-  localStorage.setItem(
-    "riscos",
-    JSON.stringify(lista)
-  );
-
+  localStorage.setItem("riscos", JSON.stringify(riscos));
+  document.getElementById("descricaoRisco").value = "";
   carregarRiscos();
-
 }
 
 function carregarRiscos() {
+  const tbody = document.getElementById("listaRiscos");
+  const riscos = JSON.parse(localStorage.getItem("riscos") || "[]");
 
-  const tabela =
-    document.getElementById(
-      "listaRiscos"
-    );
-
-  if (!tabela) return;
-
-  const lista =
-    JSON.parse(
-      localStorage.getItem(
-        "riscos"
-      ) || "[]"
-    );
-
-  tabela.innerHTML = "";
-
-  lista.forEach(item => {
-
-    tabela.innerHTML += `
+  if (tbody) {
+    tbody.innerHTML = riscos.map(r => `
       <tr>
-        <td>${item.data}</td>
-        <td>${item.tipo}</td>
-        <td>${item.descricao}</td>
+        <td>${r.data}</td>
+        <td>${r.tipo}</td>
+        <td>${r.descricao}</td>
       </tr>
-    `;
+    `).join("");
+  }
+}
 
+function registrarOcorrencia() {
+  const descricao = document.getElementById("descricao").value.trim();
+
+  if (!descricao) {
+    alert("Preencha a descrição da ocorrência.");
+    return;
+  }
+
+  const ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
+  ocorrencias.push({
+    data: new Date().toLocaleString("pt-BR"),
+    descricao
   });
 
+  localStorage.setItem("ocorrencias", JSON.stringify(ocorrencias));
+  document.getElementById("descricao").value = "";
+  carregarOcorrencias();
 }
 
-// =====================================
-// INICIALIZAÇÃO
-// =====================================
+function carregarOcorrencias() {
+  const tbody = document.getElementById("listaOcorrencias");
+  const ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
 
-carregarNavios();
-carregarCaminhoes();
-carregarOcorrencias();
-carregarRiscos();
-carregarHistorico();
+  if (tbody) {
+    tbody.innerHTML = ocorrencias.map(o => `
+      <tr>
+        <td>${o.data}</td>
+        <td>${o.descricao}</td>
+      </tr>
+    `).join("");
+  }
 
-iniciarWorkflow();
-
-const usuarioSalvo =
-localStorage.getItem(
-  "usuarioLogado"
-);
-
-if(usuarioSalvo){
-
-  document
-    .getElementById("login")
-    .classList.add("oculto");
-
-  document
-    .getElementById("sistema")
-    .classList.remove("oculto");
-
-  atualizarUsuarioLogado();
-  aplicarPermissoes();
-  atualizarWorkflow();
-  atualizarTarefaAtual();
-
+  const elTotal = document.getElementById("totalOcorrencias");
+  if (elTotal) elTotal.innerText = ocorrencias.length;
 }
+
+// Inicializar ao carregar a página
+window.onload = function() {
+  verificarSessao();
+};
