@@ -8,6 +8,10 @@ function mostrarTela(tela){
 
     document.getElementById("dashboard").classList.add("oculto");
     document.getElementById("navios").classList.add("oculto");
+    document.getElementById("caminhoes").classList.add("oculto");
+    document.getElementById("patrimonial").classList.add("oculto");
+    document.getElementById("sst").classList.add("oculto");
+    document.getElementById("riscos").classList.add("oculto");
     document.getElementById("fluxo").classList.add("oculto");
     document.getElementById("ocorrencias").classList.add("oculto");
 
@@ -56,8 +60,6 @@ function salvarNavio(){
     document.getElementById("viagem").value = "";
     document.getElementById("carga").value = "";
 
-    alert("Navio cadastrado com sucesso.");
-
 }
 
 function carregarNavios(){
@@ -67,6 +69,8 @@ function carregarNavios(){
 
     let tabela =
     document.getElementById("listaNavios");
+
+    if(!tabela) return;
 
     tabela.innerHTML = "";
 
@@ -90,21 +94,95 @@ function carregarNavios(){
 }
 
 // =========================
+// CAMINHÕES
+// =========================
+
+function salvarCaminhao(){
+
+    let placa =
+    document.getElementById("placa").value;
+
+    let motorista =
+    document.getElementById("motorista").value;
+
+    let transportadora =
+    document.getElementById("transportadora").value;
+
+    if(placa === ""){
+        alert("Informe a placa.");
+        return;
+    }
+
+    let caminhoes =
+    JSON.parse(
+    localStorage.getItem("caminhoes") || "[]");
+
+    caminhoes.push({
+
+        placa,
+        motorista,
+        transportadora
+
+    });
+
+    localStorage.setItem(
+    "caminhoes",
+    JSON.stringify(caminhoes)
+    );
+
+    carregarCaminhoes();
+
+    document.getElementById("placa").value="";
+    document.getElementById("motorista").value="";
+    document.getElementById("transportadora").value="";
+
+}
+
+function carregarCaminhoes(){
+
+    let caminhoes =
+    JSON.parse(
+    localStorage.getItem("caminhoes") || "[]");
+
+    let tabela =
+    document.getElementById("listaCaminhoes");
+
+    if(!tabela) return;
+
+    tabela.innerHTML="";
+
+    caminhoes.forEach(item=>{
+
+        tabela.innerHTML += `
+        <tr>
+            <td>${item.placa}</td>
+            <td>${item.motorista}</td>
+            <td>${item.transportadora}</td>
+        </tr>
+        `;
+
+    });
+
+}
+
+// =========================
 // FLUXO OPERACIONAL
 // =========================
 
 function avancarEtapa(){
 
-    if(etapaAtual <= 12){
+    if(etapaAtual <= 14){
 
-        document
-        .getElementById("e" + etapaAtual)
-        .classList.add("concluida");
+        let etapa =
+        document.getElementById("e"+etapaAtual);
+
+        if(etapa){
+            etapa.classList.add("concluida");
+        }
 
         etapaAtual++;
 
-        document
-        .getElementById("totalEtapas")
+        document.getElementById("totalEtapas")
         .innerText = etapaAtual - 1;
 
     }
@@ -127,23 +205,23 @@ function registrarOcorrencia(){
 
     let ocorrencias =
     JSON.parse(
-        localStorage.getItem("ocorrencias") || "[]"
+    localStorage.getItem("ocorrencias") || "[]"
     );
 
     ocorrencias.push({
 
-        data: new Date().toLocaleString(),
+        data:new Date().toLocaleString(),
 
-        descricao: descricao
+        descricao
 
     });
 
     localStorage.setItem(
-        "ocorrencias",
-        JSON.stringify(ocorrencias)
+    "ocorrencias",
+    JSON.stringify(ocorrencias)
     );
 
-    document.getElementById("descricao").value = "";
+    document.getElementById("descricao").value="";
 
     carregarOcorrencias();
 
@@ -153,15 +231,17 @@ function carregarOcorrencias(){
 
     let ocorrencias =
     JSON.parse(
-        localStorage.getItem("ocorrencias") || "[]"
+    localStorage.getItem("ocorrencias") || "[]"
     );
 
     let tabela =
     document.getElementById("listaOcorrencias");
 
-    tabela.innerHTML = "";
+    if(!tabela) return;
 
-    ocorrencias.forEach(item => {
+    tabela.innerHTML="";
+
+    ocorrencias.forEach(item=>{
 
         tabela.innerHTML += `
         <tr>
@@ -172,8 +252,70 @@ function carregarOcorrencias(){
 
     });
 
-    document.getElementById("totalOcorrencias").innerText =
-    ocorrencias.length;
+    document.getElementById("totalOcorrencias")
+    .innerText = ocorrencias.length;
+
+}
+
+// =========================
+// NOTIFY / DAMAGE
+// =========================
+
+function registrarRisco(){
+
+    let riscos =
+    JSON.parse(
+    localStorage.getItem("riscos") || "[]"
+    );
+
+    riscos.push({
+
+        data:new Date().toLocaleString(),
+
+        tipo:
+        document.getElementById("tipoRisco").value,
+
+        descricao:
+        document.getElementById("descricaoRisco").value
+
+    });
+
+    localStorage.setItem(
+    "riscos",
+    JSON.stringify(riscos)
+    );
+
+    carregarRiscos();
+
+    document.getElementById("descricaoRisco").value="";
+
+}
+
+function carregarRiscos(){
+
+    let riscos =
+    JSON.parse(
+    localStorage.getItem("riscos") || "[]"
+    );
+
+    let tabela =
+    document.getElementById("listaRiscos");
+
+    if(!tabela) return;
+
+    tabela.innerHTML="";
+
+    riscos.forEach(item=>{
+
+        tabela.innerHTML += `
+        <tr>
+            <td>${item.data}</td>
+            <td>${item.tipo}</td>
+            <td>${item.descricao}</td>
+        </tr>
+        `;
+
+    });
 
 }
 
@@ -183,3 +325,5 @@ function carregarOcorrencias(){
 
 carregarNavios();
 carregarOcorrencias();
+carregarCaminhoes();
+carregarRiscos();
