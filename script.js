@@ -50,19 +50,19 @@ function carregarSeletoresNavio() {
 function selecionarNavioGlobal(nomeNavio) {
   localStorage.setItem("navioAtivo", nomeNavio);
   
-  // Sincronizar todos os campos select das abas
   const seletores = document.querySelectorAll(".seletor-navio");
   seletores.forEach(select => {
     select.value = nomeNavio;
   });
 
-  // ATUALIZAR E FILTRAR TODAS AS TELAS COM OS DADOS DO NAVIO SELECIONADO
   atualizarWorkflow();
   atualizarTarefaAtual();
   carregarHistorico();
   carregarCaminhoes();
   carregarRiscos();
   carregarOcorrencias();
+  carregarPatrimonial();
+  carregarSST();
 }
 
 // ==========================================
@@ -82,12 +82,6 @@ function fazerLogin() {
 
   localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
   iniciarSistema();
-  
-  // REMOVER ESTAS LINHAS:
-const txtUsuario = document.getElementById("usuarioLogadoTexto");
-if (txtUsuario) {
-  txtUsuario.innerText = `Usuário: ${usuarioLogado.usuario} (${usuarioLogado.area})`;
-}
 }
 
 function logout() {
@@ -134,7 +128,7 @@ function iniciarSistema() {
 }
 
 // ==========================================
-// NAVEGAÇÃO DE TELAS
+// NAVEGAÇÃO DE TELAS E PERMISSÕES DE ACESSO
 // ==========================================
 
 function mostrarTela(tela) {
@@ -152,6 +146,28 @@ function mostrarTela(tela) {
   if (telaAlvo) {
     telaAlvo.classList.remove("oculto");
   }
+
+  aplicarPermissoesCampos();
+
+  if (tela === "patrimonial") carregarPatrimonial();
+  if (tela === "sst") carregarSST();
+}
+
+function aplicarPermissoesCampos() {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  if (!usuarioLogado) return;
+
+  const area = usuarioLogado.area;
+
+  // Permissões Patrimonial (Permite selecionar navio, mas bloqueia edição para outras áreas)
+  const inputsPatrimonial = document.querySelectorAll("#patrimonial input, #patrimonial textarea, #patrimonial select:not(.seletor-navio), #patrimonial button.btn-salvar");
+  const podePatrimonial = (area === "PATRIMONIAL" || area === "TODAS");
+  inputsPatrimonial.forEach(el => { el.disabled = !podePatrimonial; });
+
+  // Permissões SST (Permite selecionar navio, mas bloqueia edição para outras áreas)
+  const inputsSST = document.querySelectorAll("#sst input, #sst textarea, #sst select:not(.seletor-navio), #sst button.btn-salvar");
+  const podeSST = (area === "SST" || area === "TODAS");
+  inputsSST.forEach(el => { el.disabled = !podeSST; });
 }
 
 // ==========================================
@@ -175,7 +191,6 @@ function atualizarWorkflow() {
   const navioAtivo = localStorage.getItem("navioAtivo");
   const atual = getWorkflowAtual();
 
-  // Atualizar visual do fluxo
   workflow.forEach(w => {
     const el = document.getElementById(`e${w.id}`);
     if (el) {
@@ -322,6 +337,100 @@ function carregarHistorico() {
 }
 
 // ==========================================
+// SEGURANÇA PATRIMONIAL E SST
+// ==========================================
+
+function salvarPatrimonial() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) {
+    alert("Selecione um navio ativo antes de salvar.");
+    return;
+  }
+
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  if (usuarioLogado.area !== "PATRIMONIAL" && usuarioLogado.area !== "TODAS") {
+    alert("Apenas o setor Patrimonial tem permissão para alterar estes dados.");
+    return;
+  }
+
+  const obs = document.getElementById("patrimonialObs") ? document.getElementById("patrimonialObs").value : "";
+  const statusInspecao = document.getElementById("patrimonialStatus") ? document.getElementById("patrimonialStatus").value : "";
+
+  const dadosPatrimonial = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
+  dadosPatrimonial[navioAtivo] = {
+    statusInspecao,
+    obs,
+    usuario: usuarioLogado.usuario,
+    data: new Date().toLocaleString("pt-BR")
+  };
+
+  localStorage.setItem("dadosPatrimonial", JSON.stringify(dadosPatrimonial));
+  alert(`Dados da Segurança Patrimonial salvos com sucesso para o navio ${navioAtivo}!`);
+}
+
+function carregarPatrimonial() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const dados = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
+  const info = navioAtivo ? dados[navioAtivo] : null;
+
+  const elObs = document.getElementById("patrimonialObs");
+  const elStatus = document.getElementById("patrimonialStatus");
+
+  if (info) {
+    if (elObs) elObs.value = info.obs || "";
+    if (elStatus) elStatus.value = info.statusInspecao || "";
+  } else {
+    if (elObs) elObs.value = "";
+    if (elStatus) elStatus.value = "";
+  }
+}
+
+function salvarSST() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) {
+    alert("Selecione um navio ativo antes de salvar.");
+    return;
+  }
+
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  if (usuarioLogado.area !== "SST" && usuarioLogado.area !== "TODAS") {
+    alert("Apenas o setor SST tem permissão para alterar estes dados.");
+    return;
+  }
+
+  const obs = document.getElementById("sstObs") ? document.getElementById("sstObs").value : "";
+  const statusVistoria = document.getElementById("sstStatus") ? document.getElementById("sstStatus").value : "";
+
+  const dadosSST = JSON.parse(localStorage.getItem("dadosSST") || "{}");
+  dadosSST[navioAtivo] = {
+    statusVistoria,
+    obs,
+    usuario: usuarioLogado.usuario,
+    data: new Date().toLocaleString("pt-BR")
+  };
+
+  localStorage.setItem("dadosSST", JSON.stringify(dadosSST));
+  alert(`Dados da Segurança do Trabalho (SST) salvos com sucesso para o navio ${navioAtivo}!`);
+}
+
+function carregarSST() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  const dados = JSON.parse(localStorage.getItem("dadosSST") || "{}");
+  const info = navioAtivo ? dados[navioAtivo] : null;
+
+  const elObs = document.getElementById("sstObs");
+  const elStatus = document.getElementById("sstStatus");
+
+  if (info) {
+    if (elObs) elObs.value = info.obs || "";
+    if (elStatus) elStatus.value = info.statusVistoria || "";
+  } else {
+    if (elObs) elObs.value = "";
+    if (elStatus) elStatus.value = "";
+  }
+}
+
+// ==========================================
 // MÓDULOS DE DADOS FILTRADOS POR NAVIO
 // ==========================================
 
@@ -393,7 +502,15 @@ function salvarCaminhao() {
   }
 
   const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-  caminhoes.push({ navio: navioAtivo, placa, motorista, transportadora });
+  caminhoes.push({
+    id: Date.now(),
+    navio: navioAtivo,
+    placa,
+    motorista,
+    transportadora,
+    status: "TRABALHANDO"
+  });
+
   localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
 
   document.getElementById("placa").value = "";
@@ -401,6 +518,17 @@ function salvarCaminhao() {
   document.getElementById("transportadora").value = "";
 
   carregarCaminhoes();
+}
+
+function alterarStatusCaminhao(idCaminhao, novoStatus) {
+  const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+  const caminhao = caminhoes.find(c => c.id === idCaminhao);
+
+  if (caminhao) {
+    caminhao.status = novoStatus;
+    localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
+    carregarCaminhoes();
+  }
 }
 
 function carregarCaminhoes() {
@@ -411,13 +539,30 @@ function carregarCaminhoes() {
   const todos = JSON.parse(localStorage.getItem("caminhoes") || "[]");
   const caminhoes = navioAtivo ? todos.filter(c => c.navio === navioAtivo) : [];
 
-  tbody.innerHTML = caminhoes.map(c => `
-    <tr>
-      <td>${c.placa}</td>
-      <td>${c.motorista}</td>
-      <td>${c.transportadora}</td>
-    </tr>
-  `).join("");
+  let html = "";
+  caminhoes.forEach(c => {
+    const status = c.status || "TRABALHANDO";
+
+    let badgeClass = "badge-trabalhando";
+    if (status === "DISPENSADO") badgeClass = "badge-dispensado";
+    if (status === "QUEBRADO") badgeClass = "badge-quebrado";
+
+    html += `
+      <tr>
+        <td><strong>${c.placa}</strong></td>
+        <td>${c.motorista}</td>
+        <td>${c.transportadora}</td>
+        <td><span class="status-badge ${badgeClass}">${status}</span></td>
+        <td>
+          <button type="button" class="btn-status btn-trabalhando" onclick="alterarStatusCaminhao(${c.id}, 'TRABALHANDO')">Trabalhando</button>
+          <button type="button" class="btn-status btn-dispensado" onclick="alterarStatusCaminhao(${c.id}, 'DISPENSADO')">Dispensado</button>
+          <button type="button" class="btn-status btn-quebrado" onclick="alterarStatusCaminhao(${c.id}, 'QUEBRADO')">Quebrado</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum caminhão cadastrado para este navio.</td></tr>`;
 }
 
 function registrarRisco() {
@@ -513,221 +658,3 @@ function carregarOcorrencias() {
 window.onload = function() {
   verificarSessao();
 };
-
-// ==========================================
-// CONTROLE DE ACESSO AOS CAMPOS (SST E PATRIMONIAL)
-// ==========================================
-
-function aplicarPermissoesCampos() {
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  if (!usuarioLogado) return;
-
-  const area = usuarioLogado.area;
-
-  // Permissões Patrimonial (Apenas PATRIMONIAL ou TODAS/Admin)
-  const inputsPatrimonial = document.querySelectorAll("#patrimonial input, #patrimonial textarea, #patrimonial select, #patrimonial button.btn-salvar");
-  const podePatrimonial = (area === "PATRIMONIAL" || area === "TODAS");
-  
-  inputsPatrimonial.forEach(el => {
-    el.disabled = !podePatrimonial;
-  });
-
-  // Permissões SST / Seg Trabalho (Apenas SST ou TODAS/Admin)
-  const inputsSST = document.querySelectorAll("#sst input, #sst textarea, #sst select, #sst button.btn-salvar");
-  const podeSST = (area === "SST" || area === "TODAS");
-
-  inputsSST.forEach(el => {
-    el.disabled = !podeSST;
-  });
-}
-
-// Chamar a verificação de permissões ao mudar de tela
-const mostrarTelaOriginal = mostrarTela;
-mostrarTela = function(tela) {
-  mostrarTelaOriginal(tela);
-  aplicarPermissoesCampos();
-  if (tela === "patrimonial") carregarPatrimonial();
-  if (tela === "sst") carregarSST();
-};
-
-// ==========================================
-// SALVAR SEGURANÇA PATRIMONIAL
-// ==========================================
-
-function salvarPatrimonial() {
-  const navioAtivo = localStorage.getItem("navioAtivo");
-  if (!navioAtivo) {
-    alert("Selecione um navio ativo antes de salvar.");
-    return;
-  }
-
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  if (usuarioLogado.area !== "PATRIMONIAL" && usuarioLogado.area !== "TODAS") {
-    alert("Apenas o setor Patrimonial tem permissão para alterar estes dados.");
-    return;
-  }
-
-  const obs = document.getElementById("patrimonialObs") ? document.getElementById("patrimonialObs").value : "";
-  const statusInspecao = document.getElementById("patrimonialStatus") ? document.getElementById("patrimonialStatus").value : "";
-
-  const dadosPatrimonial = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
-  dadosPatrimonial[navioAtivo] = {
-    statusInspecao,
-    obs,
-    usuario: usuarioLogado.usuario,
-    data: new Date().toLocaleString("pt-BR")
-  };
-
-  localStorage.setItem("dadosPatrimonial", JSON.stringify(dadosPatrimonial));
-  alert(`Dados da Segurança Patrimonial salvos com sucesso para o navio ${navioAtivo}!`);
-}
-
-function carregarPatrimonial() {
-  const navioAtivo = localStorage.getItem("navioAtivo");
-  const dados = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
-  const info = navioAtivo ? dados[navioAtivo] : null;
-
-  const elObs = document.getElementById("patrimonialObs");
-  const elStatus = document.getElementById("patrimonialStatus");
-
-  if (info) {
-    if (elObs) elObs.value = info.obs || "";
-    if (elStatus) elStatus.value = info.statusInspecao || "";
-  } else {
-    if (elObs) elObs.value = "";
-    if (elStatus) elStatus.value = "";
-  }
-}
-
-// ==========================================
-// SALVAR SEGURANÇA DO TRABALHO (SST)
-// ==========================================
-
-function salvarSST() {
-  const navioAtivo = localStorage.getItem("navioAtivo");
-  if (!navioAtivo) {
-    alert("Selecione um navio ativo antes de salvar.");
-    return;
-  }
-
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  if (usuarioLogado.area !== "SST" && usuarioLogado.area !== "TODAS") {
-    alert("Apenas o setor SST tem permissão para alterar estes dados.");
-    return;
-  }
-
-  const obs = document.getElementById("sstObs") ? document.getElementById("sstObs").value : "";
-  const statusVistoria = document.getElementById("sstStatus") ? document.getElementById("sstStatus").value : "";
-
-  const dadosSST = JSON.parse(localStorage.getItem("dadosSST") || "{}");
-  dadosSST[navioAtivo] = {
-    statusVistoria,
-    obs,
-    usuario: usuarioLogado.usuario,
-    data: new Date().toLocaleString("pt-BR")
-  };
-
-  localStorage.setItem("dadosSST", JSON.stringify(dadosSST));
-  alert(`Dados da Segurança do Trabalho (SST) salvos com sucesso para o navio ${navioAtivo}!`);
-}
-
-function carregarSST() {
-  const navioAtivo = localStorage.getItem("navioAtivo");
-  const dados = JSON.parse(localStorage.getItem("dadosSST") || "{}");
-  const info = navioAtivo ? dados[navioAtivo] : null;
-
-  const elObs = document.getElementById("sstObs");
-  const elStatus = document.getElementById("sstStatus");
-
-  if (info) {
-    if (elObs) elObs.value = info.obs || "";
-    if (elStatus) elStatus.value = info.statusVistoria || "";
-  } else {
-    if (elObs) elObs.value = "";
-    if (elStatus) elStatus.value = "";
-  }
-}
-
-// ==========================================
-// ABA CAMINHÕES (COM STATUS / FLAGS)
-// ==========================================
-
-function salvarCaminhao() {
-  const navioAtivo = localStorage.getItem("navioAtivo");
-  if (!navioAtivo) {
-    alert("Selecione um navio antes de cadastrar um caminhão.");
-    return;
-  }
-
-  const placa = document.getElementById("placa").value.trim();
-  const motorista = document.getElementById("motorista").value.trim();
-  const transportadora = document.getElementById("transportadora").value.trim();
-
-  if (!placa) {
-    alert("Informe a placa do caminhão.");
-    return;
-  }
-
-  const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-  caminhoes.push({
-    id: Date.now(),
-    navio: navioAtivo,
-    placa,
-    motorista,
-    transportadora,
-    status: "TRABALHANDO" // Status padrão inicial
-  });
-
-  localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
-
-  document.getElementById("placa").value = "";
-  document.getElementById("motorista").value = "";
-  document.getElementById("transportadora").value = "";
-
-  carregarCaminhoes();
-}
-
-function alterarStatusCaminhao(idCaminhao, novoStatus) {
-  const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-  const caminhao = caminhoes.find(c => c.id === idCaminhao);
-
-  if (caminhao) {
-    caminhao.status = novoStatus;
-    localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
-    carregarCaminhoes();
-  }
-}
-
-function carregarCaminhoes() {
-  const tbody = document.getElementById("listaCaminhoes");
-  if (!tbody) return;
-
-  const navioAtivo = localStorage.getItem("navioAtivo");
-  const todos = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-  const caminhoes = navioAtivo ? todos.filter(c => c.navio === navioAtivo) : [];
-
-  let html = "";
-  caminhoes.forEach(c => {
-    const status = c.status || "TRABALHANDO";
-
-    let badgeClass = "badge-trabalhando";
-    if (status === "DISPENSADO") badgeClass = "badge-dispensado";
-    if (status === "QUEBRADO") badgeClass = "badge-quebrado";
-
-    html += `
-      <tr>
-        <td><strong>${c.placa}</strong></td>
-        <td>${c.motorista}</td>
-        <td>${c.transportadora}</td>
-        <td><span class="status-badge ${badgeClass}">${status}</span></td>
-        <td>
-          <button type="button" class="btn-status btn-trabalhando" onclick="alterarStatusCaminhao(${c.id}, 'TRABALHANDO')">Trabalhando</button>
-          <button type="button" class="btn-status btn-dispensado" onclick="alterarStatusCaminhao(${c.id}, 'DISPENSADO')">Dispensado</button>
-          <button type="button" class="btn-status btn-quebrado" onclick="alterarStatusCaminhao(${c.id}, 'QUEBRADO')">Quebrado</button>
-        </td>
-      </tr>
-    `;
-  });
-
-  tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum caminhão cadastrado para este navio.</td></tr>`;
-}
