@@ -1,3 +1,115 @@
+const usuarios = [
+
+{
+usuario:"documental",
+senha:"123",
+area:"DOCUMENTAL"
+},
+
+{
+usuario:"planejamento",
+senha:"123",
+area:"PLANEJAMENTO"
+},
+
+{
+usuario:"operacional",
+senha:"123",
+area:"OPERACIONAL"
+},
+
+{
+usuario:"patrimonial",
+senha:"123",
+area:"PATRIMONIAL"
+},
+
+{
+usuario:"sst",
+senha:"123",
+area:"SST"
+},
+
+{
+usuario:"riscos",
+senha:"123",
+area:"RISCOS"
+}
+
+];
+
+function fazerLogin(){
+
+let usuario =
+document.getElementById("usuario").value;
+
+let senha =
+document.getElementById("senha").value;
+
+let encontrado =
+usuarios.find(u =>
+
+u.usuario === usuario &&
+u.senha === senha
+
+);
+
+if(!encontrado){
+
+alert("Usuário inválido");
+
+return;
+
+}
+
+localStorage.setItem(
+"usuarioLogado",
+JSON.stringify(encontrado)
+);
+
+document
+.getElementById("login")
+.classList.add("oculto");
+
+document
+.getElementById("sistema")
+.classList.remove("oculto");
+
+aplicarPermissoes();
+
+}
+
+function aplicarPermissoes(){
+
+let usuario =
+JSON.parse(
+localStorage.getItem("usuarioLogado")
+);
+
+if(!usuario) return;
+
+if(usuario.area !== "PLANEJAMENTO"){
+
+document
+.querySelector(
+"button[onclick=\"mostrarTela('navios')\"]"
+)
+.style.display = "none";
+
+}
+
+if(usuario.area !== "RISCOS"){
+
+document
+.querySelector(
+"button[onclick=\"mostrarTela('riscos')\"]"
+)
+.style.display = "none";
+
+}
+
+}
+
 let etapaAtual = 1;
 
 // =========================
