@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Operação de Navios</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+.header{
+    background:#003366;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+.container{
+    padding:20px;
+    max-width:1200px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,.1);
+}
+
+h2{
+    margin-bottom:15px;
+    color:#003366;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    background:#003366;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#004d99;
+}
+
+.status{
+    font-weight:bold;
+    color:green;
+    margin-top:10px;
+}
+
+.timeline{
+    list-style:none;
+}
+
+.timeline li{
+    background:#e7f1ff;
+    margin:10px 0;
+    padding:10px;
+    border-left:5px solid #003366;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+}
+
+.metric{
+    background:#003366;
+    color:white;
+    text-align:center;
+    padding:20px;
+    border-radius:10px;
+}
+
+.metric h3{
+    font-size:34px;
+}
+
+.checklist label{
+    display:block;
+    margin-bottom:10px;
+}
+
+.ocorrencia{
+    color:red;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="header">
+    <h1>Operação de Navios</h1>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Cadastro do Navio</h2>
+
+<input type="text" id="navio" placeholder="Nome do Navio">
+
+<input type="text" id="armador" placeholder="Armador">
+
+<input type="datetime-local" id="eta">
+
+<button onclick="cadastrarNavio()">
+Cadastrar Navio
+</button>
+
+<p class="status" id="statusNavio">
+Nenhum navio cadastrado.
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>Andamento da Operação</h2>
+
+<select id="etapa">
+<option>Manifesto Conferido</option>
+<option>Carga Inserida no Sistema</option>
+<option>Remoção do Pátio</option>
+<option>Previsão de Atracação Informada</option>
+<option>Atracação Realizada</option>
+<option>Guaritas Posicionadas</option>
+<option>Vistoria de Segurança Realizada</option>
+<option>Caminhões Inspecionados</option>
+<option>DDS Realizado</option>
+<option>Operação Iniciada</option>
+<option>Operação Encerrada</option>
+<option>Documentação Emitida</option>
+<option>Visita Final Realizada</option>
+<option>Previsão de Desatracação Informada</option>
+<option>Navio Desatracado</option>
+</select>
+
+<button onclick="adicionarEtapa()">
+Registrar Etapa
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Checklist Operacional</h2>
+
+<div class="checklist">
+
+<label><input type="checkbox"> Guaritas Posicionadas</label>
+<label><input type="checkbox"> DDS Realizado</label>
+<label><input type="checkbox"> Rádio Entregue</label>
+<label><input type="checkbox"> Tablet Entregue</label>
+<label><input type="checkbox"> Caminhões Inspecionados</label>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Registro de Avarias</h2>
+
+<select id="tipoOcorrencia">
+<option>Avaria</option>
+<option>Problema de Sequenciamento</option>
+</select>
+
+<textarea id="descricao"
+placeholder="Descreva a ocorrência"></textarea>
+
+<button onclick="registrarOcorrencia()">
+Registrar
+</button>
+
+<div id="listaOcorrencias"></div>
+
+</div>
+
+<div class="card">
+
+<h2>Timeline da Operação</h2>
+
+<ul class="timeline" id="timeline"></ul>
+
+</div>
+
+<div class="card">
+
+<h2>Dashboard</h2>
+
+<div class="dashboard">
+
+<div class="metric">
+<h3 id="totalEtapas">0</h3>
+<p>Etapas Concluídas</p>
+</div>
+
+<div class="metric">
+<h3 id="totalOcorrencias">0</h3>
+<p>Ocorrências</p>
+</div>
+
+<div class="metric">
+<h3 id="statusAtual">---</h3>
+<p>Status Atual</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let etapas=0;
+let ocorrencias=0;
+
+function cadastrarNavio(){
+
+let navio =
+document.getElementById("navio").value;
+
+let armador =
+document.getElementById("armador").value;
+
+document.getElementById("statusNavio").innerHTML =
+"Navio: <b>"+navio+
+"</b> | Armador: <b>"+
+armador+"</b>";
+}
+
+function adicionarEtapa(){
+
+let etapa =
+document.getElementById("etapa").value;
+
+let timeline =
+document.getElementById("timeline");
+
+let item =
+document.createElement("li");
+
+item.innerHTML =
+new Date().toLocaleString()
++" - "+etapa;
+
+timeline.appendChild(item);
+
+etapas++;
+
+document.getElementById("totalEtapas")
+.innerHTML=etapas;
+
+document.getElementById("statusAtual")
+.innerHTML=etapa;
+}
+
+function registrarOcorrencia(){
+
+let tipo =
+document.getElementById("tipoOcorrencia")
+.value;
+
+let descricao =
+document.getElementById("descricao")
+.value;
+
+let div =
+document.getElementById("listaOcorrencias");
+
+let p =
+document.createElement("p");
+
+p.className = "ocorrencia";
+
+p.innerHTML =
+tipo+" - "+descricao;
+
+div.appendChild(p);
+
+ocorrencias++;
+
+document.getElementById("totalOcorrencias")
+.innerHTML=ocorrencias;
+
+if(tipo==="Avaria"){
+    alert(
+      "Gerenciamento de Riscos deve preparar Notify/Damage."
+    );
+}
+
+if(tipo==="Problema de Sequenciamento"){
+    alert(
+      "Planejamento deve solicitar novo plano ao Armador."
+    );
+}
+
+}
+
+</script>
+
+</body>
+</html>
