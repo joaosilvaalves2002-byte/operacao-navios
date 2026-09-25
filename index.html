@@ -44,6 +44,10 @@
 
             <!-- DASHBOARD -->
             <div id="dashboard">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio em Operação:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Dashboard Operacional</h1>
                 <div class="card">
                     <h3>Status Atual da Operação</h3>
@@ -82,8 +86,12 @@
                 </div>
             </div>
 
-            <!-- HISTÓRICO OPERACIONAL (TELA PRÓPRIA) -->
+            <!-- HISTÓRICO OPERACIONAL -->
             <div id="historico" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Histórico Operacional</h1>
                 <div class="card">
                     <table>
@@ -103,6 +111,10 @@
 
             <!-- TAREFAS -->
             <div id="tarefas" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Minhas Tarefas</h1>
                 <div class="card">
                     <h3>Etapa Atual do Setor</h3>
@@ -137,6 +149,10 @@
 
             <!-- CAMINHÕES -->
             <div id="caminhoes" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Controle de Caminhões</h1>
                 <input id="placa" placeholder="Placa">
                 <input id="motorista" placeholder="Motorista">
@@ -156,6 +172,10 @@
 
             <!-- SEGURANÇA PATRIMONIAL -->
             <div id="patrimonial" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Segurança Patrimonial</h1>
                 <div class="card">
                     <h3>Checklist Patrimonial</h3>
@@ -168,6 +188,10 @@
 
             <!-- SEGURANÇA DO TRABALHO -->
             <div id="sst" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Segurança do Trabalho (SST)</h1>
                 <div class="card">
                     <h3>Checklist SST</h3>
@@ -181,6 +205,10 @@
 
             <!-- NOTIFY / DAMAGE -->
             <div id="riscos" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Notify / Damage</h1>
                 <select id="tipoRisco">
                     <option value="Notify">Notify</option>
@@ -202,6 +230,10 @@
 
             <!-- FLUXO OPERACIONAL -->
             <div id="fluxo" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Fluxo Operacional</h1>
                 <div class="fluxo">
                     <div id="e1" class="etapa">1. Manifesto Conferido</div>
@@ -223,6 +255,10 @@
 
             <!-- OCORRÊNCIAS -->
             <div id="ocorrencias" class="oculto">
+                <div class="card-navio-selecao">
+                    <label><strong>Navio Selecionado:</strong></label>
+                    <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
+                </div>
                 <h1>Registro de Ocorrências</h1>
                 <textarea id="descricao" placeholder="Descreva a ocorrência"></textarea>
                 <button onclick="registrarOcorrencia()">Registrar Ocorrência</button>
