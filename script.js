@@ -63,6 +63,7 @@ function fazerLogin() {
 
   aplicarPermissoes();
   atualizarWorkflow();
+  atualizarTarefaAtual();
 }
 
 function logout() {
