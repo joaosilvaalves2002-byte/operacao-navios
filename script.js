@@ -54,6 +54,12 @@ function fazerLogin() {
   let campoUsuario = document.getElementById("usuarioLogadoTexto");
   if (campoUsuario) {
     campoUsuario.innerHTML = encontrado.usuario + "<br>" + encontrado.area;
+  let responsavelDashboard = document.getElementById("usuarioResponsavel");
+  if(responsavelDashboard){
+ 
+responsavelDashboard.innerText =
+encontrado.usuario;
+    
   }
 
   aplicarPermissoes();
