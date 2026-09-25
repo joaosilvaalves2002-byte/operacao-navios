@@ -1,50 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operação de Navios</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
     <div class="sidebar">
+
         <h2>🚢 Operação</h2>
+
         <button onclick="mostrarTela('dashboard')">Dashboard</button>
         <button onclick="mostrarTela('navios')">Navios</button>
+        <button onclick="mostrarTela('caminhoes')">Caminhões</button>
+        <button onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
+        <button onclick="mostrarTela('sst')">Seg. Trabalho</button>
+        <button onclick="mostrarTela('riscos')">Notify / Damage</button>
         <button onclick="mostrarTela('fluxo')">Fluxo</button>
         <button onclick="mostrarTela('ocorrencias')">Ocorrências</button>
+
     </div>
 
     <div class="content">
+
         <!-- DASHBOARD -->
+
         <div id="dashboard">
+
             <h1>Dashboard Operacional</h1>
+
             <div class="cards">
+
                 <div class="card">
                     <h2 id="totalNavios">0</h2>
                     <p>Navios</p>
                 </div>
+
                 <div class="card">
                     <h2 id="totalOcorrencias">0</h2>
                     <p>Ocorrências</p>
                 </div>
+
                 <div class="card">
                     <h2 id="totalEtapas">0</h2>
                     <p>Etapas</p>
                 </div>
+
             </div>
+
         </div>
 
         <!-- NAVIOS -->
+
         <div id="navios" class="oculto">
+
             <h1>Cadastro de Navios</h1>
+
             <input id="navio" placeholder="Nome do Navio">
             <input id="armador" placeholder="Armador">
             <input id="berco" placeholder="Berço">
             <input id="viagem" placeholder="Viagem">
             <input id="carga" placeholder="Tipo da Carga">
-            <button onclick="salvarNavio()">Cadastrar</button>
+
+            <button onclick="salvarNavio()">
+                Cadastrar
+            </button>
+
             <table>
+
                 <thead>
                     <tr>
                         <th>Navio</th>
@@ -54,48 +82,238 @@
                         <th>Carga</th>
                     </tr>
                 </thead>
+
                 <tbody id="listaNavios"></tbody>
+
             </table>
+
+        </div>
+
+        <!-- CAMINHÕES -->
+
+        <div id="caminhoes" class="oculto">
+
+            <h1>Controle de Caminhões</h1>
+
+            <input id="placa" placeholder="Placa">
+            <input id="motorista" placeholder="Motorista">
+            <input id="transportadora" placeholder="Transportadora">
+
+            <button onclick="salvarCaminhao()">
+                Cadastrar Caminhão
+            </button>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Motorista</th>
+                        <th>Transportadora</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaCaminhoes"></tbody>
+
+            </table>
+
+        </div>
+
+        <!-- SEGURANÇA PATRIMONIAL -->
+
+        <div id="patrimonial" class="oculto">
+
+            <h1>Segurança Patrimonial</h1>
+
+            <div class="card">
+
+                <h3>Checklist Patrimonial</h3>
+
+                <br>
+
+                <label>
+                    <input type="checkbox">
+                    Documentação Conferida
+                </label>
+
+                <br><br>
+
+                <label>
+                    <input type="checkbox">
+                    Lacre Conferido
+                </label>
+
+                <br><br>
+
+                <label>
+                    <input type="checkbox">
+                    Inspeção Concluída
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- SEGURANÇA DO TRABALHO -->
+
+        <div id="sst" class="oculto">
+
+            <h1>Segurança do Trabalho</h1>
+
+            <div class="card">
+
+                <h3>Checklist SST</h3>
+
+                <br>
+
+                <label>
+                    <input type="checkbox">
+                    DDS Realizado
+                </label>
+
+                <br><br>
+
+                <label>
+                    <input type="checkbox">
+                    EPIs Conferidos
+                </label>
+
+                <br><br>
+
+                <label>
+                    <input type="checkbox">
+                    Escada Inspecionada
+                </label>
+
+                <br><br>
+
+                <label>
+                    <input type="checkbox">
+                    Condições Seguras
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- NOTIFY / DAMAGE -->
+
+        <div id="riscos" class="oculto">
+
+            <h1>Notify / Damage</h1>
+
+            <select id="tipoRisco">
+
+                <option>Notify</option>
+                <option>Damage</option>
+
+            </select>
+
+            <textarea
+                id="descricaoRisco"
+                placeholder="Descrição da ocorrência">
+            </textarea>
+
+            <button onclick="registrarRisco()">
+                Registrar
+            </button>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaRiscos"></tbody>
+
+            </table>
+
         </div>
 
         <!-- FLUXO -->
+
         <div id="fluxo" class="oculto">
+
             <h1>Fluxo Operacional</h1>
+
             <div class="fluxo">
-                <div id="e1" class="etapa">Manifesto</div>
-                <div id="e2" class="etapa">Carga Sistema</div>
+
+                <div id="e1" class="etapa">Manifesto Conferido</div>
+
+                <div id="e2" class="etapa">Carga Inserida Sistema</div>
+
                 <div id="e3" class="etapa">Remoção Pátio</div>
+
                 <div id="e4" class="etapa">Aviso Atracação</div>
+
                 <div id="e5" class="etapa">Atracação</div>
-                <div id="e6" class="etapa">Guaritas</div>
+
+                <div id="e6" class="etapa">Guaritas Posicionadas</div>
+
                 <div id="e7" class="etapa">Vistoria SST</div>
+
                 <div id="e8" class="etapa">Inspeção Patrimonial</div>
-                <div id="e9" class="etapa">DDS</div>
-                <div id="e10" class="etapa">Operação</div>
-                <div id="e11" class="etapa">Documentação</div>
-                <div id="e12" class="etapa">Desatracação</div>
+
+                <div id="e9" class="etapa">Checklist Caminhões</div>
+
+                <div id="e10" class="etapa">DDS</div>
+
+                <div id="e11" class="etapa">Operação</div>
+
+                <div id="e12" class="etapa">Documentação Saída</div>
+
+                <div id="e13" class="etapa">Visita Final</div>
+
+                <div id="e14" class="etapa">Desatracação</div>
+
             </div>
+
             <br>
-            <button onclick="avancarEtapa()">Avançar Etapa</button>
+
+            <button onclick="avancarEtapa()">
+                Avançar Etapa
+            </button>
+
         </div>
 
         <!-- OCORRÊNCIAS -->
+
         <div id="ocorrencias" class="oculto">
+
             <h1>Ocorrências</h1>
-            <textarea id="descricao" placeholder="Descreva a ocorrência"></textarea>
-            <button onclick="registrarOcorrencia()">Registrar</button>
+
+            <textarea
+                id="descricao"
+                placeholder="Descreva a ocorrência">
+            </textarea>
+
+            <button onclick="registrarOcorrencia()">
+                Registrar
+            </button>
+
             <table>
+
                 <thead>
                     <tr>
                         <th>Data</th>
                         <th>Descrição</th>
                     </tr>
                 </thead>
+
                 <tbody id="listaOcorrencias"></tbody>
+
             </table>
+
         </div>
+
     </div>
 
     <script src="script.js"></script>
+
 </body>
+
 </html>
