@@ -29,6 +29,33 @@ const workflow = [
 ];
 
 // ==========================================
+// SELEÇÃO E GERENCIAMENTO DE NAVIOS
+// ==========================================
+
+function carregarSeletoresNavio() {
+  const navios = JSON.parse(localStorage.getItem("navios") || "[]");
+  const navioAtivo = localStorage.getItem("navioAtivo") || "";
+  const seletores = document.querySelectorAll(".seletor-navio");
+
+  seletores.forEach(select => {
+    let html = '<option value="">-- Selecione um Navio Cadastrado --</option>';
+    navios.forEach(n => {
+      const selected = n.navio === navioAtivo ? "selected" : "";
+      html += `<option value="${n.navio}" ${selected}>${n.navio} (${n.armador || 'Sem Armador'})</option>`;
+    });
+    select.innerHTML = html;
+  });
+}
+
+function selecionarNavioGlobal(nomeNavio) {
+  localStorage.setItem("navioAtivo", nomeNavio);
+  const seletores = document.querySelectorAll(".seletor-navio");
+  seletores.forEach(select => {
+    select.value = nomeNavio;
+  });
+}
+
+// ==========================================
 // AUTENTICAÇÃO E SESSÃO
 // ==========================================
 
@@ -86,6 +113,7 @@ function iniciarSistema() {
   carregarRiscos();
   carregarOcorrencias();
   carregarHistorico();
+  carregarSeletoresNavio();
   atualizarWorkflow();
   atualizarTarefaAtual();
   mostrarTela("dashboard");
@@ -119,7 +147,6 @@ function mostrarTela(tela) {
 function atualizarWorkflow() {
   const atual = Number(localStorage.getItem("workflowAtual") || 1);
 
-  // Destacar no fluxo visual
   workflow.forEach(w => {
     const el = document.getElementById(`e${w.id}`);
     if (el) {
@@ -132,7 +159,6 @@ function atualizarWorkflow() {
     }
   });
 
-  // Atualizar informações do Dashboard
   const etapaAtual = workflow.find(w => w.id === atual);
   const proximaEtapa = workflow.find(w => w.id === atual + 1);
 
@@ -162,6 +188,12 @@ function atualizarWorkflow() {
 }
 
 function concluirEtapa() {
+  const navioAtivo = localStorage.getItem("navioAtivo");
+  if (!navioAtivo) {
+    alert("Por favor, selecione um navio antes de concluir uma etapa.");
+    return;
+  }
+
   const atual = Number(localStorage.getItem("workflowAtual") || 1);
 
   if (atual > workflow.length) {
@@ -180,10 +212,10 @@ function concluirEtapa() {
     return;
   }
 
-  // Registrar no Histórico
   const historico = JSON.parse(localStorage.getItem("historico") || "[]");
   historico.push({
     id: historico.length + 1,
+    navio: navioAtivo,
     etapa: etapa.etapa,
     usuario: usuarioLogado.usuario,
     area: usuarioLogado.area,
@@ -197,7 +229,7 @@ function concluirEtapa() {
   atualizarTarefaAtual();
   carregarHistorico();
 
-  alert(`Etapa "${etapa.etapa}" concluída com sucesso!`);
+  alert(`Etapa "${etapa.etapa}" concluída com sucesso para o navio ${navioAtivo}!`);
 }
 
 function atualizarTarefaAtual() {
@@ -231,7 +263,7 @@ function carregarHistorico() {
     html += `
       <tr>
         <td>${idx + 1}</td>
-        <td>${item.etapa}</td>
+        <td>${item.etapa} ${item.navio ? `(${item.navio})` : ''}</td>
         <td>${item.usuario}</td>
         <td>${item.area}</td>
         <td>${item.data}</td>
@@ -243,7 +275,7 @@ function carregarHistorico() {
 }
 
 // ==========================================
-// CADASTROS E MÓDULOS (NAVIOS, CAMINHÕES, ETC)
+// CADASTROS E MÓDULOS
 // ==========================================
 
 function salvarNavio() {
@@ -262,6 +294,10 @@ function salvarNavio() {
   navios.push({ navio, armador, berco, viagem, carga });
   localStorage.setItem("navios", JSON.stringify(navios));
 
+  if (!localStorage.getItem("navioAtivo")) {
+    localStorage.setItem("navioAtivo", navio);
+  }
+
   document.getElementById("navio").value = "";
   document.getElementById("armador").value = "";
   document.getElementById("berco").value = "";
@@ -269,6 +305,7 @@ function salvarNavio() {
   document.getElementById("carga").value = "";
 
   carregarNavios();
+  carregarSeletoresNavio();
 }
 
 function carregarNavios() {
@@ -399,7 +436,6 @@ function carregarOcorrencias() {
   if (elTotal) elTotal.innerText = ocorrencias.length;
 }
 
-// Inicializar ao carregar a página
 window.onload = function() {
   verificarSessao();
 };
