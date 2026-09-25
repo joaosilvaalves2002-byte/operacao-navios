@@ -38,18 +38,65 @@
     
     <div class="sidebar">
 
-        <h2>🚢 Operação</h2>
+    <h2>🚢 Operação</h2>
 
-        <button onclick="mostrarTela('dashboard')">Dashboard</button>
-        <button onclick="mostrarTela('navios')">Navios</button>
-        <button onclick="mostrarTela('caminhoes')">Caminhões</button>
-        <button onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
-        <button onclick="mostrarTela('sst')">Seg. Trabalho</button>
-        <button onclick="mostrarTela('riscos')">Notify / Damage</button>
-        <button onclick="mostrarTela('fluxo')">Fluxo</button>
-        <button onclick="mostrarTela('ocorrencias')">Ocorrências</button>
+    <div id="usuarioLogadoTexto"></div>
 
-    </div>
+    <br>
+
+    <button onclick="mostrarTela('dashboard')">
+        Dashboard
+    </button>
+
+    <button
+        id="btnNavios"
+        onclick="mostrarTela('navios')">
+        Navios
+    </button>
+
+    <button
+        id="btnCaminhoes"
+        onclick="mostrarTela('caminhoes')">
+        Caminhões
+    </button>
+
+    <button
+        id="btnPatrimonial"
+        onclick="mostrarTela('patrimonial')">
+        Seg. Patrimonial
+    </button>
+
+    <button
+        id="btnSST"
+        onclick="mostrarTela('sst')">
+        Seg. Trabalho
+    </button>
+
+    <button
+        id="btnRiscos"
+        onclick="mostrarTela('riscos')">
+        Notify / Damage
+    </button>
+
+    <button
+        id="btnFluxo"
+        onclick="mostrarTela('fluxo')">
+        Fluxo
+    </button>
+
+    <button
+        id="btnOcorrencias"
+        onclick="mostrarTela('ocorrencias')">
+        Ocorrências
+    </button>
+
+    <br>
+
+    <button onclick="logout()">
+        Sair
+    </button>
+
+</div>
 
     <div class="content">
 
@@ -58,6 +105,32 @@
         <div id="dashboard">
 
             <h1>Dashboard Operacional</h1>
+
+            <div class="card">
+
+    <h3>Status Atual da Operação</h3>
+
+    <br>
+
+    <h2 id="statusAtual">
+        Manifesto Conferido
+    </h2>
+
+    <br>
+
+    <h4 id="responsavelAtual">
+        DOCUMENTAL
+    </h4>
+
+    <br>
+
+    <button onclick="concluirEtapa()">
+        Concluir Etapa Atual
+    </button>
+
+</div>
+
+<br>
 
             <div class="cards">
 
