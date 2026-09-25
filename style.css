@@ -174,3 +174,42 @@ input:disabled, textarea:disabled, select:disabled, button:disabled {
   color: #6c757d !important;
   opacity: 0.7;
 }
+
+/* RECUO E CONFIGURAÇÃO DAS TELAS/ABAS */
+.main-content, .conteudo, .tela {
+  margin-left: 260px; /* Recuo para não ficar atrás da sidebar */
+  padding: 20px;
+  width: calc(100% - 260px);
+}
+
+/* GARANTE QUE A ABA SÓ APAREÇA QUANDO SELECIONADA */
+.oculto {
+  display: none !important;
+}
+
+/* CONTAINER DAS ETAPAS DO FLUXO (5 POR LINHA) */
+#fluxo .container-etapas, 
+#fluxo .etapas-grid,
+.fluxo-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 etapas por linha */
+  gap: 15px;                             /* Espaçamento entre os cards */
+  margin-top: 20px;
+}
+
+/* AJUSTE DOS CARDS DAS ETAPAS */
+.card-etapa, 
+[id^="e"] {
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* RESPONSIVIDADE PARA TELAS MENORES */
+@media (max-width: 1200px) {
+  #fluxo .container-etapas, .fluxo-container {
+    grid-template-columns: repeat(3, 1fr); /* Reduz para 3 por linha em telas menores */
+  }
+}
