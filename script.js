@@ -82,6 +82,12 @@ function fazerLogin() {
 
   localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
   iniciarSistema();
+  
+  // REMOVER ESTAS LINHAS:
+const txtUsuario = document.getElementById("usuarioLogadoTexto");
+if (txtUsuario) {
+  txtUsuario.innerText = `Usuário: ${usuarioLogado.usuario} (${usuarioLogado.area})`;
+}
 }
 
 function logout() {
