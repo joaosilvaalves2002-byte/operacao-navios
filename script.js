@@ -1,3 +1,7 @@
+// =====================================
+// USUÁRIOS
+// =====================================
+
 const usuarios = [
 
 {
@@ -38,6 +42,102 @@ area:"RISCOS"
 
 ];
 
+// =====================================
+// WORKFLOW
+// =====================================
+
+const workflow = [
+
+{
+id:1,
+etapa:"Manifesto Conferido",
+responsavel:"DOCUMENTAL"
+},
+
+{
+id:2,
+etapa:"Carga Inserida Sistema",
+responsavel:"PLANEJAMENTO"
+},
+
+{
+id:3,
+etapa:"Remoção Pátio",
+responsavel:"PLANEJAMENTO"
+},
+
+{
+id:4,
+etapa:"Aviso Atracação",
+responsavel:"PLANEJAMENTO"
+},
+
+{
+id:5,
+etapa:"Atracação",
+responsavel:"OPERACIONAL"
+},
+
+{
+id:6,
+etapa:"Guaritas Posicionadas",
+responsavel:"OPERACIONAL"
+},
+
+{
+id:7,
+etapa:"Vistoria SST",
+responsavel:"SST"
+},
+
+{
+id:8,
+etapa:"Inspeção Patrimonial",
+responsavel:"PATRIMONIAL"
+},
+
+{
+id:9,
+etapa:"Checklist Caminhões",
+responsavel:"OPERACIONAL"
+},
+
+{
+id:10,
+etapa:"DDS",
+responsavel:"SST"
+},
+
+{
+id:11,
+etapa:"Operação",
+responsavel:"OPERACIONAL"
+},
+
+{
+id:12,
+etapa:"Documentação Saída",
+responsavel:"PLANEJAMENTO"
+},
+
+{
+id:13,
+etapa:"Visita Final",
+responsavel:"PLANEJAMENTO"
+},
+
+{
+id:14,
+etapa:"Desatracação",
+responsavel:"OPERACIONAL"
+}
+
+];
+
+// =====================================
+// LOGIN
+// =====================================
+
 function fazerLogin(){
 
 let usuario =
@@ -75,367 +175,659 @@ document
 .getElementById("sistema")
 .classList.remove("oculto");
 
-aplicarPermissoes();
+let campoUsuario =
+document.getElementById(
+"usuarioLogadoTexto"
+);
+
+if(campoUsuario){
+
+campoUsuario.innerHTML =
+encontrado.usuario +
+"<br>" +
+encontrado.area;
 
 }
 
+aplicarPermissoes();
+
+atualizarWorkflow();
+
+}
+
+// =====================================
+// LOGOUT
+// =====================================
+
+function logout(){
+
+localStorage.removeItem(
+"usuarioLogado"
+);
+
+location.reload();
+
+}
+
+// =====================================
+// PERMISSÕES
+// =====================================
+
 function aplicarPermissoes(){
 
-let usuario =
+const usuario =
 JSON.parse(
-localStorage.getItem("usuarioLogado")
+localStorage.getItem(
+"usuarioLogado"
+)
 );
 
 if(!usuario) return;
 
-if(usuario.area !== "PLANEJAMENTO"){
+let botoes = [
+"btnNavios",
+"btnPatrimonial",
+"btnSST",
+"btnRiscos"
+];
 
-document
-.querySelector(
-"button[onclick=\"mostrarTela('navios')\"]"
-)
-.style.display = "none";
+botoes.forEach(id=>{
+
+let botao =
+document.getElementById(id);
+
+if(botao){
+botao.style.display="none";
+}
+
+});
+
+switch(usuario.area){
+
+case "PLANEJAMENTO":
+
+if(document.getElementById("btnNavios"))
+document.getElementById("btnNavios")
+.style.display="block";
+
+break;
+
+case "PATRIMONIAL":
+
+if(document.getElementById("btnPatrimonial"))
+document.getElementById("btnPatrimonial")
+.style.display="block";
+
+break;
+
+case "SST":
+
+if(document.getElementById("btnSST"))
+document.getElementById("btnSST")
+.style.display="block";
+
+break;
+
+case "RISCOS":
+
+if(document.getElementById("btnRiscos"))
+document.getElementById("btnRiscos")
+.style.display="block";
+
+break;
 
 }
 
-if(usuario.area !== "RISCOS"){
-
-document
-.querySelector(
-"button[onclick=\"mostrarTela('riscos')\"]"
-)
-.style.display = "none";
-
 }
 
-}
-
-let etapaAtual = 1;
-
-// =========================
+// =====================================
 // NAVEGAÇÃO
-// =========================
+// =====================================
 
 function mostrarTela(tela){
 
-    document.getElementById("dashboard").classList.add("oculto");
-    document.getElementById("navios").classList.add("oculto");
-    document.getElementById("caminhoes").classList.add("oculto");
-    document.getElementById("patrimonial").classList.add("oculto");
-    document.getElementById("sst").classList.add("oculto");
-    document.getElementById("riscos").classList.add("oculto");
-    document.getElementById("fluxo").classList.add("oculto");
-    document.getElementById("ocorrencias").classList.add("oculto");
+const paginas = [
 
-    document.getElementById(tela).classList.remove("oculto");
+"dashboard",
+"navios",
+"caminhoes",
+"patrimonial",
+"sst",
+"riscos",
+"fluxo",
+"ocorrencias"
+
+];
+
+paginas.forEach(p => {
+
+let elemento =
+document.getElementById(p);
+
+if(elemento){
+
+elemento.classList.add(
+"oculto"
+);
 
 }
 
-// =========================
+});
+
+document
+.getElementById(tela)
+.classList.remove("oculto");
+
+}
+
+// =====================================
+// WORKFLOW
+// =====================================
+
+function iniciarWorkflow(){
+
+if(
+!localStorage.getItem(
+"workflowAtual"
+)
+){
+
+localStorage.setItem(
+"workflowAtual",
+"1"
+);
+
+}
+
+atualizarWorkflow();
+
+}
+
+function atualizarWorkflow(){
+
+let atual =
+Number(
+localStorage.getItem(
+"workflowAtual"
+)
+);
+
+let etapa =
+workflow.find(
+w => w.id === atual
+);
+
+if(!etapa) return;
+
+let status =
+document.getElementById(
+"statusAtual"
+);
+
+let responsavel =
+document.getElementById(
+"responsavelAtual"
+);
+
+if(status)
+status.innerText =
+etapa.etapa;
+
+if(responsavel)
+responsavel.innerText =
+etapa.responsavel;
+
+}
+
+function concluirEtapa(){
+
+let atual = Number(
+localStorage.getItem(
+"workflowAtual"
+)
+);
+
+let usuario =
+JSON.parse(
+localStorage.getItem(
+"usuarioLogado"
+)
+);
+
+if(!usuario) return;
+
+let etapa =
+workflow.find(
+w => w.id === atual
+);
+
+if(!etapa) return;
+
+if(
+etapa.responsavel !==
+usuario.area
+){
+
+alert(
+"Esta etapa pertence a " +
+etapa.responsavel
+);
+
+return;
+
+}
+
+let historico =
+JSON.parse(
+localStorage.getItem(
+"historico"
+) || "[]"
+);
+
+historico.push({
+
+etapa: etapa.etapa,
+
+usuario: usuario.usuario,
+
+area: usuario.area,
+
+data: new Date()
+.toLocaleString()
+
+});
+
+localStorage.setItem(
+"historico",
+JSON.stringify(historico)
+);
+
+localStorage.setItem(
+"workflowAtual",
+atual + 1
+);
+
+atualizarWorkflow();
+
+alert(
+"Etapa concluída com sucesso."
+);
+
+}
+
+// =====================================
 // NAVIOS
-// =========================
+// =====================================
 
 function salvarNavio(){
 
-    let navio = document.getElementById("navio").value;
-    let armador = document.getElementById("armador").value;
-    let berco = document.getElementById("berco").value;
-    let viagem = document.getElementById("viagem").value;
-    let carga = document.getElementById("carga").value;
+let navio =
+document.getElementById("navio").value;
 
-    if(navio === ""){
-        alert("Informe o nome do navio.");
-        return;
-    }
+if(navio === ""){
 
-    let navios =
-    JSON.parse(localStorage.getItem("navios") || "[]");
+alert(
+"Informe o nome do navio."
+);
 
-    navios.push({
-        navio,
-        armador,
-        berco,
-        viagem,
-        carga
-    });
+return;
 
-    localStorage.setItem(
-        "navios",
-        JSON.stringify(navios)
-    );
+}
 
-    carregarNavios();
+let navios =
+JSON.parse(
+localStorage.getItem(
+"navios"
+) || "[]"
+);
 
-    document.getElementById("navio").value = "";
-    document.getElementById("armador").value = "";
-    document.getElementById("berco").value = "";
-    document.getElementById("viagem").value = "";
-    document.getElementById("carga").value = "";
+navios.push({
+
+navio,
+
+armador:
+document.getElementById(
+"armador"
+).value,
+
+berco:
+document.getElementById(
+"berco"
+).value,
+
+viagem:
+document.getElementById(
+"viagem"
+).value,
+
+carga:
+document.getElementById(
+"carga"
+).value
+
+});
+
+localStorage.setItem(
+"navios",
+JSON.stringify(navios)
+);
+
+carregarNavios();
 
 }
 
 function carregarNavios(){
 
-    let navios =
-    JSON.parse(localStorage.getItem("navios") || "[]");
+let tabela =
+document.getElementById(
+"listaNavios"
+);
 
-    let tabela =
-    document.getElementById("listaNavios");
+if(!tabela) return;
 
-    if(!tabela) return;
+let navios =
+JSON.parse(
+localStorage.getItem(
+"navios"
+) || "[]"
+);
 
-    tabela.innerHTML = "";
+tabela.innerHTML="";
 
-    navios.forEach(item => {
+navios.forEach(item=>{
 
-        tabela.innerHTML += `
-        <tr>
-            <td>${item.navio}</td>
-            <td>${item.armador}</td>
-            <td>${item.berco}</td>
-            <td>${item.viagem}</td>
-            <td>${item.carga}</td>
-        </tr>
-        `;
+tabela.innerHTML += `
+<tr>
+<td>${item.navio}</td>
+<td>${item.armador}</td>
+<td>${item.berco}</td>
+<td>${item.viagem}</td>
+<td>${item.carga}</td>
+</tr>
+`;
 
-    });
+});
 
-    document.getElementById("totalNavios").innerText =
-    navios.length;
+let total =
+document.getElementById(
+"totalNavios"
+);
+
+if(total)
+total.innerText =
+navios.length;
 
 }
 
-// =========================
+// =====================================
 // CAMINHÕES
-// =========================
+// =====================================
 
 function salvarCaminhao(){
 
-    let placa =
-    document.getElementById("placa").value;
+let lista =
+JSON.parse(
+localStorage.getItem(
+"caminhoes"
+) || "[]"
+);
 
-    let motorista =
-    document.getElementById("motorista").value;
+lista.push({
 
-    let transportadora =
-    document.getElementById("transportadora").value;
+placa:
+document.getElementById(
+"placa"
+).value,
 
-    if(placa === ""){
-        alert("Informe a placa.");
-        return;
-    }
+motorista:
+document.getElementById(
+"motorista"
+).value,
 
-    let caminhoes =
-    JSON.parse(
-    localStorage.getItem("caminhoes") || "[]");
+transportadora:
+document.getElementById(
+"transportadora"
+).value
 
-    caminhoes.push({
+});
 
-        placa,
-        motorista,
-        transportadora
+localStorage.setItem(
+"caminhoes",
+JSON.stringify(lista)
+);
 
-    });
-
-    localStorage.setItem(
-    "caminhoes",
-    JSON.stringify(caminhoes)
-    );
-
-    carregarCaminhoes();
-
-    document.getElementById("placa").value="";
-    document.getElementById("motorista").value="";
-    document.getElementById("transportadora").value="";
+carregarCaminhoes();
 
 }
 
 function carregarCaminhoes(){
 
-    let caminhoes =
-    JSON.parse(
-    localStorage.getItem("caminhoes") || "[]");
+let tabela =
+document.getElementById(
+"listaCaminhoes"
+);
 
-    let tabela =
-    document.getElementById("listaCaminhoes");
+if(!tabela) return;
 
-    if(!tabela) return;
+let lista =
+JSON.parse(
+localStorage.getItem(
+"caminhoes"
+) || "[]"
+);
 
-    tabela.innerHTML="";
+tabela.innerHTML="";
 
-    caminhoes.forEach(item=>{
+lista.forEach(item=>{
 
-        tabela.innerHTML += `
-        <tr>
-            <td>${item.placa}</td>
-            <td>${item.motorista}</td>
-            <td>${item.transportadora}</td>
-        </tr>
-        `;
+tabela.innerHTML+=`
+<tr>
+<td>${item.placa}</td>
+<td>${item.motorista}</td>
+<td>${item.transportadora}</td>
+</tr>
+`;
 
-    });
-
-}
-
-// =========================
-// FLUXO OPERACIONAL
-// =========================
-
-function avancarEtapa(){
-
-    if(etapaAtual <= 14){
-
-        let etapa =
-        document.getElementById("e"+etapaAtual);
-
-        if(etapa){
-            etapa.classList.add("concluida");
-        }
-
-        etapaAtual++;
-
-        document.getElementById("totalEtapas")
-        .innerText = etapaAtual - 1;
-
-    }
+});
 
 }
 
-// =========================
+// =====================================
 // OCORRÊNCIAS
-// =========================
+// =====================================
 
 function registrarOcorrencia(){
 
-    let descricao =
-    document.getElementById("descricao").value;
+let descricao =
+document.getElementById(
+"descricao"
+).value;
 
-    if(descricao === ""){
-        alert("Informe uma ocorrência.");
-        return;
-    }
+if(descricao==="") return;
 
-    let ocorrencias =
-    JSON.parse(
-    localStorage.getItem("ocorrencias") || "[]"
-    );
+let ocorrencias =
+JSON.parse(
+localStorage.getItem(
+"ocorrencias"
+) || "[]"
+);
 
-    ocorrencias.push({
+ocorrencias.push({
 
-        data:new Date().toLocaleString(),
+data:new Date()
+.toLocaleString(),
 
-        descricao
+descricao
 
-    });
+});
 
-    localStorage.setItem(
-    "ocorrencias",
-    JSON.stringify(ocorrencias)
-    );
+localStorage.setItem(
+"ocorrencias",
+JSON.stringify(
+ocorrencias
+)
+);
 
-    document.getElementById("descricao").value="";
-
-    carregarOcorrencias();
+carregarOcorrencias();
 
 }
 
 function carregarOcorrencias(){
 
-    let ocorrencias =
-    JSON.parse(
-    localStorage.getItem("ocorrencias") || "[]"
-    );
+let tabela =
+document.getElementById(
+"listaOcorrencias"
+);
 
-    let tabela =
-    document.getElementById("listaOcorrencias");
+if(!tabela) return;
 
-    if(!tabela) return;
+let ocorrencias =
+JSON.parse(
+localStorage.getItem(
+"ocorrencias"
+) || "[]"
+);
 
-    tabela.innerHTML="";
+tabela.innerHTML="";
 
-    ocorrencias.forEach(item=>{
+ocorrencias.forEach(item=>{
 
-        tabela.innerHTML += `
-        <tr>
-            <td>${item.data}</td>
-            <td>${item.descricao}</td>
-        </tr>
-        `;
+tabela.innerHTML+=`
+<tr>
+<td>${item.data}</td>
+<td>${item.descricao}</td>
+</tr>
+`;
 
-    });
+});
 
-    document.getElementById("totalOcorrencias")
-    .innerText = ocorrencias.length;
+let total =
+document.getElementById(
+"totalOcorrencias"
+);
+
+if(total)
+total.innerText =
+ocorrencias.length;
 
 }
 
-// =========================
-// NOTIFY / DAMAGE
-// =========================
+// =====================================
+// RISCOS
+// =====================================
 
 function registrarRisco(){
 
-    let riscos =
-    JSON.parse(
-    localStorage.getItem("riscos") || "[]"
-    );
+let lista =
+JSON.parse(
+localStorage.getItem(
+"riscos"
+) || "[]"
+);
 
-    riscos.push({
+lista.push({
 
-        data:new Date().toLocaleString(),
+data:new Date()
+.toLocaleString(),
 
-        tipo:
-        document.getElementById("tipoRisco").value,
+tipo:
+document.getElementById(
+"tipoRisco"
+).value,
 
-        descricao:
-        document.getElementById("descricaoRisco").value
+descricao:
+document.getElementById(
+"descricaoRisco"
+).value
 
-    });
+});
 
-    localStorage.setItem(
-    "riscos",
-    JSON.stringify(riscos)
-    );
+localStorage.setItem(
+"riscos",
+JSON.stringify(lista)
+);
 
-    carregarRiscos();
-
-    document.getElementById("descricaoRisco").value="";
+carregarRiscos();
 
 }
 
 function carregarRiscos(){
 
-    let riscos =
-    JSON.parse(
-    localStorage.getItem("riscos") || "[]"
-    );
+let tabela =
+document.getElementById(
+"listaRiscos"
+);
 
-    let tabela =
-    document.getElementById("listaRiscos");
+if(!tabela) return;
 
-    if(!tabela) return;
+let lista =
+JSON.parse(
+localStorage.getItem(
+"riscos"
+) || "[]"
+);
 
-    tabela.innerHTML="";
+tabela.innerHTML="";
 
-    riscos.forEach(item=>{
+lista.forEach(item=>{
 
-        tabela.innerHTML += `
-        <tr>
-            <td>${item.data}</td>
-            <td>${item.tipo}</td>
-            <td>${item.descricao}</td>
-        </tr>
-        `;
+tabela.innerHTML+=`
+<tr>
+<td>${item.data}</td>
+<td>${item.tipo}</td>
+<td>${item.descricao}</td>
+</tr>
+`;
 
-    });
+});
 
 }
 
-// =========================
+// =====================================
 // INICIALIZAÇÃO
-// =========================
+// =====================================
 
 carregarNavios();
 carregarOcorrencias();
 carregarCaminhoes();
 carregarRiscos();
+
+iniciarWorkflow();
+
+let usuarioSalvo =
+localStorage.getItem(
+"usuarioLogado"
+);
+
+if(usuarioSalvo){
+
+document
+.getElementById("login")
+.classList.add("oculto");
+
+document
+.getElementById("sistema")
+.classList.remove("oculto");
+
+let usuario =
+JSON.parse(usuarioSalvo);
+
+let campo =
+document.getElementById(
+"usuarioLogadoTexto"
+);
+
+if(campo){
+
+campo.innerHTML =
+usuario.usuario +
+"<br>" +
+usuario.area;
+
+}
+
+aplicarPermissoes();
+
+atualizarWorkflow();
+
+}
