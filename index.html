@@ -90,6 +90,12 @@
         Ocorrências
     </button>
 
+    <button
+        id="btnTarefas"
+        onclick="mostrarTela('tarefas')">
+        Minhas Tarefas
+    </button>     
+
     <br>
 
     <button onclick="logout()">
@@ -162,6 +168,28 @@
 
         </div>
 
+<div id="tarefas" class="oculto">
+
+    <h1>Minhas Tarefas</h1>
+
+    <div class="card">
+
+        <h3>Etapa Atual</h3>
+
+        <h2 id="tarefaAtual">
+            -
+        </h2>
+
+        <br>
+
+        <button onclick="concluirEtapa()">
+            Concluir Tarefa
+        </button>
+
+    </div>
+
+</div>
+        
         <!-- NAVIOS -->
 
         <div id="navios" class="oculto">
