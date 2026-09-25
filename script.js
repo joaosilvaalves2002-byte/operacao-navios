@@ -393,3 +393,34 @@ if (usuarioSalvo) {
   aplicarPermissoes();
   atualizarWorkflow();
 }
+
+
+function atualizarTarefaAtual(){
+
+let atual =
+Number(
+localStorage.getItem(
+"workflowAtual"
+)
+);
+
+let etapa =
+workflow.find(
+w => w.id === atual
+);
+
+if(!etapa) return;
+
+let tarefa =
+document.getElementById(
+"tarefaAtual"
+);
+
+if(tarefa){
+
+tarefa.innerText =
+etapa.etapa;
+
+}
+
+}
