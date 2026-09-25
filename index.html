@@ -24,6 +24,21 @@
         <div class="sidebar">
             <h2>🚢 Operação</h2>
             <br>
+            <div class="sidebar">
+                <h2>Operação Navios</h2>
+                
+                <!-- CAMPO DE USUÁRIO LOGADO -->
+                <div class="user-card">
+                    <small>Usuário Conectado:</small>
+                    <div id="usuarioLogadoTexto">Carregando...</div>
+                </div>
+            
+                <!-- BOTÕES DAS ABAS -->
+                <button onclick="mostrarTela('dashboard')">Dashboard</button>
+                <button onclick="mostrarTela('fluxo')">Fluxo Operacional</button>
+                ...
+            </div>
+            <br>
             <button onclick="mostrarTela('dashboard')">Dashboard</button>
             <button id="btnTarefas" onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
             <button id="btnHistorico" onclick="mostrarTela('historico')">Histórico Operacional</button>
