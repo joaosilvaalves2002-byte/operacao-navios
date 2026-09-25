@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operação de Navios</title>
+
+    style.css
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>🚢 Operação</h2>
+
+    <button onclick="mostrarTela('dashboard')">Dashboard</button>
+    <button onclick="mostrarTela('navios')">Navios</button>
+    <button onclick="mostrarTela('fluxo')">Fluxo</button>
+    <button onclick="mostrarTela('ocorrencias')">Ocorrências</button>
+
+</div>
+
+<div class="content">
+
+    <!-- DASHBOARD -->
+
+    <div id="dashboard">
+
+        <h1>Dashboard Operacional</h1>
+
+        <div class="cards">
+
+            <div class="card">
+                <h2 id="totalNavios">0</h2>
+                <p>Navios</p>
+            </div>
+
+            <div class="card">
+                <h2 id="totalOcorrencias">0</h2>
+                <p>Ocorrências</p>
+            </div>
+
+            <div class="card">
+                <h2 id="totalEtapas">0</h2>
+                <p>Etapas</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NAVIOS -->
+
+    <div id="navios" class="oculto">
+
+        <h1>Cadastro de Navios</h1>
+
+        <input id="navio" placeholder="Nome do Navio">
+
+        <input id="armador" placeholder="Armador">
+
+        <input id="berco" placeholder="Berço">
+
+        <input id="viagem" placeholder="Viagem">
+
+        <input id="carga" placeholder="Tipo da Carga">
+
+        <button onclick="salvarNavio()">
+            Cadastrar
+        </button>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Navio</th>
+                    <th>Armador</th>
+                    <th>Berço</th>
+                    <th>Viagem</th>
+                    <th>Carga</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaNavios"></tbody>
+
+        </table>
+
+    </div>
+
+    <!-- FLUXO -->
+
+    <div id="fluxo" class="oculto">
+
+        <h1>Fluxo Operacional</h1>
+
+        <div class="fluxo">
+
+            <div id="e1" class="etapa">Manifesto</div>
+            <div id="e2" class="etapa">Carga Sistema</div>
+            <div id="e3" class="etapa">Remoção Pátio</div>
+            <div id="e4" class="etapa">Aviso Atracação</div>
+            <div id="e5" class="etapa">Atracação</div>
+            <div id="e6" class="etapa">Guaritas</div>
+            <div id="e7" class="etapa">Vistoria SST</div>
+            <div id="e8" class="etapa">Inspeção Patrimonial</div>
+            <div id="e9" class="etapa">DDS</div>
+            <div id="e10" class="etapa">Operação</div>
+            <div id="e11" class="etapa">Documentação</div>
+            <div id="e12" class="etapa">Desatracação</div>
+
+        </div>
+
+        <br>
+
+        <button onclick="avancarEtapa()">
+            Avançar Etapa
+        </button>
+
+    </div>
+
+    <!-- OCORRENCIAS -->
+
+    <div id="ocorrencias" class="oculto">
+
+        <h1>Ocorrências</h1>
+
+        <textarea id="descricao"
+            placeholder="Descreva a ocorrência"></textarea>
+
+        <button onclick="registrarOcorrencia()">
+            Registrar
+        </button>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaOcorrencias"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+script.jsscript>
+
+</body>
+</html>
