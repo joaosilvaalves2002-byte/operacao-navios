@@ -251,29 +251,20 @@
                 </table>
             </div>
 
-            <!-- FLUXO OPERACIONAL -->
-            <div id="fluxo" class="oculto">
+            <!-- ABA FLUXO OPERACIONAL -->
+            <div id="fluxo" class="tela oculto">
                 <div class="card-navio-selecao">
                     <label><strong>Navio Selecionado:</strong></label>
                     <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                 </div>
-                <br>
                 <h1>Fluxo Operacional</h1>
-                <div class="fluxo">
-                    <div id="e1" class="etapa">1. Manifesto Conferido</div>
-                    <div id="e2" class="etapa">2. Carga Inserida Sistema</div>
-                    <div id="e3" class="etapa">3. Remoção Pátio</div>
-                    <div id="e4" class="etapa">4. Aviso Atracação</div>
-                    <div id="e5" class="etapa">5. Atracação</div>
-                    <div id="e6" class="etapa">6. Guaritas Posicionadas</div>
-                    <div id="e7" class="etapa">7. Vistoria SST</div>
-                    <div id="e8" class="etapa">8. Inspeção Patrimonial</div>
-                    <div id="e9" class="etapa">9. Checklist Caminhões</div>
-                    <div id="e10" class="etapa">10. DDS</div>
-                    <div id="e11" class="etapa">11. Operação</div>
-                    <div id="e12" class="etapa">12. Documentação Saída</div>
-                    <div id="e13" class="etapa">13. Visita Final</div>
-                    <div id="e14" class="etapa">14. Desatracação</div>
+            
+                <!-- ENVOLVA OS CARDS NESTA DIV -->
+                <div class="etapas-grid">
+                    <div id="e1" class="card-etapa">...</div>
+                    <div id="e2" class="card-etapa">...</div>
+                    <div id="e3" class="card-etapa">...</div>
+                    <!-- ... até o e14 -->
                 </div>
             </div>
 
