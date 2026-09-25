@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- TELAS DE LOGIN -->
+
+    <!-- TELA DE LOGIN -->
     <div id="login">
         <div class="card">
-            <h1>Login</h1>
+            <h1>Login Operacional</h1>
             <input id="usuario" placeholder="Usuário">
             <input id="senha" type="password" placeholder="Senha">
             <button onclick="fazerLogin()">Entrar</button>
@@ -19,24 +20,28 @@
 
     <!-- SISTEMA PRINCIPAL -->
     <div id="sistema" class="oculto">
+        <!-- SIDEBAR -->
         <div class="sidebar">
             <h2>🚢 Operação</h2>
             <div id="usuarioLogadoTexto"></div>
             <br>
             <button onclick="mostrarTela('dashboard')">Dashboard</button>
+            <button id="btnTarefas" onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
+            <button id="btnHistorico" onclick="mostrarTela('historico')">Histórico Operacional</button>
             <button id="btnNavios" onclick="mostrarTela('navios')">Navios</button>
             <button id="btnCaminhoes" onclick="mostrarTela('caminhoes')">Caminhões</button>
             <button id="btnPatrimonial" onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
             <button id="btnSST" onclick="mostrarTela('sst')">Seg. Trabalho</button>
             <button id="btnRiscos" onclick="mostrarTela('riscos')">Notify / Damage</button>
-            <button id="btnFluxo" onclick="mostrarTela('fluxo')">Fluxo</button>
+            <button id="btnFluxo" onclick="mostrarTela('fluxo')">Fluxo Operacional</button>
             <button id="btnOcorrencias" onclick="mostrarTela('ocorrencias')">Ocorrências</button>
-            <button id="btnTarefas" onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
             <br>
             <button onclick="logout()">Sair</button>
         </div>
 
+        <!-- ÁREA DE CONTEÚDO -->
         <div class="content">
+
             <!-- DASHBOARD -->
             <div id="dashboard">
                 <h1>Dashboard Operacional</h1>
@@ -45,15 +50,17 @@
                     <br>
                     <h2 id="statusAtual">Manifesto Conferido</h2>
                     <br>
-                    <h4 id="responsavelAtual">DOCUMENTAL</h4>
+                    <p><strong>Setor Responsável:</strong> <span id="responsavelAtual">DOCUMENTAL</span></p>
                     <br>
-                    <div class="card">
-                        <h3>Próxima Área</h3>
-                        <h2 id="proximaArea">-</h2>
-                    </div>
-                    <div class="card">
-                        <h3>Usuário Logado</h3>
-                        <h2 id="usuarioResponsavel">-</h2>
+                    <div class="cards">
+                        <div class="card">
+                            <h3>Próxima Área</h3>
+                            <h2 id="proximaArea">-</h2>
+                        </div>
+                        <div class="card">
+                            <h3>Usuário Logado</h3>
+                            <h2 id="usuarioResponsavel">-</h2>
+                        </div>
                     </div>
                     <br>
                     <button onclick="concluirEtapa()">Concluir Etapa Atual</button>
@@ -62,21 +69,35 @@
                 <div class="cards">
                     <div class="card">
                         <h2 id="totalNavios">0</h2>
-                        <p>Navios</p>
+                        <p>Navios Cadastrados</p>
                     </div>
                     <div class="card">
                         <h2 id="totalOcorrencias">0</h2>
-                        <p>Ocorrências</p>
+                        <p>Ocorrências Registradas</p>
                     </div>
                     <div class="card">
-                        <h2 id="totalEtapas">0</h2>
-                        <p>Etapas</p>
+                        <h2 id="totalEtapas">0 / 14</h2>
+                        <p>Etapas Concluídas</p>
                     </div>
                 </div>
-                <br>
+            </div>
+
+            <!-- HISTÓRICO OPERACIONAL (TELA PRÓPRIA) -->
+            <div id="historico" class="oculto">
+                <h1>Histórico Operacional</h1>
                 <div class="card">
-                    <h3>Histórico Operacional</h3>
-                    <div id="historicoWorkflow"></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Etapa Concluída</th>
+                                <th>Usuário</th>
+                                <th>Setor</th>
+                                <th>Data / Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaHistorico"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -84,7 +105,7 @@
             <div id="tarefas" class="oculto">
                 <h1>Minhas Tarefas</h1>
                 <div class="card">
-                    <h3>Etapa Atual</h3>
+                    <h3>Etapa Atual do Setor</h3>
                     <h2 id="tarefaAtual">-</h2>
                     <br>
                     <button onclick="concluirEtapa()">Concluir Tarefa</button>
@@ -147,7 +168,7 @@
 
             <!-- SEGURANÇA DO TRABALHO -->
             <div id="sst" class="oculto">
-                <h1>Segurança do Trabalho</h1>
+                <h1>Segurança do Trabalho (SST)</h1>
                 <div class="card">
                     <h3>Checklist SST</h3>
                     <br>
@@ -162,10 +183,10 @@
             <div id="riscos" class="oculto">
                 <h1>Notify / Damage</h1>
                 <select id="tipoRisco">
-                    <option>Notify</option>
-                    <option>Damage</option>
+                    <option value="Notify">Notify</option>
+                    <option value="Damage">Damage</option>
                 </select>
-                <textarea id="descricaoRisco" placeholder="Descrição da ocorrência"></textarea>
+                <textarea id="descricaoRisco" placeholder="Descrição da ocorrência/avaria"></textarea>
                 <button onclick="registrarRisco()">Registrar</button>
                 <table>
                     <thead>
@@ -179,32 +200,32 @@
                 </table>
             </div>
 
-            <!-- FLUXO -->
+            <!-- FLUXO OPERACIONAL -->
             <div id="fluxo" class="oculto">
                 <h1>Fluxo Operacional</h1>
                 <div class="fluxo">
-                    <div id="e1" class="etapa">Manifesto Conferido</div>
-                    <div id="e2" class="etapa">Carga Inserida Sistema</div>
-                    <div id="e3" class="etapa">Remoção Pátio</div>
-                    <div id="e4" class="etapa">Aviso Atracação</div>
-                    <div id="e5" class="etapa">Atracação</div>
-                    <div id="e6" class="etapa">Guaritas Posicionadas</div>
-                    <div id="e7" class="etapa">Vistoria SST</div>
-                    <div id="e8" class="etapa">Inspeção Patrimonial</div>
-                    <div id="e9" class="etapa">Checklist Caminhões</div>
-                    <div id="e10" class="etapa">DDS</div>
-                    <div id="e11" class="etapa">Operação</div>
-                    <div id="e12" class="etapa">Documentação Saída</div>
-                    <div id="e13" class="etapa">Visita Final</div>
-                    <div id="e14" class="etapa">Desatracação</div>
+                    <div id="e1" class="etapa">1. Manifesto Conferido</div>
+                    <div id="e2" class="etapa">2. Carga Inserida Sistema</div>
+                    <div id="e3" class="etapa">3. Remoção Pátio</div>
+                    <div id="e4" class="etapa">4. Aviso Atracação</div>
+                    <div id="e5" class="etapa">5. Atracação</div>
+                    <div id="e6" class="etapa">6. Guaritas Posicionadas</div>
+                    <div id="e7" class="etapa">7. Vistoria SST</div>
+                    <div id="e8" class="etapa">8. Inspeção Patrimonial</div>
+                    <div id="e9" class="etapa">9. Checklist Caminhões</div>
+                    <div id="e10" class="etapa">10. DDS</div>
+                    <div id="e11" class="etapa">11. Operação</div>
+                    <div id="e12" class="etapa">12. Documentação Saída</div>
+                    <div id="e13" class="etapa">13. Visita Final</div>
+                    <div id="e14" class="etapa">14. Desatracação</div>
                 </div>
             </div>
 
             <!-- OCORRÊNCIAS -->
             <div id="ocorrencias" class="oculto">
-                <h1>Ocorrências</h1>
+                <h1>Registro de Ocorrências</h1>
                 <textarea id="descricao" placeholder="Descreva a ocorrência"></textarea>
-                <button onclick="registrarOcorrencia()">Registrar</button>
+                <button onclick="registrarOcorrencia()">Registrar Ocorrência</button>
                 <table>
                     <thead>
                         <tr>
@@ -215,6 +236,7 @@
                     <tbody id="listaOcorrencias"></tbody>
                 </table>
             </div>
+
         </div>
     </div>
 
