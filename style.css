@@ -287,3 +287,67 @@ input:disabled, textarea:disabled, select:disabled, button:disabled {
 .oculto {
     display: none !important;
 }
+/* CABEÇALHO DA SIDEBAR */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.sidebar-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+/* BOTÃO DENTRO DA SIDEBAR */
+.btn-toggle {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* BOTÃO FLUTUANTE PARA REABRIR */
+.btn-toggle-floating {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* TRANSIÇÃO E ANIMAÇÃO DA SIDEBAR */
+.sidebar {
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.recolhida {
+    transform: translateX(-270px) !important; /* Move a sidebar para fora da tela */
+}
+
+/* EXPANSÃO DO CONTEÚDO DAS TELAS QUANDO RECOLHIDO */
+.sidebar.recolhida ~ .tela,
+body.menu-recolhido .tela {
+    margin-left: 20px !important;
+    width: calc(100% - 40px) !important;
+}
+
+.tela {
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
