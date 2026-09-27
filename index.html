@@ -18,45 +18,44 @@
     </div>
 </div>
 
-<!-- CONTAINER DO SISTEMA (A SIDEBAR DEVE FICAR AQUI DENTRO) -->
+<!-- CONTAINER DO SISTEMA -->
 <div id="sistema" class="oculto">
 
+    <!-- BOTÃO FLUTUANTE (Fica FORA da sidebar para não sumir junto) -->
+    <button id="btnAbrirSidebar" class="btn-toggle-floating oculto" onclick="alternarSidebar()">
+        ☰
+    </button>
+
     <!-- BARRA LATERAL (SIDEBAR) -->
-    <div class="sidebar">
-        <h2>Operação Navios</h2>
-
-        <!-- BOTÃO FLUTUANTE PARA REABRIR O MENU QUANDO RECOLHIDO -->
-        <button id="btnAbrirSidebar" class="btn-toggle-floating oculto" onclick="toggleSidebar()">☰</button>
-
-        <!-- SIDEBAR COM BOTÃO DE RECUAR NO CABEÇALHO -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <button type="button" class="btn-toggle" onclick="toggleSidebar()" title="Recuar Menu">❮</button>
-            </div>
-    
-        <!-- CAMPO DE USUÁRIO LOGADO -->
-        <div class="user-card">
-            <small>Usuário Conectado:</small>
-            <div id="usuarioLogadoTexto">Carregando...</div>
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>Operação Navios</h2>
+            <!-- Botão para fechar/recolher -->
+            <button class="btn-toggle" onclick="alternarSidebar()">❮</button>
         </div>
 
-        <!-- BOTÕES DE NAVEGAÇÃO -->
-        <button onclick="mostrarTela('dashboard')">Dashboard</button>
-        <button id="btnTarefas" onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
-        <button id="btnHistorico" onclick="mostrarTela('historico')">Histórico Operacional</button>
-        <button id="btnNavios" onclick="mostrarTela('navios')">Navios</button>
-        <button id="btnCaminhoes" onclick="mostrarTela('caminhoes')">Caminhões</button>
-        <button id="btnPatrimonial" onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
-        <button id="btnSST" onclick="mostrarTela('sst')">Seg. Trabalho</button>
-        <button id="btnRiscos" onclick="mostrarTela('riscos')">Notify / Damage</button>
-        <button id="btnFluxo" onclick="mostrarTela('fluxo')">Fluxo Operacional</button>
-        <button id="btnOcorrencias" onclick="mostrarTela('ocorrencias')">Ocorrências</button>
+        <div class="user-card">
+            <small>Usuário Conectado:</small>
+            <div>ADMIN (TODAS)</div>
+        </div>
 
-        <br><br>
-        <button onclick="logout()">Sair</button>
-    </div>
+        <!-- BOTÕES DO MENU -->
+        <button onclick="navegarPara('dashboard')">Dashboard</button>
+        <button onclick="navegarPara('tarefas')">Minhas Tarefas</button>
+        <button onclick="navegarPara('historico')">Histórico Operacional</button>
+        <button onclick="navegarPara('navios')">Navios</button>
+        <button onclick="navegarPara('caminhoes')">Caminhões</button>
+        <button onclick="navegarPara('seg-patrimonial')">Seg. Patrimonial</button>
+        <button onclick="navegarPara('seg-trabalho')">Seg. Trabalho</button>
+        <button onclick="navegarPara('notify-damage')">Notify / Damage</button>
+        <button onclick="navegarPara('fluxo')">Fluxo Operacional</button>
+        <button onclick="navegarPara('ocorrencias')">Ocorrências</button>
+    </aside>
 
-    <!-- AQUI FICAM AS ABAS DO SISTEMA (dashboard, fluxo, etc.) -->
+    <!-- ÁREA DAS TELAS -->
+    <main class="conteudo-principal">
+        <!-- Suas telas (Dashboard, Navios, etc.) ficam aqui -->
+    </main>
 
 </div>
 
