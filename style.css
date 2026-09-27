@@ -1,5 +1,5 @@
 /* ==========================================
-   1. RESET GLOBAL E BASE
+   1. RESET GLOBAL E ESTRUTURA BASE
    ========================================== */
 * {
     margin: 0;
@@ -14,13 +14,13 @@ body {
     color: #333333;
 }
 
-/* CLASSE DE VISIBILIDADE */
+/* CLASSE PARA OCULTAR ELEMENTOS */
 .oculto {
     display: none !important;
 }
 
 /* ==========================================
-   2. TELA DE LOGIN (SOBREPOSIÇÃO TOTAL)
+   2. TELA DE LOGIN (SOBREPOSIÇÃO COMPLETA)
    ========================================== */
 #login {
     position: fixed;
@@ -39,7 +39,7 @@ body {
     background-color: #ffffff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 360px;
     display: flex;
@@ -56,9 +56,10 @@ body {
 
 .login-box input {
     padding: 10px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #cccccc;
     border-radius: 4px;
     font-size: 1rem;
+    outline: none;
 }
 
 .login-box button {
@@ -77,7 +78,7 @@ body {
 }
 
 /* ==========================================
-   3. ESTRUTURA PRINCIPAL DO SISTEMA
+   3. ESTRUTURA PRINCIPAL DO SISTEMA (#sistema)
    ========================================== */
 #sistema {
     display: flex;
@@ -85,7 +86,9 @@ body {
     min-height: 100vh;
 }
 
-/* BARRA LATERAL (SIDEBAR) */
+/* ==========================================
+   4. BARRA LATERAL (SIDEBAR) & RECUO TOTAL
+   ========================================== */
 .sidebar {
     width: 260px;
     min-width: 260px;
@@ -96,14 +99,20 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition: margin-left 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     position: relative;
     z-index: 100;
+    box-sizing: border-box;
 }
 
-/* ESTADO RECOLHIDO DA SIDEBAR */
+/* ESTADO RECOLHIDO - ZERO SOBRAS E ZERO FAIXA AZUL */
 .sidebar.recolhida {
-    margin-left: -260px;
+    margin-left: -260px !important;
+    min-width: 0 !important;
+    width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow: hidden !important;
 }
 
 /* CABEÇALHO DA SIDEBAR */
@@ -118,6 +127,7 @@ body {
     font-size: 1.2rem;
     color: #ffffff;
     margin: 0;
+    white-space: nowrap;
 }
 
 /* BOTÃO DE RECUAR NA SIDEBAR (❮) */
@@ -135,23 +145,28 @@ body {
     background: rgba(255, 255, 255, 0.35);
 }
 
-/* BOTÃO FLUTUANTE DE REABRIR (☰) */
+/* BOTÃO FLUTUANTE DE REABRIR (≡) */
 .btn-toggle-floating {
     position: fixed;
-    top: 15px;
-    left: 15px;
+    top: 12px;
+    left: 12px;
     z-index: 1000;
     background-color: #003366;
     color: #ffffff;
     border: none;
-    padding: 10px 14px;
+    padding: 8px 14px;
     border-radius: 6px;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: auto !important;
 }
 
-/* CARD DE USUÁRIO */
+.btn-toggle-floating:hover {
+    background-color: #002244;
+}
+
+/* CARD DE USUÁRIO LOGADO */
 .user-card {
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;
@@ -171,7 +186,7 @@ body {
     margin-top: 2px;
 }
 
-/* BOTÕES DA SIDEBAR */
+/* BOTÕES DE NAVEGAÇÃO DA SIDEBAR */
 .sidebar button {
     background-color: #004080;
     color: #ffffff;
@@ -182,6 +197,7 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
     transition: background 0.2s;
+    white-space: nowrap;
 }
 
 .sidebar button:hover {
@@ -189,10 +205,104 @@ body {
 }
 
 /* ==========================================
-   4. ÁREA DE CONTEÚDO PRINCIPAL (TELAS)
+   5. ÁREA DE CONTEÚDO PRINCIPAL (TELAS)
    ========================================== */
 .tela {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
+    transition: margin-left 0.3s ease-in-out;
 }
+
+/* ==========================================
+   6. TABELAS, BADGES E FORMULÁRIOS
+   ========================================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eeeeee;
+}
+
+th {
+    background-color: #003366;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* BADGES DE STATUS (CAMINHÕES) */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.badge-trabalhando { background-color: #d4edda; color: #155724; }
+.badge-dispensado { background-color: #e2e3e5; color: #383d41; }
+.badge-quebrado { background-color: #f8d7da; color: #721c24; }
+
+/* BOTÕES DE STATUS */
+.btn-status {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+.btn-trabalhando { background-color: #28a745; color: white; }
+.btn-dispensado { background-color: #6c757d; color: white; }
+.btn-quebrado { background-color: #dc3545; color: white; }
+
+/* INPUTS E ELEMENTOS DAS TELAS */
+.tela input, .tela select, .tela textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.tela button.btn-salvar, .tela button.btn-acao {
+    background-color: #003366;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tela button.btn-salvar:hover, .tela button.btn-acao:hover {
+    background-color: #002244;
+}
+
+/* WORKFLOW */
+.workflow-etapa {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 5px solid #ccc;
+    background-color: #ffffff;
+}
+
+.workflow-etapa.concluido { border-left-color: #28a745; background-color: #e8f5e9; }
+.workflow-etapa.ativo { border-left-color: #ffc107; background-color: #fffde7; }
+.workflow-etapa.pendente { border-left-color: #6c757d; background-color: #f8f9fa; }
