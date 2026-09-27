@@ -445,3 +445,52 @@ tr:hover {
 .badge-trabalhando { background-color: #d4edda; color: #155724; }
 .badge-dispensado { background-color: #e2e3e5; color: #383d41; }
 .badge-quebrado { background-color: #f8d7da; color: #721c24; }
+
+/* CONTAINER DOS CARDS DA DASHBOARD */
+.cards-grid, 
+.dashboard-cards, 
+.metrics-grid, 
+.grid-metricas {
+    display: grid !important;
+    /* Cria colunas automáticas de no mínimo 200px que dividem a tela proporcionalmente */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 20px !important;
+    width: 100% !important;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+/* ESTILIZAÇÃO INDIVIDUAL DE CADA CARD */
+.card-metrica, 
+.metric-card, 
+.dashboard-card-item, 
+.cards-grid > div, 
+.dashboard-cards > div, 
+.metrics-grid > div {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 0; /* Evita estouro de layout */
+}
+
+/* NÚMEROS E TEXTOS DOS CARDS */
+.card-metrica h2, .cards-grid > div h2, .dashboard-cards > div h2 {
+    font-size: 2.2rem;
+    color: #003366;
+    font-weight: 800;
+    margin: 0 0 5px 0;
+}
+
+.card-metrica p, .cards-grid > div p, .dashboard-cards > div p {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+    margin: 0;
+}
