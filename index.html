@@ -9,40 +9,47 @@
 <body>
 
     <!-- TELA DE LOGIN -->
-    <div id="login">
-        <div class="card">
-            <h1>Login Operacional</h1>
-            <input id="usuario" placeholder="Usuário">
-            <input id="senha" type="password" placeholder="Senha">
-            <button onclick="fazerLogin()">Entrar</button>
+<div id="login">
+    <div class="login-box">
+        <h2>Operação Navios - Login</h2>
+        <input id="usuario" placeholder="Usuário">
+        <input id="senha" type="password" placeholder="Senha">
+        <button onclick="fazerLogin()">Entrar</button>
+    </div>
+</div>
+
+<!-- CONTAINER DO SISTEMA (A SIDEBAR DEVE FICAR AQUI DENTRO) -->
+<div id="sistema" class="oculto">
+
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <div class="sidebar">
+        <h2>Operação Navios</h2>
+
+        <!-- CAMPO DE USUÁRIO LOGADO -->
+        <div class="user-card">
+            <small>Usuário Conectado:</small>
+            <div id="usuarioLogadoTexto">Carregando...</div>
         </div>
+
+        <!-- BOTÕES DE NAVEGAÇÃO -->
+        <button onclick="mostrarTela('dashboard')">Dashboard</button>
+        <button id="btnTarefas" onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
+        <button id="btnHistorico" onclick="mostrarTela('historico')">Histórico Operacional</button>
+        <button id="btnNavios" onclick="mostrarTela('navios')">Navios</button>
+        <button id="btnCaminhoes" onclick="mostrarTela('caminhoes')">Caminhões</button>
+        <button id="btnPatrimonial" onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
+        <button id="btnSST" onclick="mostrarTela('sst')">Seg. Trabalho</button>
+        <button id="btnRiscos" onclick="mostrarTela('riscos')">Notify / Damage</button>
+        <button id="btnFluxo" onclick="mostrarTela('fluxo')">Fluxo Operacional</button>
+        <button id="btnOcorrencias" onclick="mostrarTela('ocorrencias')">Ocorrências</button>
+
+        <br><br>
+        <button onclick="logout()">Sair</button>
     </div>
 
-            <!-- BARRA LATERAL (SIDEBAR) -->
-        <div class="sidebar">
-            <h2>Operação Navios</h2>
-        
-            <!-- CAMPO DE USUÁRIO LOGADO -->
-            <div class="user-card">
-                <small>Usuário Conectado:</small>
-                <div id="usuarioLogadoTexto">Carregando...</div>
-            </div>
-        
-            <!-- BOTÕES DE NAVEGAÇÃO -->
-            <button onclick="mostrarTela('dashboard')">Dashboard</button>
-            <button id="btnTarefas" onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
-            <button id="btnHistorico" onclick="mostrarTela('historico')">Histórico Operacional</button>
-            <button id="btnNavios" onclick="mostrarTela('navios')">Navios</button>
-            <button id="btnCaminhoes" onclick="mostrarTela('caminhoes')">Caminhões</button>
-            <button id="btnPatrimonial" onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
-            <button id="btnSST" onclick="mostrarTela('sst')">Seg. Trabalho</button>
-            <button id="btnRiscos" onclick="mostrarTela('riscos')">Notify / Damage</button>
-            <button id="btnFluxo" onclick="mostrarTela('fluxo')">Fluxo Operacional</button>
-            <button id="btnOcorrencias" onclick="mostrarTela('ocorrencias')">Ocorrências</button>
-        
-            <br><br>
-            <button onclick="logout()">Sair</button>
-        </div>
+    <!-- AQUI FICAM AS ABAS DO SISTEMA (dashboard, fluxo, etc.) -->
+
+</div>
 
         <!-- ÁREA DE CONTEÚDO -->
         <div class="content">
