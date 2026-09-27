@@ -1,275 +1,27 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
-}
-
-body{
-display:flex;
-background:#f4f6f9;
-}
-
-.sidebar{
-width:250px;
-height:100vh;
-background:#003366;
-padding:20px;
-position:fixed;
-}
-
-.sidebar h2{
-color:white;
-margin-bottom:20px;
-}
-
-.sidebar button{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-border:none;
-background:#0052a3;
-color:white;
-cursor:pointer;
-border-radius:6px;
-}
-
-.sidebar button:hover{
-background:#0066cc;
-}
-
-.content{
-width:100%;
-margin-left:250px;
-padding:30px;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-margin-top:20px;
-}
-
-.card{
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,.15);
-text-align:center;
-}
-
-.card h2{
-font-size:48px;
-color:#003366;
-}
-
-input,
-textarea{
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:10px;
-border:1px solid #ccc;
-border-radius:5px;
-}
-
-button{
-padding:10px;
-border:none;
-background:#003366;
-color:white;
-border-radius:5px;
-cursor:pointer;
-}
-
-table{
-width:100%;
-margin-top:20px;
-border-collapse:collapse;
-}
-
-th{
-background:#003366;
-color:white;
-padding:10px;
-}
-
-td{
-padding:10px;
-border:1px solid #ddd;
-}
-
-.oculto{
-display:none;
-}
-
-.fluxo{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:20px;
-}
-
-.etapa{
-background:#d9d9d9;
-padding:15px;
-border-radius:8px;
-font-weight:bold;
-}
-
-.concluida{
-background:#28a745;
-color:white;
-}
-
-/* Status dos Caminhões */
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 0.85em;
-}
-.badge-trabalhando { background-color: #28a745; color: white; }
-.badge-dispensado { background-color: #6c757d; color: white; }
-.badge-quebrado { background-color: #dc3545; color: white; }
-
-/* Botões de Ação na Tabela */
-.btn-status {
-  border: none;
-  padding: 4px 8px;
-  margin-right: 4px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.8em;
-  color: white;
-}
-.btn-status:hover { opacity: 0.85; }
-.btn-trabalhando { background-color: #28a745; }
-.btn-dispensado { background-color: #6c757d; }
-.btn-quebrado { background-color: #dc3545; }
-
-/* Campos desabilitados por permissão */
-input:disabled, textarea:disabled, select:disabled, button:disabled {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-/* ESTADOS DAS ETAPAS DO FLUXO */
-.concluido {
-  background-color: #d4edda !important; /* Verde claro */
-  border-left: 5px solid #28a745 !important;
-  color: #155724 !important;
-}
-
-.ativo {
-  background-color: #fff3cd !important; /* Amarelo claro */
-  border-left: 5px solid #ffc107 !important;
-  color: #856404 !important;
-}
-
-.pendente {
-  background-color: #f8f9fa !important; /* Cinza claro */
-  border-left: 5px solid #6c757d !important;
-  color: #6c757d !important;
-  opacity: 0.7;
-}
-
-/* RECUO OBRIGATÓRIO DE TODAS AS TELAS DA SIDEBAR */
-.tela, 
-#dashboard, #historico, #tarefas, #navios, #caminhoes, 
-#patrimonial, #sst, #riscos, #fluxo, #ocorrencias {
-    margin-left: 260px !important; /* Afasta o conteúdo para a direita da sidebar de 250px */
-    width: calc(100% - 260px) !important;
-    padding: 20px;
+/* ==========================================
+   1. RESET GLOBAL E BASE
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* REGRAS DE VISIBILIDADE DAS ABAS */
+body {
+    background-color: #f4f6f9;
+    min-height: 100vh;
+    color: #333333;
+}
+
+/* CLASSE DE VISIBILIDADE */
 .oculto {
     display: none !important;
 }
 
-/* FLUXO OPERACIONAL: 5 ETAPAS POR LINHA */
-.etapas-grid {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important; /* Cria 5 colunas idênticas */
-    gap: 15px !important;                              /* Espaço entre as caixas */
-    margin-top: 20px;
-}
-
-/* CARDS DAS ETAPAS E EFEITO HOVER */
-.card-etapa, 
-[id^="e"] {
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #ffffff;
-    text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-}
-
-.card-etapa:hover, 
-[id^="e"]:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-/* TRANSIÇÃO SUAVE NOS CARDS */
-.card-etapa, 
-[id^="e"],
-.card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  cursor: pointer;
-}
-
-/* EFEITO AO PASSAR O MOUSE (HOVER) */
-.card-etapa:hover, 
-[id^="e"]:hover,
-.card:hover {
-  transform: translateY(-4px);                  /* Eleva o card levemente */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);   /* Aumenta a profundidade da sombra */
-  border-color: #003366;                        /* Destaca a borda na cor principal */
-}
-
-.user-card {
-    background-color: rgba(255, 255, 255, 0.15);
-    padding: 10px 12px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    color: #ffffff;
-}
-
-.user-card small {
-    display: block;
-    font-size: 0.75rem;
-    opacity: 0.8;
-}
-
-#usuarioLogadoTexto {
-    font-weight: bold;
-    font-size: 0.95rem;
-    margin-top: 2px;
-}
-/* TELA DE LOGIN TELA CHEIA */
-#login {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #f4f6f9; /* Cor de fundo da tela de login */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Garante que fique acima de tudo */
-}
-
-/* REGRA DE VISIBILIDADE */
-.oculto {
-    display: none !important;
-}
-/* TELA DE LOGIN EM SOBREPOSIÇÃO TELA CHEIA */
+/* ==========================================
+   2. TELA DE LOGIN (SOBREPOSIÇÃO TOTAL)
+   ========================================== */
 #login {
     position: fixed;
     top: 0;
@@ -280,13 +32,80 @@ input:disabled, textarea:disabled, select:disabled, button:disabled {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Garante que cubra qualquer outro elemento */
+    z-index: 9999;
 }
 
-/* ESCONDE ELEMENTOS COM A CLASSE OCULTO */
-.oculto {
-    display: none !important;
+.login-box {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
+
+.login-box h2 {
+    color: #003366;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+.login-box input {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.login-box button {
+    padding: 10px;
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-box button:hover {
+    background-color: #002244;
+}
+
+/* ==========================================
+   3. ESTRUTURA PRINCIPAL DO SISTEMA
+   ========================================== */
+#sistema {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+}
+
+/* BARRA LATERAL (SIDEBAR) */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background-color: #003366;
+    color: #ffffff;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: margin-left 0.3s ease-in-out;
+    position: relative;
+    z-index: 100;
+}
+
+/* ESTADO RECOLHIDO DA SIDEBAR */
+.sidebar.recolhida {
+    margin-left: -260px;
+}
+
 /* CABEÇALHO DA SIDEBAR */
 .sidebar-header {
     display: flex;
@@ -297,114 +116,11 @@ input:disabled, textarea:disabled, select:disabled, button:disabled {
 
 .sidebar-header h2 {
     font-size: 1.2rem;
-    margin: 0;
-}
-
-/* BOTÃO DENTRO DA SIDEBAR */
-.btn-toggle {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: #ffffff;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.btn-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-/* BOTÃO FLUTUANTE PARA REABRIR */
-.btn-toggle-floating {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1000;
-    background-color: #003366;
-    color: #ffffff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-/* TRANSIÇÃO E ANIMAÇÃO DA SIDEBAR */
-.sidebar {
-    transition: transform 0.3s ease-in-out;
-}
-
-.sidebar.recolhida {
-    transform: translateX(-270px) !important; /* Move a sidebar para fora da tela */
-}
-
-/* EXPANSÃO DO CONTEÚDO DAS TELAS QUANDO RECOLHIDO */
-.sidebar.recolhida ~ .tela,
-body.menu-recolhido .tela {
-    margin-left: 20px !important;
-    width: calc(100% - 40px) !important;
-}
-
-.tela {
-    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
-}
-
-/* RESET DE MARGENS PADRÃO */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-}
-
-/* CONTAINER PRINCIPAL FLEX */
-#sistema {
-    display: flex;
-    width: 100vw;
-    min-height: 100vh;
-}
-
-/* BARRA LATERAL NIVELADA AO TOPO E FUNDO */
-.sidebar {
-    width: 260px;
-    min-width: 260px;
-    background-color: #003366;
-    color: #ffffff;
-    padding: 20px;
-    min-height: 100vh;
-    box-sizing: border-box;
-    transition: margin-left 0.3s ease-in-out;
-    position: relative;
-    z-index: 100;
-}
-
-/* ANIMAÇÃO DE RECUO DA BARRA LATERAL */
-.sidebar.recolhida {
-    margin-left: -260px;
-}
-
-/* CABEÇALHO DA SIDEBAR */
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.sidebar-header h2 {
-    font-size: 1.2rem;
     color: #ffffff;
     margin: 0;
 }
 
-/* BOTÃO DE RECUAR (❮) */
+/* BOTÃO DE RECUAR NA SIDEBAR (❮) */
 .btn-toggle {
     background: rgba(255, 255, 255, 0.2);
     border: none;
@@ -432,11 +148,51 @@ body {
     border-radius: 6px;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ÁREA DAS TELAS */
+/* CARD DE USUÁRIO */
+.user-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.user-card small {
+    display: block;
+    color: #cccccc;
+    font-size: 0.75rem;
+}
+
+.user-card div {
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-top: 2px;
+}
+
+/* BOTÕES DA SIDEBAR */
+.sidebar button {
+    background-color: #004080;
+    color: #ffffff;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 4px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.sidebar button:hover {
+    background-color: #0059b3;
+}
+
+/* ==========================================
+   4. ÁREA DE CONTEÚDO PRINCIPAL (TELAS)
+   ========================================== */
 .tela {
     flex: 1;
     padding: 30px;
+    overflow-y: auto;
 }
