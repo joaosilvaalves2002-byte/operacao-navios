@@ -25,6 +25,16 @@
     <div class="sidebar">
         <h2>Operação Navios</h2>
 
+        <!-- BOTÃO FLUTUANTE PARA REABRIR O MENU QUANDO RECOLHIDO -->
+        <button id="btnAbrirSidebar" class="btn-toggle-floating oculto" onclick="toggleSidebar()">☰</button>
+
+        <!-- SIDEBAR COM BOTÃO DE RECUAR NO CABEÇALHO -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Operação Navios</h2>
+                <button type="button" class="btn-toggle" onclick="toggleSidebar()" title="Recuar Menu">❮</button>
+            </div>
+    
         <!-- CAMPO DE USUÁRIO LOGADO -->
         <div class="user-card">
             <small>Usuário Conectado:</small>
