@@ -63,7 +63,7 @@
         <div class="content">
 
             <!-- DASHBOARD -->
-            <div id="dashboard">
+            <div id="dashboard" class="tela">
                 <div class="card-navio-selecao">
                     <label><strong>Navio em Operação:</strong></label>
                     <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
@@ -89,23 +89,22 @@
                 <br>
                 <!-- SUBISTITUA POR ESTE BLOCO NO INDEX.HTML -->
                 <div class="cards-grid">
-                
                     <div class="card-metrica">
-                        <h2>3</h2>
+                        <h2 id="totalNavios">3</h2>
                         <p>Navios Cadastrados</p>
                     </div>
                 
                     <div class="card-metrica">
-                        <h2>0</h2>
+                        <h2 id="totalOcorrencias">0</h2>
                         <p>Ocorrências Registradas</p>
                     </div>
                 
                     <div class="card-metrica">
-                        <h2>2 / 14</h2>
+                        <h2 id="totalEtapas">2 / 14</h2>
                         <p>Etapas Concluídas</p>
                     </div>
-                
                 </div>
+                
             </div>
 
             <!-- HISTÓRICO OPERACIONAL -->
