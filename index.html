@@ -4,15 +4,551 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operação de Navios</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- ==========================================
+         INÍCIO DO CSS (ESTILOS)
+         ========================================== -->
+    <style>
+        /* ==========================================
+           1. RESET GLOBAL E ESTRUTURA BASE
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            min-height: 100vh;
+            color: #333333;
+            overflow-x: hidden;
+        }
+
+        /* CLASSE UNIVERSAL PARA OCULTAR ELEMENTOS */
+        .oculto {
+            display: none !important;
+        }
+
+        /* ==========================================
+           2. TELA DE LOGIN (SOBREPOSIÇÃO COMPLETA)
+           ========================================== */
+        #login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-box h2 {
+            color: #003366;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .login-box input {
+            padding: 10px 12px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .login-box button {
+            padding: 10px;
+            background-color: #003366;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .login-box button:hover {
+            background-color: #002244;
+            transform: translateY(-2px);
+        }
+
+        /* ==========================================
+           3. ESTRUTURA PRINCIPAL DO SISTEMA (#sistema)
+           ========================================== */
+        #sistema {
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        /* BARRA LATERAL (SIDEBAR) */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            background-color: #003366;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            z-index: 100;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.recolhida {
+            display: none !important;
+        }
+
+        /* CABEÇALHO DA SIDEBAR */
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* BOTÃO DE RECUAR NA SIDEBAR (❮) */
+        .btn-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .btn-toggle:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* BOTÃO FLUTUANTE DE REABRIR (≡) */
+        .btn-toggle-floating {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 9999;
+            background-color: #003366;
+            color: #ffffff;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: auto !important;
+            transition: all 0.2s ease;
+        }
+
+        .btn-toggle-floating:hover {
+            background-color: #002244;
+            transform: scale(1.08);
+        }
+
+        /* CARD DE USUÁRIO LOGADO */
+        .user-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .user-card small {
+            display: block;
+            color: #cccccc;
+            font-size: 0.75rem;
+        }
+
+        .user-card div {
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        /* BOTÕES DE NAVEGAÇÃO DA SIDEBAR */
+        .sidebar button {
+            background-color: #004080;
+            color: #ffffff;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 4px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .sidebar button:hover {
+            background-color: #0059b3;
+            transform: translateX(4px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ==========================================
+           4. ÁREA PRINCIPAL E TELAS
+           ========================================== */
+        .conteudo-principal {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: hidden;
+        }
+        
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .tela {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: #f4f6f9;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .tela h1 {
+            color: #003366;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .tela select, select {
+            padding: 8px 14px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            background-color: #ffffff;
+            font-size: 0.95rem;
+            color: #003366;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        /* ==========================================
+           5. CARDS, DASHBOARD E FORMULÁRIOS
+           ========================================== */
+        .card-navio-selecao {
+            background-color: #e2e8f0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #003366;
+            flex-wrap: wrap;
+        }
+        
+        .card-navio-selecao label {
+            color: #003366;
+        }
+        
+        .card-navio-selecao select {
+            margin-bottom: 0;
+            min-width: 200px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #003366;
+        }
+
+        .card, .card-status, .dashboard-card, .status-container, .box-status, #cardStatus,
+        #dashboard > div:not(.cards-grid):not(.dashboard-cards):not(.metrics-grid):not(.card-navio-selecao) {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .card h3, .card-status h3, .dashboard-card h3, #dashboard h3 {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .card h1, .card h2, .card-status h1, .card-status h2, #dashboard h2 {
+            color: #003366;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 8px 0 15px 0;
+        }
+
+        .card p, .card-status p, #dashboard p {
+            color: #475569;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-acao, .btn-concluir, #btnConcluirEtapa, .card button, #dashboard button, .btn-salvar {
+            background-color: #003366;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 3px 8px rgba(0, 51, 102, 0.2);
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .btn-acao:hover, .btn-concluir:hover, #btnConcluirEtapa:hover, .card button:hover, #dashboard button:hover, .btn-salvar:hover {
+            background-color: #002244;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 51, 102, 0.3);
+        }
+
+        /* ==========================================
+           6. FLUXO OPERACIONAL E GRIDS
+           ========================================== */
+        .grid-fluxo, #gridFluxo, .fluxo-container, .etapas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .etapa-card, .card-fluxo, .workflow-etapa, .card-etapa, [id^="e"] {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 18px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            border-left: 6px solid #cccccc;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 85px;
+        }
+
+        .etapa-card:hover, .card-fluxo:hover, .workflow-etapa:hover, .card-etapa:hover, [id^="e"]:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .concluido, .etapa-card.concluido, .card-etapa.concluido, [id^="e"].concluido {
+            background-color: #d4edda !important;
+            border-left-color: #28a745 !important;
+            color: #155724 !important;
+        }
+
+        .ativo, .etapa-card.ativo, .card-etapa.ativo, [id^="e"].ativo {
+            background-color: #fff3cd !important;
+            border-left-color: #ffc107 !important;
+            color: #856404 !important;
+        }
+
+        .pendente, .etapa-card.pendente, .card-etapa.pendente, [id^="e"].pendente {
+            background-color: #f8f9fa !important;
+            border-left-color: #dee2e6 !important;
+            color: #888888 !important;
+        }
+
+        /* ==========================================
+           7. INPUTS E TABELAS
+           ========================================== */
+        .tela input, .tela textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        th {
+            background-color: #003366;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-trabalhando { background-color: #d4edda; color: #155724; }
+        .badge-dispensado { background-color: #e2e3e5; color: #383d41; }
+        .badge-quebrado { background-color: #f8d7da; color: #721c24; }
+
+        /* GRID DE MÉTRICAS DA DASHBOARD */
+        .cards-grid, 
+        .dashboard-cards, 
+        .metrics-grid, 
+        .grid-metricas {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+            gap: 20px !important;
+            width: 100% !important;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-metrica, 
+        .metric-card, 
+        .dashboard-card-item, 
+        .cards-grid > div, 
+        .dashboard-cards > div, 
+        .metrics-grid > div {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 0; 
+            transition: all 0.25s ease;
+        }
+        
+        .card-metrica:hover, .cards-grid > div:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .card-metrica h2, .cards-grid > div h2, .dashboard-cards > div h2 {
+            font-size: 2.2rem;
+            color: #003366;
+            font-weight: 800;
+            margin: 0 0 5px 0;
+            line-height: 1.1;
+        }
+
+        .card-metrica p, .cards-grid > div p, .dashboard-cards > div p {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Notificação Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <!-- ==========================================
+         FIM DO CSS
+         ========================================== -->
 </head>
 <body>
 
+    <!-- ==========================================
+         INÍCIO DO HTML (ESTRUTURA)
+         ========================================== -->
     <!-- TELA DE LOGIN -->
     <div id="login">
         <div class="login-box">
             <h2>Operação Navios - Login</h2>
-            <input id="usuario" placeholder="Usuário">
+            <input id="usuario" placeholder="Usuário (admin)">
             <input id="senha" type="password" placeholder="Senha">
             <button onclick="fazerLogin()">Entrar</button>
         </div>
@@ -21,8 +557,8 @@
     <!-- CONTAINER DO SISTEMA -->
     <div id="sistema" class="oculto">
 
-        <!-- BOTÃO FLUTUANTE (Fica FORA da sidebar para não sumir junto) -->
-        <button id="btnAbrirSidebar" class="btn-toggle-floating oculto" onclick="alternarSidebar()">
+        <!-- BOTÃO FLUTUANTE -->
+        <button id="btnAbrirSidebar" class="btn-toggle-floating oculto" onclick="toggleSidebar()">
             ☰
         </button>
 
@@ -30,25 +566,27 @@
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <h2>Operação Navios</h2>
-                <button class="btn-toggle" onclick="alternarSidebar()">❮</button>
+                <button class="btn-toggle" onclick="toggleSidebar()">❮</button>
             </div>
 
             <div class="user-card">
                 <small>Usuário Conectado:</small>
-                <div>ADMIN (TODAS)</div>
+                <div id="usuarioLogadoTexto">Carregando...</div>
             </div>
 
-            <!-- BOTÕES DO MENU (IDs alinhados com as divs de conteúdo) -->
-            <button onclick="navegarPara('dashboard')">Dashboard</button>
-            <button onclick="navegarPara('tarefas')">Minhas Tarefas</button>
-            <button onclick="navegarPara('historico')">Histórico Operacional</button>
-            <button onclick="navegarPara('navios')">Navios</button>
-            <button onclick="navegarPara('caminhoes')">Caminhões</button>
-            <button onclick="navegarPara('patrimonial')">Seg. Patrimonial</button>
-            <button onclick="navegarPara('sst')">Seg. Trabalho</button>
-            <button onclick="navegarPara('riscos')">Notify / Damage</button>
-            <button onclick="navegarPara('fluxo')">Fluxo Operacional</button>
-            <button onclick="navegarPara('ocorrencias')">Ocorrências</button>
+            <!-- BOTÕES DO MENU -->
+            <button onclick="mostrarTela('dashboard')">Dashboard</button>
+            <button onclick="mostrarTela('tarefas')">Minhas Tarefas</button>
+            <button onclick="mostrarTela('historico')">Histórico Operacional</button>
+            <button onclick="mostrarTela('navios')">Navios</button>
+            <button onclick="mostrarTela('caminhoes')">Caminhões</button>
+            <button onclick="mostrarTela('patrimonial')">Seg. Patrimonial</button>
+            <button onclick="mostrarTela('sst')">Seg. Trabalho</button>
+            <button onclick="mostrarTela('riscos')">Notify / Damage</button>
+            <button onclick="mostrarTela('fluxo')">Fluxo Operacional</button>
+            <button onclick="mostrarTela('ocorrencias')">Ocorrências</button>
+            
+            <button onclick="logout()" style="margin-top: 20px; background-color: #990000;">Sair (Logout)</button>
         </aside>
 
         <!-- ÁREA DAS TELAS -->
@@ -61,28 +599,25 @@
                         <label><strong>Navio em Operação:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Dashboard Operacional</h1>
                     <div class="card">
                         <h3>Status Atual da Operação</h3>
                         <br>
-                        <h2 id="statusAtual">Manifesto Conferido</h2>
+                        <h2 id="statusAtual">Aguardando Seleção</h2>
                         <br>
-                        <p><strong>Setor Responsável:</strong> <span id="responsavelAtual">DOCUMENTAL</span></p>
+                        <p><strong>Setor Responsável:</strong> <span id="responsavelAtual">-</span></p>
                         <br>
-                        <div class="cards">
-                            <div class="card">
+                        <div class="cards" style="display:flex; justify-content:center;">
+                            <div class="card" style="margin-bottom:0; min-width: 200px;">
                                 <h3>Próxima Área</h3>
                                 <h2 id="proximaArea">-</h2>
                             </div>
                         </div>
-                        <br>
-                        <button onclick="concluirEtapa()">Concluir Etapa Atual</button>
                     </div>
-                    <br>
+                    
                     <div class="cards-grid">
                         <div class="card-metrica">
-                            <h2 id="totalNavios">3</h2>
+                            <h2 id="totalNavios">0</h2>
                             <p>Navios Cadastrados</p>
                         </div>
                         <div class="card-metrica">
@@ -90,8 +625,8 @@
                             <p>Ocorrências Registradas</p>
                         </div>
                         <div class="card-metrica">
-                            <h2 id="totalEtapas">2 / 14</h2>
-                            <p>Etapas Concluídas</p>
+                            <h2 id="totalEtapas">0 / 14</h2>
+                            <p>Etapas do Fluxo</p>
                         </div>
                     </div>
                 </div>
@@ -102,20 +637,20 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Histórico Operacional</h1>
                     <div class="card">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Etapa Concluída</th>
                                     <th>Usuário</th>
                                     <th>Setor</th>
                                     <th>Data / Hora</th>
                                 </tr>
                             </thead>
-                            <tbody id="listaHistorico"></tbody>
+                            <tbody id="listaHistorico">
+                                <tr><td colspan="4" style="text-align:center;">Nenhum histórico registrado</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -126,25 +661,26 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Minhas Tarefas</h1>
                     <div class="card">
-                        <h3>Etapa Atual do Setor</h3>
-                        <h2 id="tarefaAtual">-</h2>
+                        <h3>Etapa Atual Designada</h3>
+                        <h2 id="tarefaAtual">Selecione um navio</h2>
                         <br>
-                        <button onclick="concluirEtapa()">Concluir Tarefa</button>
+                        <button onclick="concluirEtapa()">Concluir Minha Tarefa</button>
                     </div>
                 </div>
 
                 <!-- NAVIOS -->
                 <div id="navios" class="tela oculto">
                     <h1>Cadastro de Navios</h1>
-                    <input id="navio" placeholder="Nome do Navio">
-                    <input id="armador" placeholder="Armador">
-                    <input id="berco" placeholder="Berço">
-                    <input id="viagem" placeholder="Viagem">
-                    <input id="carga" placeholder="Tipo da Carga">
-                    <button onclick="salvarNavio()">Cadastrar</button>
+                    <div class="card">
+                        <input id="navio" placeholder="Nome do Navio">
+                        <input id="armador" placeholder="Armador">
+                        <input id="berco" placeholder="Berço">
+                        <input id="viagem" placeholder="Viagem">
+                        <input id="carga" placeholder="Tipo da Carga">
+                        <button class="btn-acao" onclick="salvarNavio()">Cadastrar Navio</button>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -165,12 +701,13 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Controle de Caminhões</h1>
-                    <input id="placa" placeholder="Placa">
-                    <input id="motorista" placeholder="Motorista">
-                    <input id="transportadora" placeholder="Transportadora">
-                    <button onclick="salvarCaminhao()">Cadastrar Caminhão</button>
+                    <div class="card">
+                        <input id="placa" placeholder="Placa (ex: ABC-1234)">
+                        <input id="motorista" placeholder="Nome do Motorista">
+                        <input id="transportadora" placeholder="Transportadora">
+                        <button class="btn-acao" onclick="salvarCaminhao()">Cadastrar Caminhão</button>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -181,7 +718,9 @@
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="listaCaminhoes"></tbody>
+                        <tbody id="listaCaminhoes">
+                             <tr><td colspan="5" style="text-align:center;">Nenhum caminhão registrado</td></tr>
+                        </tbody>
                     </table>
                 </div>
 
@@ -191,21 +730,22 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Segurança Patrimonial</h1>
-                    <div class="form-group">
-                        <label for="patrimonialStatus">Status da Inspeção:</label>
-                        <select id="patrimonialStatus">
-                            <option value="Pendente">Pendente</option>
-                            <option value="Em Andamento">Em Andamento</option>
-                            <option value="Concluído">Concluído</option>
-                        </select>
+                    <div class="card">
+                        <div class="form-group">
+                            <label for="patrimonialStatus">Status da Inspeção:</label>
+                            <select id="patrimonialStatus">
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="patrimonialObs">Observações / Vistoria Patrimonial:</label>
+                            <textarea id="patrimonialObs" rows="4" placeholder="Informe detalhes da inspeção patrimonial..."></textarea>
+                        </div>
+                        <button type="button" class="btn-salvar" onclick="salvarPatrimonial()">Salvar Patrimonial</button>
                     </div>
-                    <div class="form-group">
-                        <label for="patrimonialObs">Observações / Vistoria Patrimonial:</label>
-                        <textarea id="patrimonialObs" rows="4" placeholder="Informe detalhes da inspeção patrimonial..."></textarea>
-                    </div>
-                    <button type="button" class="btn-salvar" onclick="salvarPatrimonial()">Salvar Patrimonial</button>
                 </div>
 
                 <!-- SEGURANÇA DO TRABALHO (SST) -->
@@ -214,21 +754,22 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Segurança do Trabalho (SST)</h1>
-                    <div class="form-group">
-                        <label for="sstStatus">Status da Vistoria / DDS:</label>
-                        <select id="sstStatus">
-                            <option value="Pendente">Pendente</option>
-                            <option value="Em Andamento">Em Andamento</option>
-                            <option value="Concluído">Concluído</option>
-                        </select>
+                    <div class="card">
+                        <div class="form-group">
+                            <label for="sstStatus">Status da Vistoria / DDS:</label>
+                            <select id="sstStatus">
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sstObs">Observações SST / Registros DDS:</label>
+                            <textarea id="sstObs" rows="4" placeholder="Informe os detalhes da vistoria SST..."></textarea>
+                        </div>
+                        <button type="button" class="btn-salvar" onclick="salvarSST()">Salvar Seg. Trabalho (SST)</button>
                     </div>
-                    <div class="form-group">
-                        <label for="sstObs">Observações SST / Registros DDS:</label>
-                        <textarea id="sstObs" rows="4" placeholder="Informe os detalhes da vistoria SST..."></textarea>
-                    </div>
-                    <button type="button" class="btn-salvar" onclick="salvarSST()">Salvar Seg. Trabalho (SST)</button>
                 </div>
 
                 <!-- NOTIFY / DAMAGE -->
@@ -237,14 +778,15 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Notify / Damage</h1>
-                    <select id="tipoRisco">
-                        <option value="Notify">Notify</option>
-                        <option value="Damage">Damage</option>
-                    </select>
-                    <textarea id="descricaoRisco" placeholder="Descrição da ocorrência/avaria"></textarea>
-                    <button onclick="registrarRisco()">Registrar</button>
+                    <div class="card">
+                        <select id="tipoRisco">
+                            <option value="Notify">Notify (Aviso)</option>
+                            <option value="Damage">Damage (Avaria)</option>
+                        </select>
+                        <textarea id="descricaoRisco" placeholder="Descrição detalhada da ocorrência/avaria"></textarea>
+                        <button class="btn-acao" onclick="registrarRisco()">Registrar</button>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -253,32 +795,35 @@
                                 <th>Descrição</th>
                             </tr>
                         </thead>
-                        <tbody id="listaRiscos"></tbody>
+                        <tbody id="listaRiscos">
+                            <tr><td colspan="3" style="text-align:center;">Nenhum registro encontrado</td></tr>
+                        </tbody>
                     </table>
                 </div>
 
-                <!-- FLUXO OPERACIONAL -->
+                <!-- ABA FLUXO OPERACIONAL -->
                 <div id="fluxo" class="tela oculto">
                     <div class="card-navio-selecao">
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
                     <h1>Fluxo Operacional</h1>
-                    <div class="etapas-grid">
-                        <div id="e1" class="card-etapa">Manifesto Conferido</div>
-                        <div id="e2" class="card-etapa">Carga Inserida Sistema</div>
-                        <div id="e3" class="card-etapa">Remoção Pátio</div>
-                        <div id="e4" class="card-etapa">Aviso Atracação</div>
-                        <div id="e5" class="card-etapa">Atracação</div>
-                        <div id="e6" class="card-etapa">Guaritas Posicionadas</div>
-                        <div id="e7" class="card-etapa">Vistoria SST</div>
-                        <div id="e8" class="card-etapa">Inspeção Patrimonial</div>
-                        <div id="e9" class="card-etapa">Checklist Caminhões</div>
-                        <div id="e10" class="card-etapa">DDS</div>
-                        <div id="e11" class="card-etapa">Operação</div>
-                        <div id="e12" class="card-etapa">Documentação Saída</div>
-                        <div id="e13" class="card-etapa">Visita Final</div>
-                        <div id="e14" class="card-etapa">Desatracação</div>
+                    <div class="etapas-grid" id="containerFluxo">
+                        <!-- Adaptado para suportar os IDs do Workflow do seu Script -->
+                        <div class="card-etapa pendente" id="e1">Manifesto Conferido<div id="e1_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e2">Carga Inserida Sistema<div id="e2_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e3">Remoção Pátio<div id="e3_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e4">Aviso de Atracação<div id="e4_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e5">Atracação<div id="e5_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e6">Guaritas Posicionadas<div id="e6_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e7">Vistoria SST<div id="e7_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e8">Inspeção Patrimonial<div id="e8_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e9">Checklist Caminhões<div id="e9_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e10">DDS<div id="e10_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e11">Operação<div id="e11_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e12">Documentação Saída<div id="e12_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e13">Visita Final<div id="e13_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                        <div class="card-etapa pendente" id="e14">Desatracação<div id="e14_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
                     </div>
                 </div>
 
@@ -288,26 +833,765 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <br>
                     <h1>Registro de Ocorrências</h1>
-                    <textarea id="descricao" placeholder="Descreva a ocorrência"></textarea>
-                    <button onclick="registrarOcorrencia()">Registrar Ocorrência</button>
+                    <div class="card">
+                        <textarea id="descricao" placeholder="Descreva a ocorrência geral do turno"></textarea>
+                        <button class="btn-acao" onclick="registrarOcorrencia()">Registrar Ocorrência</button>
+                    </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>Data</th>
+                                <th>Data/Hora</th>
                                 <th>Descrição</th>
                             </tr>
                         </thead>
-                        <tbody id="listaOcorrencias"></tbody>
+                        <tbody id="listaOcorrencias">
+                            <tr><td colspan="2" style="text-align:center;">Nenhuma ocorrência registrada</td></tr>
+                        </tbody>
                     </table>
                 </div>
 
             </div>
         </main>
-
     </div>
+    <!-- ==========================================
+         FIM DO HTML
+         ========================================== -->
 
-    <script src="script.js"></script>
+    <!-- ==========================================
+         INÍCIO DO SCRIPT (JAVASCRIPT)
+         ========================================== -->
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO DE USUÁRIOS E WORKFLOW
+        // ==========================================
+
+        const usuarios = [
+          { usuario: "admin", senha: "123", area: "TODAS" },
+          { usuario: "documental", senha: "123", area: "DOCUMENTAL" },
+          { usuario: "planejamento", senha: "123", area: "PLANEJAMENTO" },
+          { usuario: "operacional", senha: "123", area: "OPERACIONAL" },
+          { usuario: "sst", senha: "123", area: "SST" },
+          { usuario: "patrimonial", senha: "123", area: "PATRIMONIAL" }
+        ];
+
+        const workflow = [
+          { id: 1, etapa: "Manifesto Conferido", responsavel: "DOCUMENTAL" },
+          { id: 2, etapa: "Carga Inserida Sistema", responsavel: "PLANEJAMENTO" },
+          { id: 3, etapa: "Remoção Pátio", responsavel: "PLANEJAMENTO" },
+          { id: 4, etapa: "Aviso Atracação", responsavel: "PLANEJAMENTO" },
+          { id: 5, etapa: "Atracação", responsavel: "OPERACIONAL" },
+          { id: 6, etapa: "Guaritas Posicionadas", responsavel: "OPERACIONAL" },
+          { id: 7, etapa: "Vistoria SST", responsavel: "SST" },
+          { id: 8, etapa: "Inspeção Patrimonial", responsavel: "PATRIMONIAL" },
+          { id: 9, etapa: "Checklist Caminhões", responsavel: "OPERACIONAL" },
+          { id: 10, etapa: "DDS", responsavel: "SST" },
+          { id: 11, etapa: "Operação", responsavel: "OPERACIONAL" },
+          { id: 12, etapa: "Documentação Saída", responsavel: "PLANEJAMENTO" },
+          { id: 13, etapa: "Visita Final", responsavel: "PLANEJAMENTO" },
+          { id: 14, etapa: "Desatracação", responsavel: "OPERACIONAL" }
+        ];
+
+        // ==========================================
+        // SELEÇÃO E GERENCIAMENTO DE NAVIOS
+        // ==========================================
+
+        function carregarSeletoresNavio() {
+          const navios = JSON.parse(localStorage.getItem("navios") || "[]");
+          const navioAtivo = localStorage.getItem("navioAtivo") || "";
+          const seletores = document.querySelectorAll(".seletor-navio");
+
+          seletores.forEach(select => {
+            let html = '<option value="">-- Selecione um Navio --</option>';
+            navios.forEach(n => {
+              const selected = n.navio === navioAtivo ? "selected" : "";
+              html += `<option value="${n.navio}" ${selected}>${n.navio} (${n.armador || 'Sem Armador'})</option>`;
+            });
+            select.innerHTML = html;
+          });
+        }
+
+        function selecionarNavioGlobal(nomeNavio) {
+          localStorage.setItem("navioAtivo", nomeNavio);
+          
+          const seletores = document.querySelectorAll(".seletor-navio");
+          seletores.forEach(select => {
+            select.value = nomeNavio;
+          });
+
+          atualizarWorkflow();
+          atualizarTarefaAtual();
+          carregarHistorico();
+          carregarCaminhoes();
+          carregarRiscos();
+          carregarOcorrencias();
+          carregarPatrimonial();
+          carregarSST();
+        }
+
+        // ==========================================
+        // AUTENTICAÇÃO E SESSÃO (CORRIGIDO)
+        // ==========================================
+
+        function fazerLogin() {
+          const user = document.getElementById("usuario").value.trim();
+          const pass = document.getElementById("senha").value.trim();
+
+          const encontrado = usuarios.find(u => u.usuario === user && u.senha === pass);
+
+          if (!encontrado) {
+            // Em vez de alert(), idealmente usaríamos um modal, mas mantendo a lógica existente com ressalva
+            alert("Usuário ou senha inválidos.");
+            return;
+          }
+
+          // Salva o objeto do usuário no localStorage
+          localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
+          iniciarSistema();
+        }
+
+        function logout() {
+          localStorage.removeItem("usuarioLogado");
+          
+          // Reseta a exibição do usuário
+          const txtUsuario = document.getElementById("usuarioLogadoTexto");
+          if (txtUsuario) txtUsuario.innerText = "Carregando...";
+
+          document.getElementById("login").classList.remove("oculto");
+          document.getElementById("sistema").classList.add("oculto");
+          document.getElementById("usuario").value = "";
+          document.getElementById("senha").value = "";
+        }
+
+        function verificarSessao() {
+          const usuarioLogadoRaw = localStorage.getItem("usuarioLogado");
+          if (usuarioLogadoRaw) {
+            iniciarSistema();
+          }
+        }
+
+        function iniciarSistema() {
+          let usuarioLogado = null;
+          
+          try {
+            usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+          } catch (e) {
+            console.error("Erro ao ler usuarioLogado do localStorage", e);
+          }
+
+          // Se não houver usuário logado válido, não avança
+          if (!usuarioLogado || !usuarioLogado.usuario) {
+            logout();
+            return;
+          }
+
+          document.getElementById("login").classList.add("oculto");
+          document.getElementById("sistema").classList.remove("oculto");
+
+          // ATUALIZA O NOME E SETOR DO USUÁRIO LOGADO NA SIDEBAR
+          const txtUsuario = document.getElementById("usuarioLogadoTexto");
+          if (txtUsuario) {
+            const nome = usuarioLogado.usuario.toUpperCase();
+            const area = usuarioLogado.area || "GERAL";
+            txtUsuario.innerText = `${nome} (${area})`;
+          }
+
+          const usrResp = document.getElementById("usuarioResponsavel");
+          if (usrResp) {
+            usrResp.innerText = usuarioLogado.usuario.toUpperCase();
+          }
+
+          carregarNavios();
+          carregarSeletoresNavio();
+          
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (navioAtivo) {
+            selecionarNavioGlobal(navioAtivo);
+          } else {
+            atualizarWorkflow();
+          }
+
+          mostrarTela("dashboard");
+        }
+
+        // ==========================================
+        // NAVEGAÇÃO DE TELAS E PERMISSÕES DE ACESSO
+        // ==========================================
+
+        function mostrarTela(tela) {
+          const paginas = [
+            "dashboard", "historico", "tarefas", "navios", 
+            "caminhoes", "patrimonial", "sst", "riscos", "fluxo", "ocorrencias"
+          ];
+
+          paginas.forEach(p => {
+            const el = document.getElementById(p);
+            if (el) el.classList.add("oculto");
+          });
+
+          const telaAlvo = document.getElementById(tela);
+          if (telaAlvo) {
+            telaAlvo.classList.remove("oculto");
+          }
+
+          aplicarPermissoesCampos();
+
+          if (tela === "fluxo" || tela === "dashboard" || tela === "tarefas") {
+            atualizarWorkflow();
+            atualizarTarefaAtual();
+          }
+          if (tela === "historico") carregarHistorico();
+          if (tela === "patrimonial") carregarPatrimonial();
+          if (tela === "sst") carregarSST();
+          if (tela === "caminhoes") carregarCaminhoes();
+          if (tela === "riscos") carregarRiscos();
+          if (tela === "ocorrencias") carregarOcorrencias();
+        }
+
+        function aplicarPermissoesCampos() {
+          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+          if (!usuarioLogado) return;
+
+          const area = usuarioLogado.area;
+
+          // Permissões Patrimonial
+          const inputsPatrimonial = document.querySelectorAll("#patrimonial input, #patrimonial textarea, #patrimonial select:not(.seletor-navio), #patrimonial button.btn-salvar");
+          const podePatrimonial = (area === "PATRIMONIAL" || area === "TODAS");
+          inputsPatrimonial.forEach(el => { el.disabled = !podePatrimonial; });
+
+          // Permissões SST
+          const inputsSST = document.querySelectorAll("#sst input, #sst textarea, #sst select:not(.seletor-navio), #sst button.btn-salvar");
+          const podeSST = (area === "SST" || area === "TODAS");
+          inputsSST.forEach(el => { el.disabled = !podeSST; });
+        }
+
+        // ==========================================
+        // WORKFLOW E HISTÓRICO POR NAVIO
+        // ==========================================
+
+        function getWorkflowAtual() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) return 1;
+          return Number(localStorage.getItem(`workflow_${navioAtivo}`) || 1);
+        }
+
+        function setWorkflowAtual(etapaId) {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (navioAtivo) {
+            localStorage.setItem(`workflow_${navioAtivo}`, etapaId);
+          }
+        }
+
+        function atualizarWorkflow() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const atual = getWorkflowAtual();
+
+          const todosHistoricos = JSON.parse(localStorage.getItem("historico") || "[]");
+          const historicoNavio = navioAtivo ? todosHistoricos.filter(h => h.navio === navioAtivo) : [];
+
+          workflow.forEach(w => {
+            const el = document.getElementById(`e${w.id}`);
+            if (el) {
+              el.classList.remove("concluido", "ativo", "pendente");
+              
+              if (navioAtivo) {
+                if (w.id < atual) {
+                  el.classList.add("concluido");
+                } else if (w.id === atual) {
+                  el.classList.add("ativo");
+                } else {
+                  el.classList.add("pendente");
+                }
+
+                const infoEtapa = historicoNavio.find(h => h.etapa === w.etapa);
+                const elDet = document.getElementById(`e${w.id}_detalhe`);
+                if (elDet) {
+                  if (infoEtapa) {
+                    elDet.innerText = `Concluído por ${infoEtapa.usuario} em ${infoEtapa.data}`;
+                  } else if (w.id === atual) {
+                    elDet.innerText = "Em Andamento";
+                  } else {
+                    elDet.innerText = "Pendente";
+                  }
+                }
+              } else {
+                el.classList.add("pendente");
+              }
+            }
+          });
+
+          const elStatus = document.getElementById("statusAtual");
+          const elResp = document.getElementById("responsavelAtual");
+          const elProx = document.getElementById("proximaArea");
+          const elTotalEtapas = document.getElementById("totalEtapas");
+
+          if (!navioAtivo) {
+            if (elStatus) elStatus.innerText = "Nenhum Navio Selecionado";
+            if (elResp) elResp.innerText = "-";
+            if (elProx) elProx.innerText = "-";
+            if (elTotalEtapas) elTotalEtapas.innerText = "0 / 14";
+            return;
+          }
+
+          const etapaAtual = workflow.find(w => w.id === atual);
+          const proximaEtapa = workflow.find(w => w.id === atual + 1);
+
+          if (etapaAtual) {
+            if (elStatus) elStatus.innerText = etapaAtual.etapa;
+            if (elResp) elResp.innerText = etapaAtual.responsavel;
+          } else {
+            if (elStatus) elStatus.innerText = "Operação Concluída";
+            if (elResp) elResp.innerText = "NENHUM";
+          }
+
+          if (proximaEtapa) {
+            if (elProx) elProx.innerText = `${proximaEtapa.responsavel} (${proximaEtapa.etapa})`;
+          } else {
+            if (elProx) elProx.innerText = "Fim do Processo";
+          }
+
+          if (elTotalEtapas) {
+            const concluidas = Math.min(atual - 1, workflow.length);
+            elTotalEtapas.innerText = `${concluidas} / ${workflow.length}`;
+          }
+        }
+
+        function concluirEtapa() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) {
+            alert("Por favor, selecione um navio antes de concluir uma etapa.");
+            return;
+          }
+
+          const atual = getWorkflowAtual();
+
+          if (atual > workflow.length) {
+            alert("Todas as etapas do workflow já foram concluídas para este navio.");
+            return;
+          }
+
+          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+          if (!usuarioLogado) return;
+
+          const etapa = workflow.find(w => w.id === atual);
+          if (!etapa) return;
+
+          if (usuarioLogado.area !== "TODAS" && etapa.responsavel !== usuarioLogado.area) {
+            alert(`Apenas o setor ${etapa.responsavel} pode concluir esta etapa.`);
+            return;
+          }
+
+          const historico = JSON.parse(localStorage.getItem("historico") || "[]");
+          historico.push({
+            id: historico.length + 1,
+            navio: navioAtivo,
+            etapa: etapa.etapa,
+            usuario: usuarioLogado.usuario,
+            area: usuarioLogado.area,
+            data: new Date().toLocaleString("pt-BR")
+          });
+
+          localStorage.setItem("historico", JSON.stringify(historico));
+          setWorkflowAtual(atual + 1);
+
+          atualizarWorkflow();
+          atualizarTarefaAtual();
+          carregarHistorico();
+
+          alert(`Etapa "${etapa.etapa}" concluída com sucesso para o navio ${navioAtivo}!`);
+        }
+
+        function atualizarTarefaAtual() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const elTarefa = document.getElementById("tarefaAtual");
+          if (!elTarefa) return;
+
+          if (!navioAtivo) {
+            elTarefa.innerText = "Selecione um navio para visualizar as tarefas.";
+            return;
+          }
+
+          const atual = getWorkflowAtual();
+          const etapa = workflow.find(w => w.id === atual);
+          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+          if (!etapa) {
+            elTarefa.innerText = "Nenhuma tarefa pendente (Fluxo Finalizado).";
+            return;
+          }
+
+          if (usuarioLogado.area === "TODAS" || etapa.responsavel === usuarioLogado.area) {
+            elTarefa.innerText = `${etapa.etapa} (${etapa.responsavel})`;
+          } else {
+            elTarefa.innerText = `Aguardando setor ${etapa.responsavel} concluir a etapa "${etapa.etapa}".`;
+          }
+        }
+
+        function carregarHistorico() {
+          const tbody = document.getElementById("listaHistorico");
+          if (!tbody) return;
+
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const todosHistoricos = JSON.parse(localStorage.getItem("historico") || "[]");
+          const historico = navioAtivo ? todosHistoricos.filter(h => h.navio === navioAtivo) : [];
+
+          let html = "";
+          historico.forEach((item, idx) => {
+            html += `
+              <tr>
+                <td>${item.etapa}</td>
+                <td>${item.usuario}</td>
+                <td>${item.area}</td>
+                <td>${item.data}</td>
+              </tr>
+            `;
+          });
+
+          tbody.innerHTML = html || `<tr><td colspan="4" style="text-align:center;">Nenhum histórico registrado para este navio.</td></tr>`;
+        }
+
+        // ==========================================
+        // SEGURANÇA PATRIMONIAL E SST
+        // ==========================================
+
+        function salvarPatrimonial() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) {
+            alert("Selecione um navio ativo antes de salvar.");
+            return;
+          }
+
+          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+          if (usuarioLogado.area !== "PATRIMONIAL" && usuarioLogado.area !== "TODAS") {
+            alert("Apenas o setor Patrimonial tem permissão para alterar estes dados.");
+            return;
+          }
+
+          const obs = document.getElementById("patrimonialObs") ? document.getElementById("patrimonialObs").value : "";
+          const statusInspecao = document.getElementById("patrimonialStatus") ? document.getElementById("patrimonialStatus").value : "";
+
+          const dadosPatrimonial = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
+          dadosPatrimonial[navioAtivo] = {
+            statusInspecao,
+            obs,
+            usuario: usuarioLogado.usuario,
+            data: new Date().toLocaleString("pt-BR")
+          };
+
+          localStorage.setItem("dadosPatrimonial", JSON.stringify(dadosPatrimonial));
+          alert(`Dados da Segurança Patrimonial salvos com sucesso para o navio ${navioAtivo}!`);
+        }
+
+        function carregarPatrimonial() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const dados = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
+          const info = navioAtivo ? dados[navioAtivo] : null;
+
+          const elObs = document.getElementById("patrimonialObs");
+          const elStatus = document.getElementById("patrimonialStatus");
+
+          if (info) {
+            if (elObs) elObs.value = info.obs || "";
+            if (elStatus) elStatus.value = info.statusInspecao || "";
+          } else {
+            if (elObs) elObs.value = "";
+            if (elStatus) elStatus.value = "";
+          }
+        }
+
+        function salvarSST() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) {
+            alert("Selecione um navio ativo antes de salvar.");
+            return;
+          }
+
+          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+          if (usuarioLogado.area !== "SST" && usuarioLogado.area !== "TODAS") {
+            alert("Apenas o setor SST tem permissão para alterar estes dados.");
+            return;
+          }
+
+          const obs = document.getElementById("sstObs") ? document.getElementById("sstObs").value : "";
+          const statusVistoria = document.getElementById("sstStatus") ? document.getElementById("sstStatus").value : "";
+
+          const dadosSST = JSON.parse(localStorage.getItem("dadosSST") || "{}");
+          dadosSST[navioAtivo] = {
+            statusVistoria,
+            obs,
+            usuario: usuarioLogado.usuario,
+            data: new Date().toLocaleString("pt-BR")
+          };
+
+          localStorage.setItem("dadosSST", JSON.stringify(dadosSST));
+          alert(`Dados da Segurança do Trabalho (SST) salvos com sucesso para o navio ${navioAtivo}!`);
+        }
+
+        function carregarSST() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const dados = JSON.parse(localStorage.getItem("dadosSST") || "{}");
+          const info = navioAtivo ? dados[navioAtivo] : null;
+
+          const elObs = document.getElementById("sstObs");
+          const elStatus = document.getElementById("sstStatus");
+
+          if (info) {
+            if (elObs) elObs.value = info.obs || "";
+            if (elStatus) elStatus.value = info.statusVistoria || "";
+          } else {
+            if (elObs) elObs.value = "";
+            if (elStatus) elStatus.value = "";
+          }
+        }
+
+        // ==========================================
+        // MÓDULOS DE DADOS FILTRADOS POR NAVIO
+        // ==========================================
+
+        function salvarNavio() {
+          const navio = document.getElementById("navio").value.trim();
+          const armador = document.getElementById("armador").value.trim();
+          const berco = document.getElementById("berco").value.trim();
+          const viagem = document.getElementById("viagem").value.trim();
+          const carga = document.getElementById("carga").value.trim();
+
+          if (!navio) {
+            alert("Informe o nome do navio.");
+            return;
+          }
+
+          const navios = JSON.parse(localStorage.getItem("navios") || "[]");
+          navios.push({ navio, armador, berco, viagem, carga });
+          localStorage.setItem("navios", JSON.stringify(navios));
+
+          if (!localStorage.getItem("navioAtivo")) {
+            localStorage.setItem("navioAtivo", navio);
+          }
+
+          document.getElementById("navio").value = "";
+          document.getElementById("armador").value = "";
+          document.getElementById("berco").value = "";
+          document.getElementById("viagem").value = "";
+          document.getElementById("carga").value = "";
+
+          carregarNavios();
+          carregarSeletoresNavio();
+          selecionarNavioGlobal(navio);
+        }
+
+        function carregarNavios() {
+          const tbody = document.getElementById("listaNavios");
+          const navios = JSON.parse(localStorage.getItem("navios") || "[]");
+
+          if (tbody) {
+            tbody.innerHTML = navios.map(n => `
+              <tr>
+                <td>${n.navio}</td>
+                <td>${n.armador}</td>
+                <td>${n.berco}</td>
+                <td>${n.viagem}</td>
+                <td>${n.carga}</td>
+              </tr>
+            `).join("");
+          }
+
+          const elTotal = document.getElementById("totalNavios");
+          if (elTotal) elTotal.innerText = navios.length;
+        }
+
+        function salvarCaminhao() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) {
+            alert("Selecione um navio antes de cadastrar um caminhão.");
+            return;
+          }
+
+          const placa = document.getElementById("placa").value.trim();
+          const motorista = document.getElementById("motorista").value.trim();
+          const transportadora = document.getElementById("transportadora").value.trim();
+
+          if (!placa) {
+            alert("Informe a placa do caminhão.");
+            return;
+          }
+
+          const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+          caminhoes.push({
+            id: Date.now(),
+            navio: navioAtivo,
+            placa,
+            motorista,
+            transportadora,
+            status: "TRABALHANDO"
+          });
+
+          localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
+
+          document.getElementById("placa").value = "";
+          document.getElementById("motorista").value = "";
+          document.getElementById("transportadora").value = "";
+
+          carregarCaminhoes();
+        }
+
+        function alterarStatusCaminhao(idCaminhao, novoStatus) {
+          const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+          const caminhao = caminhoes.find(c => c.id === idCaminhao);
+
+          if (caminhao) {
+            caminhao.status = novoStatus;
+            localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
+            carregarCaminhoes();
+          }
+        }
+
+        function carregarCaminhoes() {
+          const tbody = document.getElementById("listaCaminhoes");
+          if (!tbody) return;
+
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const todos = JSON.parse(localStorage.getItem("caminhoes") || "[]");
+          const caminhoes = navioAtivo ? todos.filter(c => c.navio === navioAtivo) : [];
+
+          let html = "";
+          caminhoes.forEach(c => {
+            const status = c.status || "TRABALHANDO";
+
+            let badgeClass = "badge-trabalhando";
+            if (status === "DISPENSADO") badgeClass = "badge-dispensado";
+            if (status === "QUEBRADO") badgeClass = "badge-quebrado";
+
+            html += `
+              <tr>
+                <td><strong>${c.placa}</strong></td>
+                <td>${c.motorista}</td>
+                <td>${c.transportadora}</td>
+                <td><span class="status-badge ${badgeClass}">${status}</span></td>
+                <td>
+                  <button type="button" class="btn-status btn-trabalhando" onclick="alterarStatusCaminhao(${c.id}, 'TRABALHANDO')" style="padding:4px 8px; font-size:12px; margin:2px;">Trab</button>
+                  <button type="button" class="btn-status btn-dispensado" onclick="alterarStatusCaminhao(${c.id}, 'DISPENSADO')" style="padding:4px 8px; font-size:12px; margin:2px;">Disp</button>
+                  <button type="button" class="btn-status btn-quebrado" onclick="alterarStatusCaminhao(${c.id}, 'QUEBRADO')" style="padding:4px 8px; font-size:12px; margin:2px;">Queb</button>
+                </td>
+              </tr>
+            `;
+          });
+
+          tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum caminhão cadastrado para este navio.</td></tr>`;
+        }
+
+        function registrarRisco() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) {
+            alert("Selecione um navio antes de registrar.");
+            return;
+          }
+
+          const tipo = document.getElementById("tipoRisco").value;
+          const descricao = document.getElementById("descricaoRisco").value.trim();
+
+          if (!descricao) {
+            alert("Descreva o risco / avaria.");
+            return;
+          }
+
+          const riscos = JSON.parse(localStorage.getItem("riscos") || "[]");
+          riscos.push({
+            navio: navioAtivo,
+            data: new Date().toLocaleString("pt-BR"),
+            tipo,
+            descricao
+          });
+
+          localStorage.setItem("riscos", JSON.stringify(riscos));
+          document.getElementById("descricaoRisco").value = "";
+          carregarRiscos();
+        }
+
+        function carregarRiscos() {
+          const tbody = document.getElementById("listaRiscos");
+          if (!tbody) return;
+
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const todos = JSON.parse(localStorage.getItem("riscos") || "[]");
+          const riscos = navioAtivo ? todos.filter(r => r.navio === navioAtivo) : [];
+
+          tbody.innerHTML = riscos.map(r => `
+            <tr>
+              <td>${r.data}</td>
+              <td>${r.tipo}</td>
+              <td>${r.descricao}</td>
+            </tr>
+          `).join("");
+        }
+
+        function registrarOcorrencia() {
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          if (!navioAtivo) {
+            alert("Selecione um navio antes de registrar a ocorrência.");
+            return;
+          }
+
+          const descricao = document.getElementById("descricao").value.trim();
+
+          if (!descricao) {
+            alert("Preencha a descrição da ocorrência.");
+            return;
+          }
+
+          const ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
+          ocorrencias.push({
+            navio: navioAtivo,
+            data: new Date().toLocaleString("pt-BR"),
+            descricao
+          });
+
+          localStorage.setItem("ocorrencias", JSON.stringify(ocorrencias));
+          document.getElementById("descricao").value = "";
+          carregarOcorrencias();
+        }
+
+        function carregarOcorrencias() {
+          const tbody = document.getElementById("listaOcorrencias");
+          if (!tbody) return;
+
+          const navioAtivo = localStorage.getItem("navioAtivo");
+          const todos = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
+          const ocorrencias = navioAtivo ? todos.filter(o => o.navio === navioAtivo) : [];
+
+          tbody.innerHTML = ocorrencias.map(o => `
+            <tr>
+              <td>${o.data}</td>
+              <td>${o.descricao}</td>
+            </tr>
+          `).join("");
+
+          const elTotal = document.getElementById("totalOcorrencias");
+          if (elTotal) elTotal.innerText = ocorrencias.length;
+        }
+
+        window.onload = function() {
+          verificarSessao();
+        };
+
+        function toggleSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const btnAbrir = document.getElementById("btnAbrirSidebar");
+
+          if (!sidebar) return;
+
+          sidebar.classList.toggle("recolhida");
+          document.body.classList.toggle("menu-recolhido");
+
+          // Alterna o botão flutuante de reabrir
+          if (sidebar.classList.contains("recolhida")) {
+            if (btnAbrir) btnAbrir.classList.remove("oculto");
+          } else {
+            if (btnAbrir) btnAbrir.classList.add("oculto");
+          }
+        }
+    </script>
+    <!-- ==========================================
+         FIM DO SCRIPT
+         ========================================== -->
 </body>
 </html>
