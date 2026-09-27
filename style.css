@@ -12,14 +12,16 @@ body {
     background-color: #f4f6f9;
     min-height: 100vh;
     color: #333333;
+    overflow-x: hidden;
 }
 
+/* CLASSE UNIVERSAL PARA OCULTAR ELEMENTOS */
 .oculto {
     display: none !important;
 }
 
 /* ==========================================
-   2. TELA DE LOGIN
+   2. TELA DE LOGIN (SOBREPOSIÇÃO COMPLETA)
    ========================================== */
 #login {
     position: fixed;
@@ -78,7 +80,7 @@ body {
 }
 
 /* ==========================================
-   3. ESTRUTURA PRINCIPAL E SIDEBAR
+   3. ESTRUTURA PRINCIPAL DO SISTEMA (#sistema)
    ========================================== */
 #sistema {
     display: flex;
@@ -86,6 +88,7 @@ body {
     min-height: 100vh;
 }
 
+/* BARRA LATERAL (SIDEBAR) */
 .sidebar {
     width: 260px;
     min-width: 260px;
@@ -96,22 +99,18 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition: all 0.3s ease-in-out;
     position: relative;
     z-index: 100;
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 
-/* ESTADO RECOLHIDO DA SIDEBAR (SEM SOBRAS LATERAIS) */
+/* RECUO TOTAL: ELIMINA 100% A FAIXA AZUL LATERAL */
 .sidebar.recolhida {
-    margin-left: -260px !important;
-    min-width: 0 !important;
-    width: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    overflow: hidden !important;
+    display: none !important;
 }
 
+/* CABEÇALHO DA SIDEBAR */
 .sidebar-header {
     display: flex;
     justify-content: space-between;
@@ -126,6 +125,7 @@ body {
     white-space: nowrap;
 }
 
+/* BOTÃO DE RECUAR NA SIDEBAR (❮) */
 .btn-toggle {
     background: rgba(255, 255, 255, 0.2);
     border: none;
@@ -141,28 +141,30 @@ body {
     background: rgba(255, 255, 255, 0.4);
 }
 
+/* BOTÃO FLUTUANTE DE REABRIR (≡) */
 .btn-toggle-floating {
     position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 1000;
+    top: 15px;
+    left: 15px;
+    z-index: 9999;
     background-color: #003366;
     color: #ffffff;
     border: none;
-    padding: 8px 14px;
+    padding: 10px 14px;
     border-radius: 6px;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     width: auto !important;
     transition: all 0.2s ease;
 }
 
 .btn-toggle-floating:hover {
     background-color: #002244;
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
+/* CARD DE USUÁRIO LOGADO */
 .user-card {
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;
@@ -182,6 +184,7 @@ body {
     margin-top: 2px;
 }
 
+/* BOTÕES DE NAVEGAÇÃO DA SIDEBAR */
 .sidebar button {
     background-color: #004080;
     color: #ffffff;
@@ -202,7 +205,7 @@ body {
 }
 
 /* ==========================================
-   4. ÁREA PRINCIPAL (TELAS & DASHBOARD)
+   4. ÁREA PRINCIPAL (TELAS)
    ========================================== */
 .tela {
     flex: 1;
@@ -210,114 +213,133 @@ body {
     overflow-y: auto;
     background-color: #f4f6f9;
     box-sizing: border-box;
+    width: 100%;
 }
 
-/* TÍTULOS DAS TELAS */
-.tela h1, .tela h2 {
+.tela h1 {
     color: #003366;
     margin-bottom: 20px;
     font-size: 1.8rem;
     font-weight: 700;
 }
 
-/* BARRA SUPERIOR DE FILTRO / SELEÇÃO DE NAVIO */
-.filtro-navio, .header-select, .top-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #333333;
-}
-
 .tela select, select {
-    padding: 8px 12px;
+    padding: 8px 14px;
     border: 1px solid #cccccc;
     border-radius: 6px;
     background-color: #ffffff;
     font-size: 0.95rem;
-    color: #333333;
+    color: #003366;
+    font-weight: 600;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.tela select:focus, select:focus {
-    border-color: #003366;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 /* ==========================================
-   5. CARDS DE DASHBOARD E STATUS OPERACIONAL
+   5. CARDS DO DASHBOARD & STATUS OPERACIONAL
    ========================================== */
-/* CARDS BRANCOS DE CONTEÚDO E STATUS */
-.card, .card-status, .dashboard-card, .box-status, .card-destaque {
+
+/* CARD PRINCIPAL DO STATUS DA OPERAÇÃO */
+.card, .card-status, .dashboard-card, .status-container, .box-status, #cardStatus,
+#dashboard > div:not(.cards-grid):not(.dashboard-cards):not(.metrics-grid) {
     background-color: #ffffff;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-top: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     border: 1px solid #e2e8f0;
     text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card:hover, .card-status:hover, .dashboard-card:hover {
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-}
-
-.card-status h3, .card h3, .dashboard-card h3 {
-    font-size: 0.95rem;
-    color: #666666;
+/* TÍTULOS E TEXTOS DENTRO DO CARD DE STATUS */
+.card h3, .card-status h3, .dashboard-card h3, #dashboard h3 {
+    font-size: 0.9rem;
+    color: #64748b;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
-.card-status h1, .card h1, .status-titulo {
-    font-size: 2.2rem;
+.card h1, .card h2, .card-status h1, .card-status h2, #dashboard h2 {
     color: #003366;
+    font-size: 2rem;
     font-weight: 800;
-    margin: 10px 0;
+    margin: 8px 0 15px 0;
 }
 
-.card-status p, .card p {
-    color: #555555;
+.card p, .card-status p, #dashboard p {
+    color: #475569;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+/* BOTÃO DE CONCLUIR ETAPA */
+.btn-acao, .btn-concluir, #btnConcluirEtapa, .card button, #dashboard button {
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 700;
     font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 3px 8px rgba(0, 51, 102, 0.2);
+    margin-top: 10px;
 }
 
-/* GRID DE MÉTRICAS (MÁQUINAS / CADASTROS / ETAPAS) */
-.dashboard-cards, .cards-grid, .metrics-grid {
+.btn-acao:hover, .btn-concluir:hover, #btnConcluirEtapa:hover, .card button:hover, #dashboard button:hover {
+    background-color: #002244;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 51, 102, 0.3);
+}
+
+/* GRID DE MÉTRICAS (NAVIOS, OCORRÊNCIAS, ETAPAS) */
+.dashboard-cards, .cards-grid, .metrics-grid, .grid-metricas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
     margin-top: 25px;
 }
 
-.card-metrica, .metric-card {
+/* CARD INDIVIDUAL DE MÉTRICA */
+.card-metrica, .metric-card, .dashboard-card-item, 
+.cards-grid > div, .dashboard-cards > div, .metrics-grid > div {
     background-color: #ffffff;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 22px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     border: 1px solid #e2e8f0;
     transition: all 0.25s ease;
 }
 
-.card-metrica:hover, .metric-card:hover {
+.card-metrica:hover, .metric-card:hover, .cards-grid > div:hover, .dashboard-cards > div:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
 }
 
-.card-metrica h2, .metric-card .numero, .card-metrica .valor {
-    font-size: 2.2rem;
+/* NÚMEROS DAS MÉTRICAS */
+.card-metrica h2, .card-metrica h1, .metric-card .numero, 
+.cards-grid > div h2, .cards-grid > div h1, .dashboard-cards > div h2, .dashboard-cards > div h1 {
+    font-size: 2.4rem;
     color: #003366;
     font-weight: 800;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    line-height: 1.1;
 }
 
-.card-metrica p, .metric-card .label {
-    font-size: 0.88rem;
-    color: #666666;
+/* LEGENDAS DAS MÉTRICAS */
+.card-metrica p, .metric-card .label, 
+.cards-grid > div p, .dashboard-cards > div p {
+    font-size: 0.9rem;
+    color: #64748b;
     font-weight: 600;
 }
 
@@ -374,28 +396,8 @@ body {
 }
 
 /* ==========================================
-   7. BOTÕES E FORMULÁRIOS DAS TELAS
+   7. FORMULÁRIOS, INPUTS E TABELAS
    ========================================== */
-.tela button, button.btn-acao, button.btn-salvar, .btn-concluir {
-    background-color: #003366;
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-block;
-    margin-top: 10px;
-}
-
-.tela button:hover, button.btn-acao:hover, button.btn-salvar:hover, .btn-concluir:hover {
-    background-color: #002244;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
 .tela input, .tela textarea {
     width: 100%;
     padding: 10px 12px;
@@ -407,9 +409,6 @@ body {
     font-size: 0.95rem;
 }
 
-/* ==========================================
-   8. TABELAS E BADGES
-   ========================================== */
 table {
     width: 100%;
     border-collapse: collapse;
