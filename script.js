@@ -66,7 +66,7 @@ function selecionarNavioGlobal(nomeNavio) {
 }
 
 // ==========================================
-// AUTENTICAÇÃO E SESSÃO
+// AUTENTICAÇÃO E SESSÃO (CORRIGIDO)
 // ==========================================
 
 function fazerLogin() {
@@ -80,12 +80,18 @@ function fazerLogin() {
     return;
   }
 
+  // Salva o objeto do usuário no localStorage
   localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
   iniciarSistema();
 }
 
 function logout() {
   localStorage.removeItem("usuarioLogado");
+  
+  // Reseta a exibição do usuário
+  const txtUsuario = document.getElementById("usuarioLogadoTexto");
+  if (txtUsuario) txtUsuario.innerText = "Carregando...";
+
   document.getElementById("login").classList.remove("oculto");
   document.getElementById("sistema").classList.add("oculto");
   document.getElementById("usuario").value = "";
@@ -93,24 +99,40 @@ function logout() {
 }
 
 function verificarSessao() {
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  if (usuarioLogado) {
+  const usuarioLogadoRaw = localStorage.getItem("usuarioLogado");
+  if (usuarioLogadoRaw) {
     iniciarSistema();
   }
 }
 
 function iniciarSistema() {
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  let usuarioLogado = null;
+  
+  try {
+    usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  } catch (e) {
+    console.error("Erro ao ler usuarioLogado do localStorage", e);
+  }
+
+  // Se não houver usuário logado válido, não avança
+  if (!usuarioLogado || !usuarioLogado.usuario) {
+    logout();
+    return;
+  }
+
   document.getElementById("login").classList.add("oculto");
   document.getElementById("sistema").classList.remove("oculto");
 
+  // ATUALIZA O NOME E SETOR DO USUÁRIO LOGADO NA SIDEBAR
   const txtUsuario = document.getElementById("usuarioLogadoTexto");
-  if (txtUsuario && usuarioLogado) {
-    txtUsuario.innerText = `${usuarioLogado.usuario.toUpperCase()} (${usuarioLogado.area})`;
+  if (txtUsuario) {
+    const nome = usuarioLogado.usuario.toUpperCase();
+    const area = usuarioLogado.area || "GERAL";
+    txtUsuario.innerText = `${nome} (${area})`;
   }
 
   const usrResp = document.getElementById("usuarioResponsavel");
-  if (usrResp && usuarioLogado) {
+  if (usrResp) {
     usrResp.innerText = usuarioLogado.usuario.toUpperCase();
   }
 
