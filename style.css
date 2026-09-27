@@ -1,5 +1,5 @@
 /* ==========================================
-   1. RESET GLOBAL E ESTRUTURA BASE
+   1. RESET GLOBAL E BASE
    ========================================== */
 * {
     margin: 0;
@@ -20,7 +20,7 @@ body {
 }
 
 /* ==========================================
-   2. TELA DE LOGIN (SOBREPOSIÇÃO COMPLETA)
+   2. TELA DE LOGIN (SOBREPOSIÇÃO TOTAL)
    ========================================== */
 #login {
     position: fixed;
@@ -70,15 +70,16 @@ body {
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
 
 .login-box button:hover {
     background-color: #002244;
+    transform: translateY(-2px);
 }
 
 /* ==========================================
-   3. ESTRUTURA PRINCIPAL DO SISTEMA (#sistema)
+   3. ESTRUTURA PRINCIPAL DO SISTEMA
    ========================================== */
 #sistema {
     display: flex;
@@ -86,9 +87,7 @@ body {
     min-height: 100vh;
 }
 
-/* ==========================================
-   4. BARRA LATERAL (SIDEBAR) & RECUO TOTAL
-   ========================================== */
+/* BARRA LATERAL (SIDEBAR) */
 .sidebar {
     width: 260px;
     min-width: 260px;
@@ -105,7 +104,7 @@ body {
     box-sizing: border-box;
 }
 
-/* ESTADO RECOLHIDO - ZERO SOBRAS E ZERO FAIXA AZUL */
+/* ESTADO RECOLHIDO DA SIDEBAR (SEM SOBRAS) */
 .sidebar.recolhida {
     margin-left: -260px !important;
     min-width: 0 !important;
@@ -139,10 +138,11 @@ body {
     cursor: pointer;
     padding: 6px 10px;
     border-radius: 4px;
+    transition: background 0.2s;
 }
 
 .btn-toggle:hover {
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* BOTÃO FLUTUANTE DE REABRIR (≡) */
@@ -160,10 +160,12 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     width: auto !important;
+    transition: all 0.2s ease;
 }
 
 .btn-toggle-floating:hover {
     background-color: #002244;
+    transform: scale(1.05);
 }
 
 /* CARD DE USUÁRIO LOGADO */
@@ -186,7 +188,7 @@ body {
     margin-top: 2px;
 }
 
-/* BOTÕES DE NAVEGAÇÃO DA SIDEBAR */
+/* BOTÕES DA SIDEBAR COM REAÇÃO AO PASSAR O MOUSE */
 .sidebar button {
     background-color: #004080;
     color: #ffffff;
@@ -196,22 +198,108 @@ body {
     text-align: left;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: background 0.2s;
+    transition: all 0.2s ease-in-out;
     white-space: nowrap;
 }
 
 .sidebar button:hover {
     background-color: #0059b3;
+    transform: translateX(4px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* ==========================================
-   5. ÁREA DE CONTEÚDO PRINCIPAL (TELAS)
+   4. ÁREA PRINCIPAL E DASHBOARD
    ========================================== */
 .tela {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
-    transition: margin-left 0.3s ease-in-out;
+}
+
+/* GRID DE CARDS DO DASHBOARD */
+.dashboard-cards, .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card-metrica, .dashboard-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.25s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.card-metrica:hover, .dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================
+   5. FLUXO OPERACIONAL (GRID DE ETAPAS E CORES)
+   ========================================== */
+.grid-fluxo, #gridFluxo, .fluxo-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* CARD INDIVIDUAL DA ETAPA DO FLUXO */
+.etapa-card, .card-fluxo, .workflow-etapa, [id^="e"] {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 18px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-left: 6px solid #cccccc;
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 85px;
+}
+
+/* REAÇÃO AO DESLIZAR O MOUSE SOBRE A ETAPA */
+.etapa-card:hover, .card-fluxo:hover, .workflow-etapa:hover, [id^="e"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* MUDANÇA DE CORES CONFORME STATUS DA ETAPA */
+.concluido, .etapa-card.concluido, [id^="e"].concluido {
+    background-color: #d4edda !important;
+    border-left-color: #28a745 !important;
+    color: #155724 !important;
+}
+
+.ativo, .etapa-card.ativo, [id^="e"].ativo {
+    background-color: #fff3cd !important;
+    border-left-color: #ffc107 !important;
+    color: #856404 !important;
+}
+
+.pendente, .etapa-card.pendente, [id^="e"].pendente {
+    background-color: #f8f9fa !important;
+    border-left-color: #dee2e6 !important;
+    color: #888888 !important;
+}
+
+/* DETALHES INFORMATIVOS DO CARD DE FLUXO */
+.etapa-detalhe, [id$="_detalhe"] {
+    font-size: 0.75rem;
+    font-weight: normal;
+    margin-top: 6px;
+    color: #555555;
 }
 
 /* ==========================================
@@ -224,7 +312,7 @@ table {
     background-color: #ffffff;
     border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 th, td {
@@ -239,8 +327,9 @@ th {
     font-weight: 600;
 }
 
+/* Destaque ao passar o mouse na tabela */
 tr:hover {
-    background-color: #f9f9f9;
+    background-color: #f1f5f9;
 }
 
 /* BADGES DE STATUS (CAMINHÕES) */
@@ -255,7 +344,7 @@ tr:hover {
 .badge-dispensado { background-color: #e2e3e5; color: #383d41; }
 .badge-quebrado { background-color: #f8d7da; color: #721c24; }
 
-/* BOTÕES DE STATUS */
+/* BOTÕES DE STATUS E FORMULÁRIOS */
 .btn-status {
     padding: 4px 8px;
     border: none;
@@ -263,13 +352,17 @@ tr:hover {
     font-size: 0.75rem;
     cursor: pointer;
     margin-right: 4px;
+    transition: transform 0.15s ease;
+}
+
+.btn-status:hover {
+    transform: scale(1.05);
 }
 
 .btn-trabalhando { background-color: #28a745; color: white; }
 .btn-dispensado { background-color: #6c757d; color: white; }
 .btn-quebrado { background-color: #dc3545; color: white; }
 
-/* INPUTS E ELEMENTOS DAS TELAS */
 .tela input, .tela select, .tela textarea {
     width: 100%;
     padding: 10px;
@@ -280,7 +373,7 @@ tr:hover {
     box-sizing: border-box;
 }
 
-.tela button.btn-salvar, .tela button.btn-acao {
+.tela button.btn-salvar, .tela button.btn-acao, button {
     background-color: #003366;
     color: white;
     border: none;
@@ -288,21 +381,11 @@ tr:hover {
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
+    transition: all 0.2s ease-in-out;
 }
 
-.tela button.btn-salvar:hover, .tela button.btn-acao:hover {
+.tela button.btn-salvar:hover, .tela button.btn-acao:hover, button:hover {
     background-color: #002244;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
-
-/* WORKFLOW */
-.workflow-etapa {
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    border-left: 5px solid #ccc;
-    background-color: #ffffff;
-}
-
-.workflow-etapa.concluido { border-left-color: #28a745; background-color: #e8f5e9; }
-.workflow-etapa.ativo { border-left-color: #ffc107; background-color: #fffde7; }
-.workflow-etapa.pendente { border-left-color: #6c757d; background-color: #f8f9fa; }
