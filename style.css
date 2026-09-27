@@ -351,3 +351,92 @@ body.menu-recolhido .tela {
 .tela {
     transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
+
+/* RESET DE MARGENS PADRÃO */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+/* CONTAINER PRINCIPAL FLEX */
+#sistema {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+}
+
+/* BARRA LATERAL NIVELADA AO TOPO E FUNDO */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background-color: #003366;
+    color: #ffffff;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease-in-out;
+    position: relative;
+    z-index: 100;
+}
+
+/* ANIMAÇÃO DE RECUO DA BARRA LATERAL */
+.sidebar.recolhida {
+    margin-left: -260px;
+}
+
+/* CABEÇALHO DA SIDEBAR */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+/* BOTÃO DE RECUAR (❮) */
+.btn-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+.btn-toggle:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* BOTÃO FLUTUANTE DE REABRIR (☰) */
+.btn-toggle-floating {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ÁREA DAS TELAS */
+.tela {
+    flex: 1;
+    padding: 30px;
+}
