@@ -708,3 +708,20 @@ function carregarOcorrencias() {
 window.onload = function() {
   verificarSessao();
 };
+
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const btnAbrir = document.getElementById("btnAbrirSidebar");
+
+  if (!sidebar) return;
+
+  sidebar.classList.toggle("recolhida");
+  document.body.classList.toggle("menu-recolhido");
+
+  // Alterna o botão flutuante de reabrir
+  if (sidebar.classList.contains("recolhida")) {
+    if (btnAbrir) btnAbrir.classList.remove("oculto");
+  } else {
+    if (btnAbrir) btnAbrir.classList.add("oculto");
+  }
+}
