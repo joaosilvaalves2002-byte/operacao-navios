@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operação de Navios</title>
     
-    <!-- ==========================================
-         INÍCIO DO CSS (ESTILOS)
-         ========================================== -->
     <style>
         /* ==========================================
            1. RESET GLOBAL E ESTRUTURA BASE
@@ -341,8 +338,7 @@
             color: #003366;
         }
 
-        .card, .card-status, .dashboard-card, .status-container, .box-status, #cardStatus,
-        #dashboard > div:not(.cards-grid):not(.dashboard-cards):not(.metrics-grid):not(.card-navio-selecao) {
+        .card, .card-status, .dashboard-card, .status-container, .box-status, #cardStatus {
             background-color: #ffffff;
             border-radius: 12px;
             padding: 25px;
@@ -407,7 +403,7 @@
             margin-top: 20px;
         }
 
-        .etapa-card, .card-fluxo, .workflow-etapa, .card-etapa, [id^="e"] {
+        .etapa-card, .card-fluxo, .workflow-etapa, .card-etapa {
             background-color: #ffffff;
             border-radius: 8px;
             padding: 18px 12px;
@@ -425,24 +421,24 @@
             min-height: 85px;
         }
 
-        .etapa-card:hover, .card-fluxo:hover, .workflow-etapa:hover, .card-etapa:hover, [id^="e"]:hover {
+        .etapa-card:hover, .card-fluxo:hover, .workflow-etapa:hover, .card-etapa:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
         }
 
-        .concluido, .etapa-card.concluido, .card-etapa.concluido, [id^="e"].concluido {
+        .concluido {
             background-color: #d4edda !important;
             border-left-color: #28a745 !important;
             color: #155724 !important;
         }
 
-        .ativo, .etapa-card.ativo, .card-etapa.ativo, [id^="e"].ativo {
+        .ativo {
             background-color: #fff3cd !important;
             border-left-color: #ffc107 !important;
             color: #856404 !important;
         }
 
-        .pendente, .etapa-card.pendente, .card-etapa.pendente, [id^="e"].pendente {
+        .pendente {
             background-color: #f8f9fa !important;
             border-left-color: #dee2e6 !important;
             color: #888888 !important;
@@ -499,11 +495,7 @@
         .badge-dispensado { background-color: #e2e3e5; color: #383d41; }
         .badge-quebrado { background-color: #f8d7da; color: #721c24; }
 
-        /* GRID DE MÉTRICAS DA DASHBOARD */
-        .cards-grid, 
-        .dashboard-cards, 
-        .metrics-grid, 
-        .grid-metricas {
+        .cards-grid {
             display: grid !important;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
             gap: 20px !important;
@@ -512,12 +504,7 @@
             box-sizing: border-box;
         }
 
-        .card-metrica, 
-        .metric-card, 
-        .dashboard-card-item, 
-        .cards-grid > div, 
-        .dashboard-cards > div, 
-        .metrics-grid > div {
+        .card-metrica {
             background-color: #ffffff;
             border-radius: 10px;
             padding: 20px 15px;
@@ -532,13 +519,13 @@
             transition: all 0.25s ease;
         }
         
-        .card-metrica:hover, .cards-grid > div:hover {
+        .card-metrica:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             border-color: #cbd5e1;
         }
 
-        .card-metrica h2, .cards-grid > div h2, .dashboard-cards > div h2 {
+        .card-metrica h2 {
             font-size: 2.2rem;
             color: #003366;
             font-weight: 800;
@@ -546,7 +533,7 @@
             line-height: 1.1;
         }
 
-        .card-metrica p, .cards-grid > div p, .dashboard-cards > div p {
+        .card-metrica p {
             font-size: 0.85rem;
             color: #64748b;
             font-weight: 600;
@@ -575,9 +562,6 @@
             transform: translateY(0);
         }
 
-        /* ==========================================
-           8. ADAPTAÇÕES RESPONSIVAS PARA CELULAR
-           ========================================== */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -606,7 +590,7 @@
 
             .tela h1 {
                 font-size: 1.4rem;
-                margin-top: 38px; /* Evita sobreposição com o botão flutuante */
+                margin-top: 38px;
             }
 
             .card-navio-selecao {
@@ -634,19 +618,16 @@
             }
 
             .tela input, .tela select, .tela textarea, .login-box input {
-                font-size: 16px !important; /* Previne auto-zoom indesejado no Safari iOS ao focar inputs */
+                font-size: 16px !important;
             }
         }
     </style>
-    <!-- ==========================================
-         FIM DO CSS
-         ========================================== -->
 </head>
 <body>
 
-    <!-- ==========================================
-         INÍCIO DO HTML (ESTRUTURA)
-         ========================================== -->
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">Operação realizada com sucesso!</div>
+
     <!-- TELA DE LOGIN -->
     <div id="login">
         <div class="login-box">
@@ -774,6 +755,7 @@
                     <div class="card">
                         <h3>Etapa Atual Designada</h3>
                         <h2 id="tarefaAtual">Selecione um navio</h2>
+                        <p style="margin-top:10px;">Setor Responsável: <strong id="tarefaSetorResponsavel">-</strong></p>
                         <br>
                         <button onclick="concluirEtapa()">Concluir Minha Tarefa</button>
                     </div>
@@ -891,28 +873,13 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <h1>Notify / Damage</h1>
+                    <h1>Notify / Damage (Riscos e Avarias)</h1>
                     <div class="card">
-                        <select id="tipoRisco">
-                            <option value="Notify">Notify (Aviso)</option>
-                            <option value="Damage">Damage (Avaria)</option>
-                        </select>
-                        <textarea id="descricaoRisco" placeholder="Descrição detalhada da ocorrência/avaria"></textarea>
-                        <button class="btn-acao" onclick="registrarRisco()">Registrar</button>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Tipo</th>
-                                    <th>Descrição</th>
-                                </tr>
-                            </thead>
-                            <tbody id="listaRiscos">
-                                <tr><td colspan="3" style="text-align:center;">Nenhum registro encontrado</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="form-group">
+                            <label for="riscosObs">Registro de Notificações de Avarias:</label>
+                            <textarea id="riscosObs" rows="4" placeholder="Descreva eventuais avarias ou notificações de risco..."></textarea>
+                        </div>
+                        <button type="button" class="btn-salvar" onclick="salvarRiscos()">Salvar Registro de Danos</button>
                     </div>
                 </div>
 
@@ -922,83 +889,8 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <h1>Fluxo Operacional de Navios</h1>
-                    <div class="card">
-                        <h3>Acompanhamento do Processo (14 Etapas)</h3>
-                        <p>Acompanhe e gerencie as etapas operacionais em tempo real.</p>
-                    </div>
-                    <div class="etapas-grid" id="gridFluxo">
-                        <div id="e1" class="etapa-card">
-                            <strong>1. Manifesto Conferido</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: DOCUMENTAL</small>
-                            <span id="e1_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e2" class="etapa-card">
-                            <strong>2. Carga Inserida Sistema</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: PLANEJAMENTO</small>
-                            <span id="e2_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e3" class="etapa-card">
-                            <strong>3. Remoção Pátio</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: PLANEJAMENTO</small>
-                            <span id="e3_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e4" class="etapa-card">
-                            <strong>4. Aviso Atracação</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: PLANEJAMENTO</small>
-                            <span id="e4_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e5" class="etapa-card">
-                            <strong>5. Atracação</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: OPERACIONAL</small>
-                            <span id="e5_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e6" class="etapa-card">
-                            <strong>6. Guaritas Posicionadas</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: OPERACIONAL</small>
-                            <span id="e6_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e7" class="etapa-card">
-                            <strong>7. Vistoria SST</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: SST</small>
-                            <span id="e7_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e8" class="etapa-card">
-                            <strong>8. Inspeção Patrimonial</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: PATRIMONIAL</small>
-                            <span id="e8_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e9" class="etapa-card">
-                            <strong>9. Checklist Caminhões</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: OPERACIONAL</small>
-                            <span id="e9_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e10" class="etapa-card">
-                            <strong>10. DDS</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: SST</small>
-                            <span id="e10_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e11" class="etapa-card">
-                            <strong>11. Operação</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: OPERACIONAL</small>
-                            <span id="e11_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e12" class="etapa-card">
-                            <strong>12. Documentação Saída</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: PLANEJAMENTO</small>
-                            <span id="e12_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e13" class="etapa-card">
-                            <strong>13. Visita Final</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: PLANEJAMENTO</small>
-                            <span id="e13_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                        <div id="e14" class="etapa-card">
-                            <strong>14. Desatracação</strong>
-                            <small style="color: #666; margin-top: 4px; display: block;">Respon.: OPERACIONAL</small>
-                            <span id="e14_detalhe" style="font-size: 0.8rem; margin-top: 6px; font-weight: normal;">Pendente</span>
-                        </div>
-                    </div>
+                    <h1>Fluxo Operacional</h1>
+                    <div id="gridFluxo" class="etapas-grid"></div>
                 </div>
 
                 <!-- OCORRÊNCIAS -->
@@ -1007,21 +899,22 @@
                         <label><strong>Navio Selecionado:</strong></label>
                         <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
                     </div>
-                    <h1>Registro de Ocorrências</h1>
+                    <h1>Ocorrências Operacionais</h1>
                     <div class="card">
-                        <textarea id="descricao" placeholder="Descreva a ocorrência geral do turno"></textarea>
-                        <button class="btn-acao" onclick="registrarOcorrencia()">Registrar Ocorrência</button>
+                        <textarea id="ocorrenciaTexto" rows="3" placeholder="Descreva a ocorrência registrada..."></textarea>
+                        <button class="btn-acao" onclick="salvarOcorrencia()">Registrar Ocorrência</button>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Data/Hora</th>
                                     <th>Descrição</th>
+                                    <th>Usuário</th>
+                                    <th>Data/Hora</th>
                                 </tr>
                             </thead>
                             <tbody id="listaOcorrencias">
-                                <tr><td colspan="2" style="text-align:center;">Nenhuma ocorrência registrada</td></tr>
+                                <tr><td colspan="3" style="text-align:center;">Nenhuma ocorrência registrada</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1030,851 +923,557 @@
             </div>
         </main>
     </div>
-    <!-- ==========================================
-         FIM DO HTML
-         ========================================== -->
 
     <!-- ==========================================
-         INÍCIO DO SCRIPT (JAVASCRIPT)
+         INÍCIO DO JAVASCRIPT
          ========================================== -->
     <script>
-        // ==========================================
-        // INTEGRAÇÃO COM API AZURE
-        // ==========================================
-
-        // Exemplo de como carregar/salvar dados pela API no Azure
-        async function salvarDados(dados) {
-          try {
-            await fetch('/api/salvarOperacao', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(dados)
-            });
-          } catch (error) {
-            console.error("Erro ao salvar dados na API Azure:", error);
-          }
-        }
-
-        // ==========================================
-        // CONFIGURAÇÃO DE USUÁRIOS E WORKFLOW
-        // ==========================================
-
-        const usuarios = [
-          { usuario: "admin", senha: "123", area: "TODAS" },
-          { usuario: "documental", senha: "123", area: "DOCUMENTAL" },
-          { usuario: "planejamento", senha: "123", area: "PLANEJAMENTO" },
-          { usuario: "operacional", senha: "123", area: "OPERACIONAL" },
-          { usuario: "sst", senha: "123", area: "SST" },
-          { usuario: "patrimonial", senha: "123", area: "PATRIMONIAL" }
+        // CONFIGURAÇÕES DAS ETAPAS DO FLUXO
+        const ETAPAS_FLUXO = [
+            { id: 1, nome: "Atracação do Navio", setor: "Operações" },
+            { id: 2, nome: "Inspeção Inicial e Reunião", setor: "SST" },
+            { id: 3, nome: "Liberação Patrimonial Inicial", setor: "Seg. Patrimonial" },
+            { id: 4, nome: "Vistoria Notificação de Danos", setor: "Notify / Damage" },
+            { id: 5, nome: "Inspeção de Equipamentos e DDS", setor: "SST" },
+            { id: 6, nome: "Início da Operação de Carga/Descarga", setor: "Operações" },
+            { id: 7, nome: "Controle e Fluxo de Caminhões", setor: "Logística" },
+            { id: 8, nome: "Acompanhamento Operacional", setor: "Operações" },
+            { id: 9, nome: "Ronda Patrimonial de Operação", setor: "Seg. Patrimonial" },
+            { id: 10, nome: "Relatório de Avarias em Operação", setor: "Notify / Damage" },
+            { id: 11, nome: "Vistoria Final de Segurança", setor: "SST" },
+            { id: 12, nome: "Término da Operação", setor: "Operações" },
+            { id: 13, nome: "Emissão de Documentação Final", setor: "Documentação" },
+            { id: 14, nome: "Desatracação do Navio", setor: "Operações" }
         ];
 
-        const workflow = [
-          { id: 1, etapa: "Manifesto Conferido", responsavel: "DOCUMENTAL" },
-          { id: 2, etapa: "Carga Inserida Sistema", responsavel: "PLANEJAMENTO" },
-          { id: 3, etapa: "Remoção Pátio", responsavel: "PLANEJAMENTO" },
-          { id: 4, etapa: "Aviso Atracação", responsavel: "PLANEJAMENTO" },
-          { id: 5, etapa: "Atracação", responsavel: "OPERACIONAL" },
-          { id: 6, etapa: "Guaritas Posicionadas", responsavel: "OPERACIONAL" },
-          { id: 7, etapa: "Vistoria SST", responsavel: "SST" },
-          { id: 8, etapa: "Inspeção Patrimonial", responsavel: "PATRIMONIAL" },
-          { id: 9, etapa: "Checklist Caminhões", responsavel: "OPERACIONAL" },
-          { id: 10, etapa: "DDS", responsavel: "SST" },
-          { id: 11, etapa: "Operação", responsavel: "OPERACIONAL" },
-          { id: 12, etapa: "Documentação Saída", responsavel: "PLANEJAMENTO" },
-          { id: 13, etapa: "Visita Final", responsavel: "PLANEJAMENTO" },
-          { id: 14, etapa: "Desatracação", responsavel: "OPERACIONAL" }
-        ];
+        // ESTADO GLOBAL DA APLICAÇÃO
+        let usuarioAtual = null;
+        let navioSelecionadoId = null;
+        let navios = JSON.parse(localStorage.getItem("navios") || "[]");
+        let dadosPatrimonial = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
+        let dadosSST = JSON.parse(localStorage.getItem("dadosSST") || "{}");
+        let dadosRiscos = JSON.parse(localStorage.getItem("dadosRiscos") || "{}");
+        let historicoEtapas = JSON.parse(localStorage.getItem("historicoEtapas") || "{}");
+        let ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "{}");
+        let caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "{}");
 
-        // ==========================================
-        // SELEÇÃO E GERENCIAMENTO DE NAVIOS
-        // ==========================================
-
-        function carregarSeletoresNavio() {
-          const navios = JSON.parse(localStorage.getItem("navios") || "[]");
-          const navioAtivo = localStorage.getItem("navioAtivo") || "";
-          const seletores = document.querySelectorAll(".seletor-navio");
-
-          seletores.forEach(select => {
-            let html = '<option value="">-- Selecione um Navio --</option>';
-            navios.forEach(n => {
-              const selected = n.navio === navioAtivo ? "selected" : "";
-              html += `<option value="${n.navio}" ${selected}>${n.navio} (${n.armador || 'Sem Armador'})</option>`;
-            });
-            select.innerHTML = html;
-          });
+        // EXIBIÇÃO DE TOAST
+        function mostrarToast(mensagem) {
+            const toast = document.getElementById("toast");
+            toast.innerText = mensagem;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
         }
 
-        function selecionarNavioGlobal(nomeNavio) {
-          localStorage.setItem("navioAtivo", nomeNavio);
-          
-          const seletores = document.querySelectorAll(".seletor-navio");
-          seletores.forEach(select => {
-            select.value = nomeNavio;
-          });
+        // CONTROLADOR DE SIDEBAR (MOBILE E DESKTOP)
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const btnFloating = document.getElementById("btnAbrirSidebar");
 
-          atualizarWorkflow();
-          atualizarTarefaAtual();
-          carregarHistorico();
-          carregarCaminhoes();
-          carregarRiscos();
-          carregarOcorrencias();
-          carregarPatrimonial();
-          carregarSST();
+            sidebar.classList.toggle("recolhida");
+            if (window.innerWidth <= 768) {
+                overlay.classList.toggle("ativo");
+            }
+            
+            if (sidebar.classList.contains("recolhida")) {
+                btnFloating.classList.remove("oculto");
+            } else {
+                btnFloating.classList.add("oculto");
+            }
         }
 
-        // ==========================================
-        // AUTENTICAÇÃO, SESSÃO E MONITOR DE INATIVIDADE
-        // ==========================================
-
-        let timerInatividade = null;
-        const TEMPO_INATIVIDADE_MS = 10 * 60 * 1000; // 10 minutos em milissegundos
-
-        function iniciarMonitorInatividade() {
-          const eventos = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-          eventos.forEach(evt => window.addEventListener(evt, resetarTimerInatividade));
-          resetarTimerInatividade();
-        }
-
-        function pararMonitorInatividade() {
-          if (timerInatividade) {
-            clearTimeout(timerInatividade);
-            timerInatividade = null;
-          }
-          const eventos = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-          eventos.forEach(evt => window.removeEventListener(evt, resetarTimerInatividade));
-        }
-
-        function resetarTimerInatividade() {
-          const sistema = document.getElementById("sistema");
-          if (!sistema || sistema.classList.contains("oculto")) return;
-
-          if (timerInatividade) clearTimeout(timerInatividade);
-          timerInatividade = setTimeout(expirarSessaoInatividade, TEMPO_INATIVIDADE_MS);
-        }
-
-        function expirarSessaoInatividade() {
-          logout();
-          mostrarMensagemLogin("Sessão expirada por inatividade (10 minutos). Faça login novamente.");
-        }
-
-        function mostrarMensagemLogin(msg) {
-          const elMsg = document.getElementById("mensagemLogin");
-          if (elMsg) {
-            elMsg.innerText = msg;
-            elMsg.classList.remove("oculto");
-          }
-        }
-
+        // LOGIN E AUTENTICAÇÃO
         function fazerLogin() {
-          const user = document.getElementById("usuario").value.trim();
-          const pass = document.getElementById("senha").value.trim();
+            const userIn = document.getElementById("usuario").value.trim();
+            const passIn = document.getElementById("senha").value.trim();
+            const msg = document.getElementById("mensagemLogin");
 
-          const encontrado = usuarios.find(u => u.usuario === user && u.senha === pass);
-
-          if (!encontrado) {
-            mostrarMensagemLogin("Usuário ou senha inválidos.");
-            return;
-          }
-
-          // Oculta avisos de login
-          const elMsg = document.getElementById("mensagemLogin");
-          if (elMsg) elMsg.classList.add("oculto");
-
-          sessionStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
-          iniciarSistema();
+            if (userIn && passIn) {
+                usuarioAtual = { nome: userIn, setor: "Operações" };
+                document.getElementById("usuarioLogadoTexto").innerText = userIn;
+                document.getElementById("login").classList.add("oculto");
+                document.getElementById("sistema").classList.remove("oculto");
+                msg.classList.add("oculto");
+                inicializarSistema();
+            } else {
+                msg.innerText = "Informe usuário e senha válidos!";
+                msg.classList.remove("oculto");
+            }
         }
 
         function logout() {
-          pararMonitorInatividade();
-          sessionStorage.removeItem("usuarioLogado");
-          localStorage.removeItem("usuarioLogado");
-          
-          const txtUsuario = document.getElementById("usuarioLogadoTexto");
-          if (txtUsuario) txtUsuario.innerText = "Carregando...";
-
-          document.getElementById("login").classList.remove("oculto");
-          document.getElementById("sistema").classList.add("oculto");
-          document.getElementById("usuario").value = "";
-          document.getElementById("senha").value = "";
+            usuarioAtual = null;
+            document.getElementById("sistema").classList.add("oculto");
+            document.getElementById("login").classList.remove("oculto");
         }
 
-        function verificarSessao() {
-          // Garante que toda vez que abrir o link/recarregar a página, o usuário precisa logar
-          sessionStorage.removeItem("usuarioLogado");
-          localStorage.removeItem("usuarioLogado");
-
-          document.getElementById("login").classList.remove("oculto");
-          document.getElementById("sistema").classList.add("oculto");
-        }
-
-        function iniciarSistema() {
-          let usuarioLogado = null;
-          
-          try {
-            usuarioLogado = JSON.parse(sessionStorage.getItem("usuarioLogado"));
-          } catch (e) {
-            console.error("Erro ao ler usuarioLogado da sessão", e);
-          }
-
-          if (!usuarioLogado || !usuarioLogado.usuario) {
-            logout();
-            return;
-          }
-
-          document.getElementById("login").classList.add("oculto");
-          document.getElementById("sistema").classList.remove("oculto");
-
-          const txtUsuario = document.getElementById("usuarioLogadoTexto");
-          if (txtUsuario) {
-            const nome = usuarioLogado.usuario.toUpperCase();
-            const area = usuarioLogado.area || "GERAL";
-            txtUsuario.innerText = `${nome} (${area})`;
-          }
-
-          const usrResp = document.getElementById("usuarioResponsavel");
-          if (usrResp) {
-            usrResp.innerText = usuarioLogado.usuario.toUpperCase();
-          }
-
-          carregarNavios();
-          carregarSeletoresNavio();
-
-          // Recolhe a barra lateral por padrão em smartphones
-          if (window.innerWidth <= 768) {
-            const sidebar = document.getElementById("sidebar");
-            const btnAbrir = document.getElementById("btnAbrirSidebar");
-            if (sidebar) sidebar.classList.add("recolhida");
-            if (btnAbrir) btnAbrir.classList.remove("oculto");
-          }
-          
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (navioAtivo) {
-            selecionarNavioGlobal(navioAtivo);
-          } else {
-            atualizarWorkflow();
-          }
-
-          iniciarMonitorInatividade();
-          mostrarTela("dashboard");
-        }
-
-        // ==========================================
-        // NAVEGAÇÃO DE TELAS E PERMISSÕES DE ACESSO
-        // ==========================================
-
-        function mostrarTela(tela) {
-          // No celular, fecha a barra lateral automaticamente ao clicar em uma opção
-          if (window.innerWidth <= 768) {
-            const sidebar = document.getElementById("sidebar");
-            const overlay = document.getElementById("sidebarOverlay");
-            const btnAbrir = document.getElementById("btnAbrirSidebar");
-            if (sidebar && !sidebar.classList.contains("recolhida")) {
-              sidebar.classList.add("recolhida");
-              if (overlay) overlay.classList.remove("ativo");
-              if (btnAbrir) btnAbrir.classList.remove("oculto");
+        // INICIALIZAÇÃO E NAVEGAÇÃO DE TELAS
+        function inicializarSistema() {
+            atualizarSeletorNavios();
+            if (navios.length > 0 && !navioSelecionadoId) {
+                selecionarNavioGlobal(navios[0].id);
+            } else {
+                atualizarInterfaceNavio();
             }
-          }
-
-          const paginas = [
-            "dashboard", "historico", "tarefas", "navios", 
-            "caminhoes", "patrimonial", "sst", "riscos", "fluxo", "ocorrencias"
-          ];
-
-          paginas.forEach(p => {
-            const el = document.getElementById(p);
-            if (el) el.classList.add("oculto");
-          });
-
-          const telaAlvo = document.getElementById(tela);
-          if (telaAlvo) {
-            telaAlvo.classList.remove("oculto");
-            telaAlvo.scrollTop = 0; // Garante que a tela volte ao topo ao alternar de página
-          }
-
-          aplicarPermissoesCampos();
-
-          if (tela === "fluxo" || tela === "dashboard" || tela === "tarefas") {
-            atualizarWorkflow();
-            atualizarTarefaAtual();
-          }
-          if (tela === "historico") carregarHistorico();
-          if (tela === "patrimonial") carregarPatrimonial();
-          if (tela === "sst") carregarSST();
-          if (tela === "caminhoes") carregarCaminhoes();
-          if (tela === "riscos") carregarRiscos();
-          if (tela === "ocorrencias") carregarOcorrencias();
+            renderizarListaNavios();
         }
 
-        function aplicarPermissoesCampos() {
-          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-          if (!usuarioLogado) return;
-
-          const area = usuarioLogado.area;
-
-          // Permissões Patrimonial
-          const inputsPatrimonial = document.querySelectorAll("#patrimonial input, #patrimonial textarea, #patrimonial select:not(.seletor-navio), #patrimonial button.btn-salvar");
-          const podePatrimonial = (area === "PATRIMONIAL" || area === "TODAS");
-          inputsPatrimonial.forEach(el => { el.disabled = !podePatrimonial; });
-
-          // Permissões SST
-          const inputsSST = document.querySelectorAll("#sst input, #sst textarea, #sst select:not(.seletor-navio), #sst button.btn-salvar");
-          const podeSST = (area === "SST" || area === "TODAS");
-          inputsSST.forEach(el => { el.disabled = !podeSST; });
+        function mostrarTela(idTela) {
+            document.querySelectorAll(".tela").forEach(t => t.classList.add("oculto"));
+            const telaAlvo = document.getElementById(idTela);
+            if (telaAlvo) {
+                telaAlvo.classList.remove("oculto");
+            }
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById("sidebar");
+                if (!sidebar.classList.contains("recolhida")) {
+                    toggleSidebar();
+                }
+            }
         }
 
-        // ==========================================
-        // WORKFLOW E HISTÓRICO POR NAVIO
-        // ==========================================
-
-        function getWorkflowAtual() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) return 1;
-          return Number(localStorage.getItem(`workflow_${navioAtivo}`) || 1);
+        // GERENCIAMENTO DE NAVIOS
+        function atualizarSeletorNavios() {
+            const selectores = document.querySelectorAll(".seletor-navio");
+            selectores.forEach(select => {
+                select.innerHTML = "";
+                if (navios.length === 0) {
+                    select.innerHTML = '<option value="">Nenhum navio cadastrado</option>';
+                    return;
+                }
+                navios.forEach(n => {
+                    const opt = document.createElement("option");
+                    opt.value = n.id;
+                    opt.textContent = `${n.nome} (Viagem: ${n.viagem || 'N/A'})`;
+                    if (n.id === navioSelecionadoId) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            });
         }
 
-        function setWorkflowAtual(etapaId) {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (navioAtivo) {
-            localStorage.setItem(`workflow_${navioAtivo}`, etapaId);
-          }
+        function salvarNavio() {
+            const nome = document.getElementById("navio").value.trim();
+            const armador = document.getElementById("armador").value.trim();
+            const berco = document.getElementById("berco").value.trim();
+            const viagem = document.getElementById("viagem").value.trim();
+            const carga = document.getElementById("carga").value.trim();
+
+            if (!nome) {
+                alert("Por favor, preencha o nome do navio!");
+                return;
+            }
+
+            const novoNavio = {
+                id: "NAV-" + Date.now(),
+                nome, armador, berco, viagem, carga,
+                etapaAtualId: 1
+            };
+
+            navios.push(novoNavio);
+            localStorage.setItem("navios", JSON.stringify(navios));
+
+            // Sincronização com Backend Azure (Mantendo estrutura do servidor)
+            fetch('/api/navios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(novoNavio)
+            }).catch(() => console.log("Salvo no storage local (Azure offline/indisponível)"));
+
+            document.getElementById("navio").value = "";
+            document.getElementById("armador").value = "";
+            document.getElementById("berco").value = "";
+            document.getElementById("viagem").value = "";
+            document.getElementById("carga").value = "";
+
+            atualizarSeletorNavios();
+            renderizarListaNavios();
+            selecionarNavioGlobal(novoNavio.id);
+            mostrarToast("Navio cadastrado com sucesso!");
         }
 
-        function atualizarWorkflow() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const atual = getWorkflowAtual();
+        function renderizarListaNavios() {
+            const tbody = document.getElementById("listaNavios");
+            tbody.innerHTML = "";
+            if (navios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum navio cadastrado</td></tr>';
+                return;
+            }
+            navios.forEach(n => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${n.nome}</strong></td>
+                    <td>${n.armador || '-'}</td>
+                    <td>${n.berco || '-'}</td>
+                    <td>${n.viagem || '-'}</td>
+                    <td>${n.carga || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById("totalNavios").innerText = navios.length;
+        }
 
-          const todosHistoricos = JSON.parse(localStorage.getItem("historico") || "[]");
-          const historicoNavio = navioAtivo ? todosHistoricos.filter(h => h.navio === navioAtivo) : [];
+        // SELEÇÃO GLOBAL DO NAVIO E CARREGAMENTO DE DADOS (CORREÇÃO CHAVE)
+        function selecionarNavioGlobal(navioId) {
+            if (!navioId) return;
+            navioSelecionadoId = navioId;
+            
+            // Sincroniza todos os dropdowns de seleção
+            document.querySelectorAll(".seletor-navio").forEach(select => {
+                select.value = navioId;
+            });
 
-          workflow.forEach(w => {
-            const el = document.getElementById(`e${w.id}`);
-            if (el) {
-              el.classList.remove("concluido", "ativo", "pendente");
-              
-              if (navioAtivo) {
-                if (w.id < atual) {
-                  el.classList.add("concluido");
-                } else if (w.id === atual) {
-                  el.classList.add("ativo");
+            atualizarInterfaceNavio();
+            carregarPatrimonial();
+            carregarSST();
+            carregarRiscos();
+            carregarOcorrencias();
+            carregarCaminhoes();
+            carregarHistorico();
+        }
+
+        function obterNavioAtual() {
+            return navios.find(n => n.id === navioSelecionadoId);
+        }
+
+        function atualizarInterfaceNavio() {
+            const navio = obterNavioAtual();
+            if (!navio) {
+                document.getElementById("statusAtual").innerText = "Nenhum navio selecionado";
+                document.getElementById("responsavelAtual").innerText = "-";
+                document.getElementById("proximaArea").innerText = "-";
+                document.getElementById("tarefaAtual").innerText = "Selecione um navio";
+                document.getElementById("tarefaSetorResponsavel").innerText = "-";
+                document.getElementById("totalEtapas").innerText = "0 / 14";
+                renderizarFluxo();
+                return;
+            }
+
+            const etapaObj = ETAPAS_FLUXO.find(e => e.id === navio.etapaAtualId) || ETAPAS_FLUXO[0];
+            const proximaEtapaObj = ETAPAS_FLUXO.find(e => e.id === navio.etapaAtualId + 1);
+
+            // Dashboard
+            document.getElementById("statusAtual").innerText = `${etapaObj.id}. ${etapaObj.nome}`;
+            document.getElementById("responsavelAtual").innerText = etapaObj.setor;
+            document.getElementById("proximaArea").innerText = proximaEtapaObj ? proximaEtapaObj.setor : "Concluído";
+            document.getElementById("totalEtapas").innerText = `${navio.etapaAtualId - 1} / 14`;
+
+            // Aba Minhas Tarefas (Ajuste Solicitado)
+            document.getElementById("tarefaAtual").innerText = `${etapaObj.id}. ${etapaObj.nome}`;
+            document.getElementById("tarefaSetorResponsavel").innerText = etapaObj.setor;
+
+            renderizarFluxo();
+        }
+
+        // FLUXO OPERACIONAL E CONCLUSÃO DE TAREFAS
+        function renderizarFluxo() {
+            const container = document.getElementById("gridFluxo");
+            container.innerHTML = "";
+            const navio = obterNavioAtual();
+            const etapaAtualId = navio ? navio.etapaAtualId : 0;
+
+            ETAPAS_FLUXO.forEach(e => {
+                const card = document.createElement("div");
+                card.className = "etapa-card";
+                if (e.id < etapaAtualId) {
+                    card.classList.add("concluido");
+                } else if (e.id === etapaAtualId) {
+                    card.classList.add("ativo");
                 } else {
-                  el.classList.add("pendente");
+                    card.classList.add("pendente");
                 }
 
-                const infoEtapa = historicoNavio.find(h => h.etapa === w.etapa);
-                const elDet = document.getElementById(`e${w.id}_detalhe`);
-                if (elDet) {
-                  if (infoEtapa) {
-                    elDet.innerText = `Concluído por ${infoEtapa.usuario} em ${infoEtapa.data}`;
-                  } else if (w.id === atual) {
-                    elDet.innerText = "Em Andamento";
-                  } else {
-                    elDet.innerText = "Pendente";
-                  }
-                }
-              } else {
-                el.classList.add("pendente");
-              }
-            }
-          });
-
-          const elStatus = document.getElementById("statusAtual");
-          const elResp = document.getElementById("responsavelAtual");
-          const elProx = document.getElementById("proximaArea");
-          const elTotalEtapas = document.getElementById("totalEtapas");
-
-          if (!navioAtivo) {
-            if (elStatus) elStatus.innerText = "Nenhum Navio Selecionado";
-            if (elResp) elResp.innerText = "-";
-            if (elProx) elProx.innerText = "-";
-            if (elTotalEtapas) elTotalEtapas.innerText = "0 / 14";
-            return;
-          }
-
-          const etapaAtual = workflow.find(w => w.id === atual);
-          const proximaEtapa = workflow.find(w => w.id === atual + 1);
-
-          if (etapaAtual) {
-            if (elStatus) elStatus.innerText = etapaAtual.etapa;
-            if (elResp) elResp.innerText = etapaAtual.responsavel;
-          } else {
-            if (elStatus) elStatus.innerText = "Operação Concluída";
-            if (elResp) elResp.innerText = "NENHUM";
-          }
-
-          if (proximaEtapa) {
-            if (elProx) elProx.innerText = `${proximaEtapa.responsavel} (${proximaEtapa.etapa})`;
-          } else {
-            if (elProx) elProx.innerText = "Fim do Processo";
-          }
-
-          if (elTotalEtapas) {
-            const concluidas = Math.min(atual - 1, workflow.length);
-            elTotalEtapas.innerText = `${concluidas} / ${workflow.length}`;
-          }
+                card.innerHTML = `
+                    <div style="font-size:0.75rem; opacity:0.8;">ETAPA ${e.id}</div>
+                    <div style="margin: 5px 0;"><strong>${e.nome}</strong></div>
+                    <div style="font-size:0.8rem; color:#003366;">${e.setor}</div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         function concluirEtapa() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) {
-            alert("Por favor, selecione um navio antes de concluir uma etapa.");
-            return;
-          }
+            const navio = obterNavioAtual();
+            if (!navio) {
+                alert("Selecione um navio primeiro!");
+                return;
+            }
 
-          const atual = getWorkflowAtual();
+            if (navio.etapaAtualId > ETAPAS_FLUXO.length) {
+                alert("Todas as etapas deste navio já foram concluídas!");
+                return;
+            }
 
-          if (atual > workflow.length) {
-            alert("Todas as etapas do workflow já foram concluídas para este navio.");
-            return;
-          }
+            const etapaConcluida = ETAPAS_FLUXO.find(e => e.id === navio.etapaAtualId);
+            
+            // Grava Histórico
+            if (!historicoEtapas[navio.id]) historicoEtapas[navio.id] = [];
+            historicoEtapas[navio.id].unshift({
+                etapa: etapaConcluida.nome,
+                usuario: usuarioAtual ? usuarioAtual.nome : "Sistema",
+                setor: etapaConcluida.setor,
+                dataHora: new Date().toLocaleString("pt-BR")
+            });
+            localStorage.setItem("historicoEtapas", JSON.stringify(historicoEtapas));
 
-          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-          if (!usuarioLogado) return;
+            // Avança para a próxima etapa
+            navio.etapaAtualId += 1;
+            localStorage.setItem("navios", JSON.stringify(navios));
 
-          const etapa = workflow.find(w => w.id === atual);
-          if (!etapa) return;
+            // Envia para o Azure Backend
+            fetch(`/api/navios/${navio.id}/etapa`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ etapaAtualId: navio.etapaAtualId, historico: historicoEtapas[navio.id] })
+            }).catch(() => console.log("Atualizado via cache local (Azure offline)"));
 
-          if (usuarioLogado.area !== "TODAS" && etapa.responsavel !== usuarioLogado.area) {
-            alert(`Apenas o setor ${etapa.responsavel} pode concluir esta etapa.`);
-            return;
-          }
-
-          const historico = JSON.parse(localStorage.getItem("historico") || "[]");
-          historico.push({
-            id: historico.length + 1,
-            navio: navioAtivo,
-            etapa: etapa.etapa,
-            usuario: usuarioLogado.usuario,
-            area: usuarioLogado.area,
-            data: new Date().toLocaleString("pt-BR")
-          });
-
-          localStorage.setItem("historico", JSON.stringify(historico));
-          setWorkflowAtual(atual + 1);
-
-          // Sincroniza a conclusão da etapa com a API Azure
-          salvarDados({ tipo: 'concluirEtapa', navio: navioAtivo, etapa: etapa.etapa, usuario: usuarioLogado.usuario });
-
-          atualizarWorkflow();
-          atualizarTarefaAtual();
-          carregarHistorico();
-
-          alert(`Etapa "${etapa.etapa}" concluída com sucesso para o navio ${navioAtivo}!`);
-        }
-
-        function atualizarTarefaAtual() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const elTarefa = document.getElementById("tarefaAtual");
-          if (!elTarefa) return;
-
-          if (!navioAtivo) {
-            elTarefa.innerText = "Selecione um navio para visualizar as tarefas.";
-            return;
-          }
-
-          const atual = getWorkflowAtual();
-          const etapa = workflow.find(w => w.id === atual);
-          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-
-          if (!etapa) {
-            elTarefa.innerText = "Nenhuma tarefa pendente (Fluxo Finalizado).";
-            return;
-          }
-
-          if (usuarioLogado.area === "TODAS" || etapa.responsavel === usuarioLogado.area) {
-            elTarefa.innerText = `${etapa.etapa} (${etapa.responsavel})`;
-          } else {
-            elTarefa.innerText = `Aguardando setor ${etapa.responsavel} concluir a etapa "${etapa.etapa}".`;
-          }
+            atualizarInterfaceNavio();
+            carregarHistorico();
+            mostrarToast("Etapa concluída e avançada com sucesso!");
         }
 
         function carregarHistorico() {
-          const tbody = document.getElementById("listaHistorico");
-          if (!tbody) return;
+            const tbody = document.getElementById("listaHistorico");
+            tbody.innerHTML = "";
+            const lista = historicoEtapas[navioSelecionadoId] || [];
 
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const todosHistoricos = JSON.parse(localStorage.getItem("historico") || "[]");
-          const historico = navioAtivo ? todosHistoricos.filter(h => h.navio === navioAtivo) : [];
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum histórico registrado</td></tr>';
+                return;
+            }
 
-          let html = "";
-          historico.forEach((item, idx) => {
-            html += `
-              <tr>
-                <td>${item.etapa}</td>
-                <td>${item.usuario}</td>
-                <td>${item.area}</td>
-                <td>${item.data}</td>
-              </tr>
-            `;
-          });
-
-          tbody.innerHTML = html || `<tr><td colspan="4" style="text-align:center;">Nenhum histórico registrado para este navio.</td></tr>`;
+            lista.forEach(h => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${h.etapa}</strong></td>
+                    <td>${h.usuario}</td>
+                    <td>${h.setor}</td>
+                    <td>${h.dataHora}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // ==========================================
-        // SEGURANÇA PATRIMONIAL E SST
-        // ==========================================
-
+        // SEGURANÇA PATRIMONIAL (AJUSTE SOLICITADO)
         function salvarPatrimonial() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) {
-            alert("Selecione um navio ativo antes de salvar.");
-            return;
-          }
+            if (!navioSelecionadoId) {
+                alert("Selecione um navio para salvar as informações!");
+                return;
+            }
 
-          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-          if (usuarioLogado.area !== "PATRIMONIAL" && usuarioLogado.area !== "TODAS") {
-            alert("Apenas o setor Patrimonial tem permissão para alterar estes dados.");
-            return;
-          }
+            const status = document.getElementById("patrimonialStatus").value;
+            const obs = document.getElementById("patrimonialObs").value;
 
-          const obs = document.getElementById("patrimonialObs") ? document.getElementById("patrimonialObs").value : "";
-          const statusInspecao = document.getElementById("patrimonialStatus") ? document.getElementById("patrimonialStatus").value : "";
+            dadosPatrimonial[navioSelecionadoId] = { status, obs, dataAlteracao: new Date().toISOString() };
+            localStorage.setItem("dadosPatrimonial", JSON.stringify(dadosPatrimonial));
 
-          const dadosPatrimonial = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
-          dadosPatrimonial[navioAtivo] = {
-            statusInspecao,
-            obs,
-            usuario: usuarioLogado.usuario,
-            data: new Date().toLocaleString("pt-BR")
-          };
+            // Envio para o Azure Backend
+            fetch(`/api/patrimonial/${navioSelecionadoId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosPatrimonial[navioSelecionadoId])
+            }).catch(() => console.log("Dados patrimoniais gravados no storage Azure/Local"));
 
-          localStorage.setItem("dadosPatrimonial", JSON.stringify(dadosPatrimonial));
-          salvarDados({ tipo: 'patrimonial', navio: navioAtivo, dados: dadosPatrimonial[navioAtivo] });
-
-          alert(`Dados da Segurança Patrimonial salvos com sucesso para o navio ${navioAtivo}!`);
+            mostrarToast("Segurança Patrimonial salva com sucesso!");
         }
 
         function carregarPatrimonial() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const dados = JSON.parse(localStorage.getItem("dadosPatrimonial") || "{}");
-          const info = navioAtivo ? dados[navioAtivo] : null;
-
-          const elObs = document.getElementById("patrimonialObs");
-          const elStatus = document.getElementById("patrimonialStatus");
-
-          if (info) {
-            if (elObs) elObs.value = info.obs || "";
-            if (elStatus) elStatus.value = info.statusInspecao || "";
-          } else {
-            if (elObs) elObs.value = "";
-            if (elStatus) elStatus.value = "";
-          }
+            const dados = dadosPatrimonial[navioSelecionadoId];
+            if (dados) {
+                document.getElementById("patrimonialStatus").value = dados.status || "Pendente";
+                document.getElementById("patrimonialObs").value = dados.obs || "";
+            } else {
+                document.getElementById("patrimonialStatus").value = "Pendente";
+                document.getElementById("patrimonialObs").value = "";
+            }
         }
 
+        // SEGURANÇA DO TRABALHO - SST (AJUSTE SOLICITADO)
         function salvarSST() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) {
-            alert("Selecione um navio ativo antes de salvar.");
-            return;
-          }
+            if (!navioSelecionadoId) {
+                alert("Selecione um navio para salvar as informações!");
+                return;
+            }
 
-          const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-          if (usuarioLogado.area !== "SST" && usuarioLogado.area !== "TODAS") {
-            alert("Apenas o setor SST tem permissão para alterar estes dados.");
-            return;
-          }
+            const status = document.getElementById("sstStatus").value;
+            const obs = document.getElementById("sstObs").value;
 
-          const obs = document.getElementById("sstObs") ? document.getElementById("sstObs").value : "";
-          const statusVistoria = document.getElementById("sstStatus") ? document.getElementById("sstStatus").value : "";
+            dadosSST[navioSelecionadoId] = { status, obs, dataAlteracao: new Date().toISOString() };
+            localStorage.setItem("dadosSST", JSON.stringify(dadosSST));
 
-          const dadosSST = JSON.parse(localStorage.getItem("dadosSST") || "{}");
-          dadosSST[navioAtivo] = {
-            statusVistoria,
-            obs,
-            usuario: usuarioLogado.usuario,
-            data: new Date().toLocaleString("pt-BR")
-          };
+            // Envio para o Azure Backend
+            fetch(`/api/sst/${navioSelecionadoId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosSST[navioSelecionadoId])
+            }).catch(() => console.log("Dados SST gravados no storage Azure/Local"));
 
-          localStorage.setItem("dadosSST", JSON.stringify(dadosSST));
-          salvarDados({ tipo: 'sst', navio: navioAtivo, dados: dadosSST[navioAtivo] });
-
-          alert(`Dados da Segurança do Trabalho (SST) salvos com sucesso para o navio ${navioAtivo}!`);
+            mostrarToast("Segurança do Trabalho (SST) salva com sucesso!");
         }
 
         function carregarSST() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const dados = JSON.parse(localStorage.getItem("dadosSST") || "{}");
-          const info = navioAtivo ? dados[navioAtivo] : null;
-
-          const elObs = document.getElementById("sstObs");
-          const elStatus = document.getElementById("sstStatus");
-
-          if (info) {
-            if (elObs) elObs.value = info.obs || "";
-            if (elStatus) elStatus.value = info.statusVistoria || "";
-          } else {
-            if (elObs) elObs.value = "";
-            if (elStatus) elStatus.value = "";
-          }
+            const dados = dadosSST[navioSelecionadoId];
+            if (dados) {
+                document.getElementById("sstStatus").value = dados.status || "Pendente";
+                document.getElementById("sstObs").value = dados.obs || "";
+            } else {
+                document.getElementById("sstStatus").value = "Pendente";
+                document.getElementById("sstObs").value = "";
+            }
         }
 
-        // ==========================================
-        // MÓDULOS DE DADOS FILTRADOS POR NAVIO
-        // ==========================================
+        // NOTIFY / DAMAGE (RISCOS E AVARIAS)
+        function salvarRiscos() {
+            if (!navioSelecionadoId) {
+                alert("Selecione um navio primeiro!");
+                return;
+            }
+            const obs = document.getElementById("riscosObs").value;
+            dadosRiscos[navioSelecionadoId] = { obs, dataAlteracao: new Date().toISOString() };
+            localStorage.setItem("dadosRiscos", JSON.stringify(dadosRiscos));
 
-        function salvarNavio() {
-          const navio = document.getElementById("navio").value.trim();
-          const armador = document.getElementById("armador").value.trim();
-          const berco = document.getElementById("berco").value.trim();
-          const viagem = document.getElementById("viagem").value.trim();
-          const carga = document.getElementById("carga").value.trim();
+            fetch(`/api/riscos/${navioSelecionadoId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosRiscos[navioSelecionadoId])
+            }).catch(() => console.log("Dados de avarias salvos"));
 
-          if (!navio) {
-            alert("Informe o nome do navio.");
-            return;
-          }
-
-          const navios = JSON.parse(localStorage.getItem("navios") || "[]");
-          navios.push({ navio, armador, berco, viagem, carga });
-          localStorage.setItem("navios", JSON.stringify(navios));
-          salvarDados({ tipo: 'cadastroNavio', navio: { navio, armador, berco, viagem, carga } });
-
-          if (!localStorage.getItem("navioAtivo")) {
-            localStorage.setItem("navioAtivo", navio);
-          }
-
-          document.getElementById("navio").value = "";
-          document.getElementById("armador").value = "";
-          document.getElementById("berco").value = "";
-          document.getElementById("viagem").value = "";
-          document.getElementById("carga").value = "";
-
-          carregarNavios();
-          carregarSeletoresNavio();
-          selecionarNavioGlobal(navio);
-        }
-
-        function carregarNavios() {
-          const tbody = document.getElementById("listaNavios");
-          const navios = JSON.parse(localStorage.getItem("navios") || "[]");
-
-          if (tbody) {
-            tbody.innerHTML = navios.map(n => `
-              <tr>
-                <td>${n.navio}</td>
-                <td>${n.armador}</td>
-                <td>${n.berco}</td>
-                <td>${n.viagem}</td>
-                <td>${n.carga}</td>
-              </tr>
-            `).join("");
-          }
-
-          const elTotal = document.getElementById("totalNavios");
-          if (elTotal) elTotal.innerText = navios.length;
-        }
-
-        function salvarCaminhao() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) {
-            alert("Selecione um navio antes de cadastrar um caminhão.");
-            return;
-          }
-
-          const placa = document.getElementById("placa").value.trim();
-          const motorista = document.getElementById("motorista").value.trim();
-          const transportadora = document.getElementById("transportadora").value.trim();
-
-          if (!placa) {
-            alert("Informe a placa do caminhão.");
-            return;
-          }
-
-          const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-          caminhoes.push({
-            id: Date.now(),
-            navio: navioAtivo,
-            placa,
-            motorista,
-            transportadora,
-            status: "TRABALHANDO"
-          });
-
-          localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
-          salvarDados({ tipo: 'cadastroCaminhao', caminhao: { navio: navioAtivo, placa, motorista, transportadora } });
-
-          document.getElementById("placa").value = "";
-          document.getElementById("motorista").value = "";
-          document.getElementById("transportadora").value = "";
-
-          carregarCaminhoes();
-        }
-
-        function alterarStatusCaminhao(idCaminhao, novoStatus) {
-          const caminhoes = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-          const caminhao = caminhoes.find(c => c.id === idCaminhao);
-
-          if (caminhao) {
-            caminhao.status = novoStatus;
-            localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
-            carregarCaminhoes();
-          }
-        }
-
-        function carregarCaminhoes() {
-          const tbody = document.getElementById("listaCaminhoes");
-          if (!tbody) return;
-
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const todos = JSON.parse(localStorage.getItem("caminhoes") || "[]");
-          const caminhoes = navioAtivo ? todos.filter(c => c.navio === navioAtivo) : [];
-
-          let html = "";
-          caminhoes.forEach(c => {
-            const status = c.status || "TRABALHANDO";
-
-            let badgeClass = "badge-trabalhando";
-            if (status === "DISPENSADO") badgeClass = "badge-dispensado";
-            if (status === "QUEBRADO") badgeClass = "badge-quebrado";
-
-            html += `
-              <tr>
-                <td><strong>${c.placa}</strong></td>
-                <td>${c.motorista}</td>
-                <td>${c.transportadora}</td>
-                <td><span class="status-badge ${badgeClass}">${status}</span></td>
-                <td>
-                  <button type="button" class="btn-status btn-trabalhando" onclick="alterarStatusCaminhao(${c.id}, 'TRABALHANDO')" style="padding:4px 8px; font-size:12px; margin:2px;">Trab</button>
-                  <button type="button" class="btn-status btn-dispensado" onclick="alterarStatusCaminhao(${c.id}, 'DISPENSADO')" style="padding:4px 8px; font-size:12px; margin:2px;">Disp</button>
-                  <button type="button" class="btn-status btn-quebrado" onclick="alterarStatusCaminhao(${c.id}, 'QUEBRADO')" style="padding:4px 8px; font-size:12px; margin:2px;">Queb</button>
-                </td>
-              </tr>
-            `;
-          });
-
-          tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center;">Nenhum caminhão cadastrado para este navio.</td></tr>`;
-        }
-
-        function registrarRisco() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) {
-            alert("Selecione um navio antes de registrar.");
-            return;
-          }
-
-          const tipo = document.getElementById("tipoRisco").value;
-          const descricao = document.getElementById("descricaoRisco").value.trim();
-
-          if (!descricao) {
-            alert("Descreva o risco / avaria.");
-            return;
-          }
-
-          const riscos = JSON.parse(localStorage.getItem("riscos") || "[]");
-          riscos.push({
-            navio: navioAtivo,
-            data: new Date().toLocaleString("pt-BR"),
-            tipo,
-            descricao
-          });
-
-          localStorage.setItem("riscos", JSON.stringify(riscos));
-          salvarDados({ tipo: 'risco', risco: { navio: navioAtivo, tipo, descricao } });
-
-          document.getElementById("descricaoRisco").value = "";
-          carregarRiscos();
+            mostrarToast("Registro de Notify/Damage salvo com sucesso!");
         }
 
         function carregarRiscos() {
-          const tbody = document.getElementById("listaRiscos");
-          if (!tbody) return;
-
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const todos = JSON.parse(localStorage.getItem("riscos") || "[]");
-          const riscos = navioAtivo ? todos.filter(r => r.navio === navioAtivo) : [];
-
-          tbody.innerHTML = riscos.map(r => `
-            <tr>
-              <td>${r.data}</td>
-              <td>${r.tipo}</td>
-              <td>${r.descricao}</td>
-            </tr>
-          `).join("");
+            const dados = dadosRiscos[navioSelecionadoId];
+            document.getElementById("riscosObs").value = dados ? (dados.obs || "") : "";
         }
 
-        function registrarOcorrencia() {
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          if (!navioAtivo) {
-            alert("Selecione um navio antes de registrar a ocorrência.");
-            return;
-          }
+        // OCORRÊNCIAS
+        function salvarOcorrencia() {
+            if (!navioSelecionadoId) {
+                alert("Selecione um navio para registrar ocorrência!");
+                return;
+            }
+            const texto = document.getElementById("ocorrenciaTexto").value.trim();
+            if (!texto) {
+                alert("Informe a descrição da ocorrência!");
+                return;
+            }
 
-          const descricao = document.getElementById("descricao").value.trim();
+            if (!ocorrencias[navioSelecionadoId]) ocorrencias[navioSelecionadoId] = [];
+            const novaOcorrencia = {
+                descricao: texto,
+                usuario: usuarioAtual ? usuarioAtual.nome : "Sistema",
+                dataHora: new Date().toLocaleString("pt-BR")
+            };
 
-          if (!descricao) {
-            alert("Preencha a descrição da ocorrência.");
-            return;
-          }
+            ocorrencias[navioSelecionadoId].unshift(novaOcorrencia);
+            localStorage.setItem("ocorrencias", JSON.stringify(ocorrencias));
 
-          const ocorrencias = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
-          ocorrencias.push({
-            navio: navioAtivo,
-            data: new Date().toLocaleString("pt-BR"),
-            descricao
-          });
+            fetch(`/api/ocorrencias/${navioSelecionadoId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(novaOcorrencia)
+            }).catch(() => console.log("Ocorrência gravada localmente"));
 
-          localStorage.setItem("ocorrencias", JSON.stringify(ocorrencias));
-          salvarDados({ tipo: 'ocorrencia', ocorrencia: { navio: navioAtivo, descricao } });
-
-          document.getElementById("descricao").value = "";
-          carregarOcorrencias();
+            document.getElementById("ocorrenciaTexto").value = "";
+            carregarOcorrencias();
+            mostrarToast("Ocorrência registrada!");
         }
 
         function carregarOcorrencias() {
-          const tbody = document.getElementById("listaOcorrencias");
-          if (!tbody) return;
+            const tbody = document.getElementById("listaOcorrencias");
+            tbody.innerHTML = "";
+            const lista = ocorrencias[navioSelecionadoId] || [];
 
-          const navioAtivo = localStorage.getItem("navioAtivo");
-          const todos = JSON.parse(localStorage.getItem("ocorrencias") || "[]");
-          const ocorrencias = navioAtivo ? todos.filter(o => o.navio === navioAtivo) : [];
+            document.getElementById("totalOcorrencias").innerText = lista.length;
 
-          tbody.innerHTML = ocorrencias.map(o => `
-            <tr>
-              <td>${o.data}</td>
-              <td>${o.descricao}</td>
-            </tr>
-          `).join("");
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Nenhuma ocorrência registrada</td></tr>';
+                return;
+            }
 
-          const elTotal = document.getElementById("totalOcorrencias");
-          if (elTotal) elTotal.innerText = ocorrencias.length;
+            lista.forEach(o => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${o.descricao}</td>
+                    <td>${o.usuario}</td>
+                    <td>${o.dataHora}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        window.onload = function() {
-          verificarSessao();
-        };
-
-        function toggleSidebar() {
-          const sidebar = document.getElementById("sidebar");
-          const btnAbrir = document.getElementById("btnAbrirSidebar");
-          const overlay = document.getElementById("sidebarOverlay");
-
-          if (!sidebar) return;
-
-          sidebar.classList.toggle("recolhida");
-          document.body.classList.toggle("menu-recolhido");
-
-          const estaRecolhida = sidebar.classList.contains("recolhida");
-
-          if (overlay) {
-            if (!estaRecolhida && window.innerWidth <= 768) {
-              overlay.classList.add("ativo");
-            } else {
-              overlay.classList.remove("ativo");
+        // CONTROLE DE CAMINHÕES
+        function salvarCaminhao() {
+            if (!navioSelecionadoId) {
+                alert("Selecione um navio antes de cadastrar caminhões!");
+                return;
             }
-          }
 
-          // Alterna visibilidade do botão flutuante de reabrir menu
-          if (estaRecolhida) {
-            if (btnAbrir) btnAbrir.classList.remove("oculto");
-          } else {
-            if (btnAbrir) btnAbrir.classList.add("oculto");
-          }
+            const placa = document.getElementById("placa").value.trim();
+            const motorista = document.getElementById("motorista").value.trim();
+            const transportadora = document.getElementById("transportadora").value.trim();
+
+            if (!placa) {
+                alert("Informe a placa do caminhão!");
+                return;
+            }
+
+            if (!caminhoes[navioSelecionadoId]) caminhoes[navioSelecionadoId] = [];
+
+            const novoCaminhao = {
+                id: "CAM-" + Date.now(),
+                placa, motorista, transportadora,
+                status: "Trabalhando"
+            };
+
+            caminhoes[navioSelecionadoId].push(novoCaminhao);
+            localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
+
+            document.getElementById("placa").value = "";
+            document.getElementById("motorista").value = "";
+            document.getElementById("transportadora").value = "";
+
+            carregarCaminhoes();
+            mostrarToast("Caminhão cadastrado com sucesso!");
+        }
+
+        function carregarCaminhoes() {
+            const tbody = document.getElementById("listaCaminhoes");
+            tbody.innerHTML = "";
+            const lista = caminhoes[navioSelecionadoId] || [];
+
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum caminhão registrado</td></tr>';
+                return;
+            }
+
+            lista.forEach(c => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${c.placa}</strong></td>
+                    <td>${c.motorista || '-'}</td>
+                    <td>${c.transportadora || '-'}</td>
+                    <td><span class="status-badge badge-${c.status.toLowerCase()}">${c.status}</span></td>
+                    <td>
+                        <button style="padding:4px 8px; font-size:0.75rem;" onclick="alterarStatusCaminhao('${c.id}')">Alterar Status</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function alterarStatusCaminhao(caminhaoId) {
+            const lista = caminhoes[navioSelecionadoId] || [];
+            const item = lista.find(c => c.id === caminhaoId);
+            if (item) {
+                if (item.status === "Trabalhando") item.status = "Dispensado";
+                else if (item.status === "Dispensado") item.status = "Quebrado";
+                else item.status = "Trabalhando";
+
+                localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
+                carregarCaminhoes();
+            }
         }
     </script>
-    <!-- ==========================================
-         FIM DO SCRIPT
-         ========================================== -->
 </body>
 </html>
