@@ -1039,6 +1039,25 @@
          ========================================== -->
     <script>
         // ==========================================
+        // INTEGRAÇÃO COM API AZURE
+        // ==========================================
+
+        // Exemplo de como carregar/salvar dados pela API no Azure
+        async function salvarDados(dados) {
+          try {
+            await fetch('/api/salvarOperacao', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(dados)
+            });
+          } catch (error) {
+            console.error("Erro ao salvar dados na API Azure:", error);
+          }
+        }
+
+        // ==========================================
         // CONFIGURAÇÃO DE USUÁRIOS E WORKFLOW
         // ==========================================
 
@@ -1434,6 +1453,9 @@
           localStorage.setItem("historico", JSON.stringify(historico));
           setWorkflowAtual(atual + 1);
 
+          // Sincroniza a conclusão da etapa com a API Azure
+          salvarDados({ tipo: 'concluirEtapa', navio: navioAtivo, etapa: etapa.etapa, usuario: usuarioLogado.usuario });
+
           atualizarWorkflow();
           atualizarTarefaAtual();
           carregarHistorico();
@@ -1519,6 +1541,8 @@
           };
 
           localStorage.setItem("dadosPatrimonial", JSON.stringify(dadosPatrimonial));
+          salvarDados({ tipo: 'patrimonial', navio: navioAtivo, dados: dadosPatrimonial[navioAtivo] });
+
           alert(`Dados da Segurança Patrimonial salvos com sucesso para o navio ${navioAtivo}!`);
         }
 
@@ -1564,6 +1588,8 @@
           };
 
           localStorage.setItem("dadosSST", JSON.stringify(dadosSST));
+          salvarDados({ tipo: 'sst', navio: navioAtivo, dados: dadosSST[navioAtivo] });
+
           alert(`Dados da Segurança do Trabalho (SST) salvos com sucesso para o navio ${navioAtivo}!`);
         }
 
@@ -1603,6 +1629,7 @@
           const navios = JSON.parse(localStorage.getItem("navios") || "[]");
           navios.push({ navio, armador, berco, viagem, carga });
           localStorage.setItem("navios", JSON.stringify(navios));
+          salvarDados({ tipo: 'cadastroNavio', navio: { navio, armador, berco, viagem, carga } });
 
           if (!localStorage.getItem("navioAtivo")) {
             localStorage.setItem("navioAtivo", navio);
@@ -1666,6 +1693,7 @@
           });
 
           localStorage.setItem("caminhoes", JSON.stringify(caminhoes));
+          salvarDados({ tipo: 'cadastroCaminhao', caminhao: { navio: navioAtivo, placa, motorista, transportadora } });
 
           document.getElementById("placa").value = "";
           document.getElementById("motorista").value = "";
@@ -1743,6 +1771,8 @@
           });
 
           localStorage.setItem("riscos", JSON.stringify(riscos));
+          salvarDados({ tipo: 'risco', risco: { navio: navioAtivo, tipo, descricao } });
+
           document.getElementById("descricaoRisco").value = "";
           carregarRiscos();
         }
@@ -1786,6 +1816,8 @@
           });
 
           localStorage.setItem("ocorrencias", JSON.stringify(ocorrencias));
+          salvarDados({ tipo: 'ocorrencia', ocorrencia: { navio: navioAtivo, descricao } });
+
           document.getElementById("descricao").value = "";
           carregarOcorrencias();
         }
