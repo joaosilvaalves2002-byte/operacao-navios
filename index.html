@@ -22,13 +22,43 @@
         body {
             background-color: #f4f6f9;
             min-height: 100vh;
+            min-height: 100dvh;
             color: #333333;
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* CLASSE UNIVERSAL PARA OCULTAR ELEMENTOS */
         .oculto {
             display: none !important;
+        }
+
+        /* BACKDROP DA SIDEBAR EM DISPOSITIVOS MÓVEIS */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.ativo {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* CONTAINER DE TABELA COM ROLAGEM HORIZONTAL MÓVEL */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+            border-radius: 8px;
         }
 
         /* ==========================================
@@ -95,8 +125,10 @@
            ========================================== */
         #sistema {
             display: flex;
-            width: 100vw;
+            width: 100%;
             min-height: 100vh;
+            min-height: 100dvh;
+            position: relative;
         }
 
         /* BARRA LATERAL (SIDEBAR) */
@@ -107,6 +139,7 @@
             color: #ffffff;
             padding: 20px;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -114,7 +147,9 @@
             z-index: 100;
             box-sizing: border-box;
             flex-shrink: 0;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, margin-left 0.3s ease;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .sidebar.recolhida {
@@ -222,8 +257,10 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-width: 0;
             height: 100vh;
-            overflow-y: hidden;
+            height: 100dvh;
+            overflow: hidden;
         }
         
         .content {
@@ -231,12 +268,15 @@
             display: flex;
             flex-direction: column;
             width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         .tela {
             flex: 1;
-            padding: 30px;
+            padding: 25px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             background-color: #f4f6f9;
             box-sizing: border-box;
             width: 100%;
@@ -534,6 +574,69 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* ==========================================
+           8. ADAPTAÇÕES RESPONSIVAS PARA CELULAR
+           ========================================== */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 1000;
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .sidebar.recolhida {
+                display: flex !important;
+                transform: translateX(-100%);
+            }
+
+            .btn-toggle-floating {
+                top: 12px;
+                left: 12px;
+                padding: 8px 12px;
+                font-size: 1.1rem;
+            }
+
+            .tela {
+                padding: 15px 12px;
+            }
+
+            .tela h1 {
+                font-size: 1.4rem;
+                margin-top: 38px; /* Evita sobreposição com o botão flutuante */
+            }
+
+            .card-navio-selecao {
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .card-navio-selecao select {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .card, .card-status, .dashboard-card {
+                padding: 15px 12px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+                gap: 10px !important;
+            }
+
+            .etapas-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 10px;
+            }
+
+            .tela input, .tela select, .tela textarea, .login-box input {
+                font-size: 16px !important; /* Previne auto-zoom indesejado no Safari iOS ao focar inputs */
+            }
+        }
     </style>
     <!-- ==========================================
          FIM DO CSS
@@ -557,6 +660,9 @@
 
     <!-- CONTAINER DO SISTEMA -->
     <div id="sistema" class="oculto">
+
+        <!-- OVERLAY PARA FECHAR SIDEBAR EM CELULARES -->
+        <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
         <!-- BOTÃO FLUTUANTE -->
         <button id="btnAbrirSidebar" class="btn-toggle-floating oculto" onclick="toggleSidebar()">
@@ -640,19 +746,21 @@
                     </div>
                     <h1>Histórico Operacional</h1>
                     <div class="card">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Etapa Concluída</th>
-                                    <th>Usuário</th>
-                                    <th>Setor</th>
-                                    <th>Data / Hora</th>
-                                </tr>
-                            </thead>
-                            <tbody id="listaHistorico">
-                                <tr><td colspan="4" style="text-align:center;">Nenhum histórico registrado</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Etapa Concluída</th>
+                                        <th>Usuário</th>
+                                        <th>Setor</th>
+                                        <th>Data / Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaHistorico">
+                                    <tr><td colspan="4" style="text-align:center;">Nenhum histórico registrado</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -682,18 +790,20 @@
                         <input id="carga" placeholder="Tipo da Carga">
                         <button class="btn-acao" onclick="salvarNavio()">Cadastrar Navio</button>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Navio</th>
-                                <th>Armador</th>
-                                <th>Berço</th>
-                                <th>Viagem</th>
-                                <th>Carga</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaNavios"></tbody>
-                    </table>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Navio</th>
+                                    <th>Armador</th>
+                                    <th>Berço</th>
+                                    <th>Viagem</th>
+                                    <th>Carga</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaNavios"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- CAMINHÕES -->
@@ -709,43 +819,21 @@
                         <input id="transportadora" placeholder="Transportadora">
                         <button class="btn-acao" onclick="salvarCaminhao()">Cadastrar Caminhão</button>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Placa</th>
-                                <th>Motorista</th>
-                                <th>Transportadora</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaCaminhoes">
-                             <tr><td colspan="5" style="text-align:center;">Nenhum caminhão registrado</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- SEGURANÇA PATRIMONIAL -->
-                <div id="patrimonial" class="tela oculto">
-                    <div class="card-navio-selecao">
-                        <label><strong>Navio Selecionado:</strong></label>
-                        <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
-                    </div>
-                    <h1>Segurança Patrimonial</h1>
-                    <div class="card">
-                        <div class="form-group">
-                            <label for="patrimonialStatus">Status da Inspeção:</label>
-                            <select id="patrimonialStatus">
-                                <option value="Pendente">Pendente</option>
-                                <option value="Em Andamento">Em Andamento</option>
-                                <option value="Concluído">Concluído</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="patrimonialObs">Observações / Vistoria Patrimonial:</label>
-                            <textarea id="patrimonialObs" rows="4" placeholder="Informe detalhes da inspeção patrimonial..."></textarea>
-                        </div>
-                        <button type="button" class="btn-salvar" onclick="salvarPatrimonial()">Salvar Patrimonial</button>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Placa</th>
+                                    <th>Motorista</th>
+                                    <th>Transportadora</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaCaminhoes">
+                                 <tr><td colspan="5" style="text-align:center;">Nenhum caminhão registrado</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -788,43 +876,19 @@
                         <textarea id="descricaoRisco" placeholder="Descrição detalhada da ocorrência/avaria"></textarea>
                         <button class="btn-acao" onclick="registrarRisco()">Registrar</button>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Tipo</th>
-                                <th>Descrição</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaRiscos">
-                            <tr><td colspan="3" style="text-align:center;">Nenhum registro encontrado</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- ABA FLUXO OPERACIONAL -->
-                <div id="fluxo" class="tela oculto">
-                    <div class="card-navio-selecao">
-                        <label><strong>Navio Selecionado:</strong></label>
-                        <select class="seletor-navio" onchange="selecionarNavioGlobal(this.value)"></select>
-                    </div>
-                    <h1>Fluxo Operacional</h1>
-                    <div class="etapas-grid" id="containerFluxo">
-                        <!-- Adaptado para suportar os IDs do Workflow do seu Script -->
-                        <div class="card-etapa pendente" id="e1">Manifesto Conferido<div id="e1_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e2">Carga Inserida Sistema<div id="e2_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e3">Remoção Pátio<div id="e3_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e4">Aviso de Atracação<div id="e4_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e5">Atracação<div id="e5_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e6">Guaritas Posicionadas<div id="e6_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e7">Vistoria SST<div id="e7_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e8">Inspeção Patrimonial<div id="e8_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e9">Checklist Caminhões<div id="e9_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e10">DDS<div id="e10_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e11">Operação<div id="e11_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e12">Documentação Saída<div id="e12_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e13">Visita Final<div id="e13_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
-                        <div class="card-etapa pendente" id="e14">Desatracação<div id="e14_detalhe" style="font-size: 0.7rem; font-weight: normal; margin-top: 5px;">Pendente</div></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaRiscos">
+                                <tr><td colspan="3" style="text-align:center;">Nenhum registro encontrado</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -839,17 +903,19 @@
                         <textarea id="descricao" placeholder="Descreva a ocorrência geral do turno"></textarea>
                         <button class="btn-acao" onclick="registrarOcorrencia()">Registrar Ocorrência</button>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data/Hora</th>
-                                <th>Descrição</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaOcorrencias">
-                            <tr><td colspan="2" style="text-align:center;">Nenhuma ocorrência registrada</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaOcorrencias">
+                                <tr><td colspan="2" style="text-align:center;">Nenhuma ocorrência registrada</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>
@@ -1046,6 +1112,14 @@
 
           carregarNavios();
           carregarSeletoresNavio();
+
+          // Recolhe a barra lateral por padrão em smartphones
+          if (window.innerWidth <= 768) {
+            const sidebar = document.getElementById("sidebar");
+            const btnAbrir = document.getElementById("btnAbrirSidebar");
+            if (sidebar) sidebar.classList.add("recolhida");
+            if (btnAbrir) btnAbrir.classList.remove("oculto");
+          }
           
           const navioAtivo = localStorage.getItem("navioAtivo");
           if (navioAtivo) {
@@ -1063,6 +1137,18 @@
         // ==========================================
 
         function mostrarTela(tela) {
+          // No celular, fecha a barra lateral automaticamente ao clicar em uma opção
+          if (window.innerWidth <= 768) {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const btnAbrir = document.getElementById("btnAbrirSidebar");
+            if (sidebar && !sidebar.classList.contains("recolhida")) {
+              sidebar.classList.add("recolhida");
+              if (overlay) overlay.classList.remove("ativo");
+              if (btnAbrir) btnAbrir.classList.remove("oculto");
+            }
+          }
+
           const paginas = [
             "dashboard", "historico", "tarefas", "navios", 
             "caminhoes", "patrimonial", "sst", "riscos", "fluxo", "ocorrencias"
@@ -1076,6 +1162,7 @@
           const telaAlvo = document.getElementById(tela);
           if (telaAlvo) {
             telaAlvo.classList.remove("oculto");
+            telaAlvo.scrollTop = 0; // Garante que a tela volte ao topo ao alternar de página
           }
 
           aplicarPermissoesCampos();
@@ -1620,14 +1707,25 @@
         function toggleSidebar() {
           const sidebar = document.getElementById("sidebar");
           const btnAbrir = document.getElementById("btnAbrirSidebar");
+          const overlay = document.getElementById("sidebarOverlay");
 
           if (!sidebar) return;
 
           sidebar.classList.toggle("recolhida");
           document.body.classList.toggle("menu-recolhido");
 
-          // Alterna o botão flutuante de reabrir
-          if (sidebar.classList.contains("recolhida")) {
+          const estaRecolhida = sidebar.classList.contains("recolhida");
+
+          if (overlay) {
+            if (!estaRecolhida && window.innerWidth <= 768) {
+              overlay.classList.add("ativo");
+            } else {
+              overlay.classList.remove("ativo");
+            }
+          }
+
+          // Alterna visibilidade do botão flutuante de reabrir menu
+          if (estaRecolhida) {
             if (btnAbrir) btnAbrir.classList.remove("oculto");
           } else {
             if (btnAbrir) btnAbrir.classList.add("oculto");
